@@ -14,4 +14,7 @@ public class ConstantQueries {
         "f.aircraft, f.commander, f.firstOfficial" +
         "from flight f join route r on" +
         "f.route = r.id";
+
+    public static final String getAirports =
+        "select * from airport";
 }

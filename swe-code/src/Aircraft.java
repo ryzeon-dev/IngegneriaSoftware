@@ -35,4 +35,22 @@ public class Aircraft {
 
         this.seats = Integer.parseInt(dbRow.get(7));
     }
+
+    public static Vector<Aircraft> getAllFromQuery() {
+        PgDB db = new PgDB();
+        var result = db.runAndFetch(ConstantQueries.getCompanyAircrafts);
+        Vector<Aircraft> aircrafts = new Vector<>();
+
+        for (var row : result) {
+            aircrafts.add(new Aircraft(row));
+        }
+
+        db.close();
+        return aircrafts;
+    }
+
+    @Override
+    public String toString() {
+        return "Aircraft {" + this.manufacturer + " " + this.model + " " + this.plate + "}";
+    }
 }
