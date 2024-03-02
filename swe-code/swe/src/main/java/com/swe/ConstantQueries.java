@@ -1,3 +1,4 @@
+package com.swe;
 public class ConstantQueries {
     public static final String getCompanyAircrafts =
         "select ai.plate, a.manufacturer, a.model, a.specification, " +

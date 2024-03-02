@@ -1,3 +1,4 @@
+package com.swe.model;
 import java.util.Vector;
 
 public class Aircraft {
@@ -34,5 +35,16 @@ public class Aircraft {
         }
 
         this.seats = Integer.parseInt(dbRow.get(7));
+    }
+
+    public Aircraft(long id) {
+        this.plate="xx"+id+"xx";
+        this.manufacturer = "Boing";
+        this.model = "747";
+        this.specification = "test";
+        this.dimensionClass = null;
+        this.assistantsNumber = 3;
+        this.range = 240;
+        this.seats = 300;
     }
 }
