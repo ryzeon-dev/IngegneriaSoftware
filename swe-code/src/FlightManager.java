@@ -1,12 +1,11 @@
 import java.util.Vector;
 
-import dao.AircraftDaoPg;
 import dao.interfaces.AircraftDaoI;
 import model.Aircraft;
 
 public class FlightManager {
-    private AircraftDaoI aircraftDao= new AircraftDaoPg();
-    public Vector<Aircraft> aircrafts = aircraftDao.getAllFromQuery();
+    private AircraftDaoI aircraftDao;
+    public Vector<Aircraft> aircrafts;
 
     public Vector<Airport> airports = Airport.getAllFromQuery();
     public Vector<Employee> commanders = new Vector<>();
@@ -15,7 +14,8 @@ public class FlightManager {
     public Vector<Employee> flightAssistants = new Vector<>();
 
     FlightManager(AircraftDaoI aircraftDao) {
-
+        this.aircraftDao=aircraftDao;
+        aircrafts=this.aircraftDao.getAllFromQuery();
         makeEmployeesVectors();
     }
 
