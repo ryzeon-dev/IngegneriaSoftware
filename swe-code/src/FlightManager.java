@@ -15,7 +15,7 @@ public class FlightManager {
 
     FlightManager(AircraftDaoI aircraftDao) {
         this.aircraftDao=aircraftDao;
-        aircrafts=this.aircraftDao.getAllFromQuery();
+        aircrafts=this.aircraftDao.getAll();
         makeEmployeesVectors();
     }
 

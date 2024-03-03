@@ -6,7 +6,7 @@ import db.PgDB;
 import model.Aircraft;
 import model.DimensionClass;
 public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
-  public Vector<Aircraft> getAllFromQuery() {
+  public Vector<Aircraft> getAll() {
     PgDB db = new PgDB();
     var result = db.runAndFetch(ConstantQueries.getCompanyAircrafts);
     Vector<Aircraft> aircrafts = new Vector<>();
