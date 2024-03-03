@@ -1,0 +1,40 @@
+import java.util.Vector;
+
+public class FlightManager {
+    public Vector<Aircraft> aircrafts = Aircraft.getAllFromQuery();
+
+    public Vector<Airport> airports = Airport.getAllFromQuery();
+    public Vector<Employee> commanders = new Vector<>();
+
+    public Vector<Employee> firstOfficers = new Vector<>();
+    public Vector<Employee> flightAssistants = new Vector<>();
+
+    FlightManager() {
+        makeEmployeesVectors();
+    }
+
+    private void makeEmployeesVectors() {
+        Vector<Employee> employees = Employee.getAllFromQuery();
+
+        for (Employee employee : employees) {
+            switch (employee.role) {
+                case EmployeeRole.Commander -> commanders.add(employee);
+                case EmployeeRole.FirstOfficer -> firstOfficers.add(employee);
+                case EmployeeRole.FlightAssistant -> flightAssistants.add(employee);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        String res = "{\n";
+        res += "\tAircrafts: " + aircrafts + "\n\n";
+        res += "\tCommanders: " + commanders + "\n";
+        res += "\tFirst Officers: " + firstOfficers + "\n";
+        res += "\tFlight Assistants: " + flightAssistants + "\n\n";
+        res += "\tAirports: " + airports + "\n";
+        res += "}";
+        return res;
+    }
+
+}

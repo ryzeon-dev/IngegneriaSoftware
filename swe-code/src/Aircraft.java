@@ -11,6 +11,7 @@ public class Aircraft {
     public final int range;
     public final int seats;
     public boolean busy = false;
+    public String position = "";
 
     Aircraft(Vector<String> dbRow) {
         this.plate = dbRow.get(0);
@@ -47,6 +48,10 @@ public class Aircraft {
 
         db.close();
         return aircrafts;
+    }
+
+    public void setPosition(String icao) {
+        this.position = icao;
     }
 
     @Override

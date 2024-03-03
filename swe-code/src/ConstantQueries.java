@@ -17,4 +17,7 @@ public class ConstantQueries {
 
     public static final String getAirports =
         "select * from airport";
+
+    public static final String getRoutes =
+        "select * from route";
 }

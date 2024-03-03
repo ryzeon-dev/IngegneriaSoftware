@@ -6,6 +6,7 @@ public class Employee {
     public final String lastName;
     public final EmployeeRole role;
     public final String dimensionClass;
+    public String position = "";
 
     Employee(Vector<String> row) {
         this.id = Integer.parseInt(row.get(0));
@@ -45,6 +46,10 @@ public class Employee {
         }
 
         return employees;
+    }
+
+    public void setPosition(String icao) {
+        this.position = icao;
     }
 
     @Override
