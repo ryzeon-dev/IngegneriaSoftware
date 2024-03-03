@@ -9,6 +9,4 @@ public class ManagementSystem extends Thread {
         this.manager=manager;
         this.flightSchedule = new FlightSchedule(this.manager);
     }
-
-
 }

@@ -1,3 +1,5 @@
+package model;
+
 public enum EmployeeRole {
     Commander, FirstOfficer, FlightAssistant;
 
