@@ -1,9 +1,10 @@
+package db;
 import java.sql.*;
 import java.util.Vector;
 
 public class PgDB {
     private Connection connection;
-    PgDB() {
+    public PgDB() {
         try {
             String url = DBConfig.getLocalnetUrl(); // sostituire con `DBConfig.getUrl()`\
             String username = DBConfig.getUsername();

@@ -1,5 +1,9 @@
 import org.checkerframework.checker.units.qual.A;
 
+import db.ConstantQueries;
+import db.PgDB;
+import model.DimensionClass;
+
 import java.util.Vector;
 
 public class Airport {

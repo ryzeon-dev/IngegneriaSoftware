@@ -1,5 +1,8 @@
 import java.util.Vector;
 
+import db.ConstantQueries;
+import db.PgDB;
+
 public class FlightRoute {
     public final int id;
     public final int distance;
