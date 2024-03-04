@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/swe-code/lib/junit-platform-console-standalone-1.10.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/swe-code/lib/checker-qual-3.42.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/swe-code/lib/postgresql-42.7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

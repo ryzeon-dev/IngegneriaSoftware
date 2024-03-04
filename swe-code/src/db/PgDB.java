@@ -6,7 +6,7 @@ public class PgDB {
     private Connection connection;
     public PgDB() {
         try {
-            String url = DBConfig.getLocalnetUrl(); // sostituire con `DBConfig.getUrl()`
+            String url = DBConfig.getUrl(); // sostituire con `DBConfig.getUrl()`
             String username = DBConfig.getUsername();
             String passwd = DBConfig.getPasswd();
 

@@ -8,9 +8,7 @@ public class SimulatedClock extends Thread {
     public boolean run = true;
     public int timeCoefficient = 60; // impostato a 60, ogni secondo corrisponde ad un minuto
 
-    SimulatedClock() {
-
-    }
+    SimulatedClock() {}
 
     public void run() {
         try {
@@ -41,6 +39,18 @@ public class SimulatedClock extends Thread {
 
         } catch (InterruptedException ex) {
             return "";
+        }
+    }
+
+    public long getCounter() {
+        try {
+            this.mutex.acquire();
+            long counterValue = this.counter;
+            this.mutex.release();
+
+            return counterValue;
+        } catch (InterruptedException ex) {
+            return 0;
         }
     }
 }

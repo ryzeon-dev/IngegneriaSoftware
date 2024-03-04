@@ -38,9 +38,17 @@ public class FlightManager {
 
         for (Employee employee : employees) {
             switch (employee.role) {
-                case EmployeeRole.Commander -> commanders.add(employee);
-                case EmployeeRole.FirstOfficer -> firstOfficers.add(employee);
-                case EmployeeRole.FlightAssistant -> flightAssistants.add(employee);
+                case Commander:
+                    commanders.add(employee);
+                    break;
+
+                case FirstOfficer:
+                    firstOfficers.add(employee);
+                    break;
+
+                case FlightAssistant:
+                    flightAssistants.add(employee);
+                    break;
             }
         }
     }
