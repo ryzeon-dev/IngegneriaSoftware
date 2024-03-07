@@ -22,4 +22,7 @@ public class ConstantQueries {
 
     public static final String getRoutes =
         "select * from route";
+
+    public static final String getCredentials =
+        "select * from credentials";
 }

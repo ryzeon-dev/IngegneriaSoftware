@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
-    private FlightManager manager;
+    public FlightManager manager;
     private FlightSchedule flightSchedule;
 
     public ManagementSystem(FlightManager manager) {

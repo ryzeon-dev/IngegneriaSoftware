@@ -50,4 +50,14 @@ public class Aircraft {
         return "Aircraft {" + this.manufacturer + " " + this.model + " " + this.plate + "}";
     }
 
+    public String fullData() {
+        return "Plate: " + this.plate + "\n" +
+                "Manufacturer: " + this.manufacturer + "\n" +
+                "Model: " + this.model + "\n" +
+                "Specification: " + this.specification + "\n" +
+                "Dimension class: " + this.dimensionClass + "\n" +
+                "Assistants number: " + this.assistantsNumber + "\n" +
+                "Range: " + this.range + "Km\n" +
+                "Seats: " + this.seats;
+    }
 }
