@@ -10,6 +10,7 @@ public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
     public FlightManager manager;
     private FlightSchedule flightSchedule;
+
     private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
     private Vector<FlightRoute> flightRoutes;
 
@@ -67,5 +68,6 @@ public class ManagementSystem extends Thread {
 
         return String.join("\n\n", res);
     }
+
 
 }

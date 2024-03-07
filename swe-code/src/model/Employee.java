@@ -28,4 +28,12 @@ public class Employee {
     public String toString() {
         return this.role + " {" + this.name + " " + this.lastName + "}";
     }
+
+    public String getFullData() {
+        return "Name: " + this.name + "\n" +
+                "Last name: " + this.lastName + "\n" +
+                "ID: " + this.id + "\n" +
+                "Role: " + this.role + "\n" +
+                "Abilitation: " + this.abilitation + "\n";
+    }
 }

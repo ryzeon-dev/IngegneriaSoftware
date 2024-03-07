@@ -15,6 +15,7 @@ public class FlightManager {
     public Vector<Aircraft> aircrafts;
 
     private EmployeeDaoI employeeDao;
+    public Vector<Employee> employees;
     public Vector<Employee> commanders = new Vector<>();
     public Vector<Employee> firstOfficers = new Vector<>();
     public Vector<Employee> flightAssistants = new Vector<>();
@@ -35,6 +36,7 @@ public class FlightManager {
 
     private void makeEmployeesVectors() {
         Vector<Employee> employees = employeeDao.getAll();
+        this.employees = employees;
 
         for (Employee employee : employees) {
             switch (employee.role) {
@@ -63,6 +65,36 @@ public class FlightManager {
         res += "\tAirports: " + airports + "\n";
         res += "}";
         return res;
+    }
+
+    public Vector<Employee> getCommanders() {
+        return this.commanders;
+    }
+
+    public Vector<Employee> getFirstOfficiers() {
+        return this.firstOfficers;
+    }
+
+    public Vector<Employee> getFlightAssistants() {
+        return this.flightAssistants;
+    }
+
+    public Vector<Employee> getAllEmployees() {
+        return this.employees;
+    }
+
+    public Employee getEmployeeById(int id) {
+        for (var employee : this.employees) {
+            if (employee.id == id) {
+                return employee;
+            }
+        }
+
+        return null;
+    }
+
+    public int employeesNumber() {
+        return this.employees.size();
     }
 
 }

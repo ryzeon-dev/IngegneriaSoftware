@@ -1,15 +1,11 @@
 package cli;
 
-import dao.CredentialsDaoPg;
 import model.Credentials;
 import system.CredentialsManager;
 import system.ManagementSystem;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.Vector;
-
-import java.io.Console;
 
 public class CLI {//extends Thread {
     private ManagementSystem managementSystem;
@@ -74,13 +70,112 @@ public class CLI {//extends Thread {
     }
 
     private void accessEmployeesData() {
-        System.out.println("\nEmployees data menu");
-        System.out.println();
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Access to this area requires login");
+
+        System.out.print("Username: ");
+        String username = stdin.nextLine();
+
+        System.out.print("Password: ");
+        String passwd = stdin.nextLine();
+
+        if (username.equals("admin")) {
+            Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
+
+            if (!adminCredentials.username.equals(username) || !adminCredentials.passwd.equals(passwd)) {
+                System.out.println("Login failed");
+                return;
+            }
+
+            System.out.println("\nEmployees data menu");
+            System.out.println("1 -> View all employees");
+            System.out.println("2 -> View all commanders");
+
+            System.out.println("3 -> View all first officers");
+            System.out.println("4 -> View all flight assistants");
+
+            System.out.println("5 -> View a specific employee");
+            System.out.println("6 -> back");
+
+            int choice = 0;
+            while (true) {
+                try {
+                    System.out.print("View: ");
+                    choice = stdin.nextInt();
+                    break;
+
+                } catch (InputMismatchException ex) {
+                    System.out.println("Invalid input: retry");
+                }
+            }
+
+            System.out.println();
+            switch (choice) {
+                case 1: {
+                    for (var employee : managementSystem.manager.getAllEmployees()) {
+                        System.out.println(employee);
+                    }
+                    break;
+                }
+
+                case 2: {
+                    for (var commander : managementSystem.manager.getCommanders()) {
+                        System.out.println(commander + "\n");
+                    }
+                    break;
+                }
+
+                case 3: {
+                    for (var firstOfficer : managementSystem.manager.getFirstOfficiers()) {
+                        System.out.println(firstOfficer + "\n");
+                    }
+                    break;
+                }
+
+                case 4: {
+                    for (var flightAssistant : managementSystem.manager.getFlightAssistants()) {
+                        System.out.println(flightAssistant + "\n");
+                    }
+                    break;
+                }
+
+                case 5: {
+                    int requestedId = -1;
+
+                    while (true) {
+                        try {
+                            System.out.print("Employee id: ");
+                            requestedId = stdin.nextInt();
+                            break;
+
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Invalid input: retry");
+                        }
+                    }
+
+                    if (requestedId >= 0 && requestedId < managementSystem.manager.employeesNumber()) {
+                        System.out.println(managementSystem.manager.getEmployeeById(requestedId).getFullData());
+
+                    } else {
+                        System.out.println("ID index out of range");
+                    }
+                    break;
+                }
+
+                case 6: {
+                    return;
+                }
+
+                default: {
+                    System.out.println("Invalid choice\n");
+                    return;
+                }
+            }
+        }
     }
 
     private void accessAircraftDetails() {
         Scanner stdin = new Scanner(System.in);
-        Console console = System.console();
 
         System.out.println("Access to this area requires admin privileges. Please login");
 
