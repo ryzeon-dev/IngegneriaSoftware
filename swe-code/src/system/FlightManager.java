@@ -23,7 +23,7 @@ public class FlightManager {
     public Vector<Airport> airports = new Vector<>();
 
 
-    FlightManager(AircraftDaoI aircraftDao, EmployeeDaoI employeeDao, AirportDaoI airportDao) {
+    public FlightManager(AircraftDaoI aircraftDao, EmployeeDaoI employeeDao, AirportDaoI airportDao) {
         this.aircraftDao = aircraftDao;
         this.employeeDao = employeeDao;
         this.airportDao = airportDao;

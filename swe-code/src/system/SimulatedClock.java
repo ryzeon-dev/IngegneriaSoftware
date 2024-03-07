@@ -3,7 +3,7 @@ package system;
 import java.util.concurrent.Semaphore;
 
 public class SimulatedClock extends Thread {
-    private Semaphore mutex = new Semaphore(0);
+    private Semaphore mutex = new Semaphore(1);
     private long counter = 0;
     public boolean run = true;
     public int timeCoefficient = 60; // impostato a 60, ogni secondo corrisponde ad un minuto
@@ -14,19 +14,18 @@ public class SimulatedClock extends Thread {
         try {
             while (this.run) {
                 sleep(1000);
+
+                this.mutex.acquire();
+                this.counter += 1;
+                this.mutex.release();
             }
-
-            this.mutex.acquire();
-            this.counter += 1;
-            this.mutex.release();
-
         } catch (InterruptedException ex) {
 
         }
-
     }
 
     public String getTime() {
+        System.out.println("Trying to get time");
         try {
             this.mutex.acquire();
             long current = this.counter;
