@@ -1,5 +1,6 @@
-import java.util.Vector;
-import java.util.random.RandomGenerator;
+package system;
+
+import system.FlightManager;
 
 public class FlightSchedule {
     FlightManager manager;
