@@ -16,7 +16,7 @@ public class Main {
         AirportDaoPg airportDaoPg = new AirportDaoPg();
 
         FlightManager manager = new FlightManager(aircraftDao, employeeDao, airportDaoPg);
-        System.out.println(manager);
+        //System.out.println(manager);
 
         ManagementSystem managementSystem = new ManagementSystem(manager);
         CLI cli = new CLI(managementSystem);

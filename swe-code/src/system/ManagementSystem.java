@@ -1,15 +1,23 @@
 package system;
 
+import dao.FlightRouteDaoPg;
+import model.Aircraft;
+import model.FlightRoute;
+
 import java.util.Vector;
 
 public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
     public FlightManager manager;
     private FlightSchedule flightSchedule;
+    private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
+    private Vector<FlightRoute> flightRoutes;
 
     public ManagementSystem(FlightManager manager) {
         this.manager = manager;
         this.flightSchedule = new FlightSchedule(this.manager);
+
+        this.flightRoutes = flightRouteDao.getAll();
         clock.start();
     }
 
@@ -29,4 +37,35 @@ public class ManagementSystem extends Thread {
     public String getTime() {
         return clock.getTime();
     }
+
+    public Vector<Aircraft> getAircraftDetails() {
+        return this.manager.aircrafts;
+    }
+
+    public String getRouteDetails() {
+        Vector<String> res = new Vector<>();
+
+        for (var route : this.flightRoutes) {
+            String departureCity = "";
+            String arrivalCity = "";
+
+            for (var airport : this.manager.airports) {
+                if (airport.icao.equals(route.departure)) {
+                    departureCity = airport.city;
+
+                } else if (airport.icao.equals(route.arrival)) {
+                    arrivalCity = airport.city;
+                }
+            }
+
+            String routeLine = "From: " + route.departure + " (" + departureCity + ")\n" +
+                    "To: " + route.arrival + " (" + arrivalCity + ")\n" +
+                    "Distance: " + route.distance + " km\n" +
+                    "Duration: " + route.duration + " minutes";
+            res.add(routeLine);
+        }
+
+        return String.join("\n\n", res);
+    }
+
 }

@@ -57,7 +57,7 @@ public class Aircraft {
                 "Specification: " + this.specification + "\n" +
                 "Dimension class: " + this.dimensionClass + "\n" +
                 "Assistants number: " + this.assistantsNumber + "\n" +
-                "Range: " + this.range + "Km\n" +
+                "Range: " + this.range + " Km\n" +
                 "Seats: " + this.seats;
     }
 }

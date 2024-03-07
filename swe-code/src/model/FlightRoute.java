@@ -23,5 +23,4 @@ public class  FlightRoute {
     public String toString() {
         return "Route {" + this.departure + "->" + this.arrival + "}";
     }
-
 }

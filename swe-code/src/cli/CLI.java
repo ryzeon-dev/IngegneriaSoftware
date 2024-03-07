@@ -74,7 +74,8 @@ public class CLI {//extends Thread {
     }
 
     private void accessEmployeesData() {
-
+        System.out.println("\nEmployees data menu");
+        System.out.println();
     }
 
     private void accessAircraftDetails() {
@@ -96,14 +97,15 @@ public class CLI {//extends Thread {
         }
         System.out.println();
 
-        for (var airctaft : this.managementSystem.manager.aircrafts) {
+        for (var airctaft : this.managementSystem.getAircraftDetails()) {
             System.out.println(airctaft.fullData());
             System.out.println();
         }
     }
 
     private void accessRoutesDetails() {
-
+        System.out.println(this.managementSystem.getRouteDetails());
+        System.out.println();
     }
 
     private void accessFlightSchedule() {
