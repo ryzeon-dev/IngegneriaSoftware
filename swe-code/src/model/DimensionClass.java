@@ -20,7 +20,8 @@ public enum DimensionClass {
             return "";
         }
     }
-
+    //Aircraft is lhs Airport is rhs
+    //Check if an Aircraft(lhs) can land on Airport(rhs) 
     public boolean isCompatible(DimensionClass other) {
         String selfRepr = this.toString();
         int selfNumber = selfRepr.charAt(0);
@@ -30,7 +31,7 @@ public enum DimensionClass {
         int otherNumber = otherRepr.charAt(0);
         int otherLetter = otherRepr.charAt(1);
 
-        if (selfNumber >= otherNumber && selfLetter >= otherLetter) {
+        if (selfNumber <= otherNumber && selfLetter <= otherLetter) {
             return true;
         }
         return false;
