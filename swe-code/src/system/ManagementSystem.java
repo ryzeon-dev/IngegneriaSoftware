@@ -48,19 +48,23 @@ public class ManagementSystem extends Thread {
 
         for (var route : this.flightRoutes) {
             String departureCity = "";
+            String departureCountry = "";
             String arrivalCity = "";
+            String arrivalCountry = "";
 
             for (var airport : this.manager.airports) {
                 if (airport.icao.equals(route.departure)) {
                     departureCity = airport.city;
+                    departureCountry = airport.nation;
 
                 } else if (airport.icao.equals(route.arrival)) {
                     arrivalCity = airport.city;
+                    arrivalCountry = airport.nation;
                 }
             }
 
-            String routeLine = "From: " + route.departure + " (" + departureCity + ")\n" +
-                    "To: " + route.arrival + " (" + arrivalCity + ")\n" +
+            String routeLine = "From: " + route.departure + " (" + departureCity + ", " + departureCountry +  ")\n" +
+                    "To: " + route.arrival + " (" + arrivalCity + ", " + arrivalCountry +  ")\n" +
                     "Distance: " + route.distance + " km\n" +
                     "Duration: " + route.duration + " minutes";
             res.add(routeLine);
