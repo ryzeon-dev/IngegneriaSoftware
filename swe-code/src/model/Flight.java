@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Vector;
+
 public class Flight {
     private int id;
     private String departureTime;
@@ -10,19 +12,21 @@ public class Flight {
     private String aircraftPlate;
     private int commander;
     private int firstOfficial;
+    private Vector<Employee> flightAssistants;
     
     public Flight(int id, String departureTime, int passengersNumber, int route,
-                  String aircraftPlate, int commander, int firstOfficial){
+                  String aircraftPlate, int commander, int firstOfficial, Vector<Employee> flightAssistants){
         this.id = id;
-
         this.departureTime = departureTime;
+
         this.passengersNumber = passengersNumber;
-
         this.route = route;
-        this.aircraftPlate = aircraftPlate;
 
+        this.aircraftPlate = aircraftPlate;
         this.commander = commander;
+
         this.firstOfficial = firstOfficial;
+        this.flightAssistants = flightAssistants;
     }
     
     //Getters and setters

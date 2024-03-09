@@ -1,4 +1,7 @@
 package model;
+
+import system.ManagementSystem;
+
 public enum DimensionClass {
     C4, C3, E4;
 
@@ -16,5 +19,20 @@ public enum DimensionClass {
         } else {
             return "";
         }
+    }
+
+    public boolean isCompatible(DimensionClass other) {
+        String selfRepr = this.toString();
+        int selfNumber = selfRepr.charAt(0);
+        int selfLetter = selfRepr.charAt(1);
+
+        String otherRepr = other.toString();
+        int otherNumber = otherRepr.charAt(0);
+        int otherLetter = otherRepr.charAt(1);
+
+        if (selfNumber >= otherNumber && selfLetter >= otherLetter) {
+            return true;
+        }
+        return false;
     }
 }
