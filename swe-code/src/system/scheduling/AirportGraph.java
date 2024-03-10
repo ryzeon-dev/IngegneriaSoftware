@@ -26,11 +26,9 @@ public class AirportGraph {
         if(!adjacencyList.containsKey(a1)){
             addVertex(a1);
         }
-
         if(!adjacencyList.containsKey(a2)){
             addVertex(a2);
         }
-        
         adjacencyList.get(a1).add(new AirportWeighted(a2, weight));
     }
 
@@ -48,9 +46,9 @@ public class AirportGraph {
         for ( Entry<Airport, LinkedList<AirportWeighted>> vertex : adjacencyList.entrySet()) {
             builder.append(vertex.getKey().icao);
             for ( AirportWeighted airportWeighted : vertex.getValue()) {
-                builder.append("-"+airportWeighted.weight+"->"+airportWeighted.airport.icao);
+                builder.append(" -"+airportWeighted.weight+"-> "+airportWeighted.airport.icao+"");
             }
-            builder.append("\n");
+            builder.append("\n\n");
         }
         return builder.toString();
     }

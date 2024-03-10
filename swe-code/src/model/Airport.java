@@ -16,6 +16,7 @@ public class Airport {
         this.nation = nation;
         this.city = city;
     }
+    
 
     @Override
     public int hashCode() {
@@ -28,7 +29,7 @@ public class Airport {
         if (obj == null || getClass() != obj.getClass()) 
             return false;
         Airport other = (Airport) obj;
-        return (this.icao == other.icao);
+        return (this.icao.equals(other.icao));
     }
     @Override
     public String toString() {

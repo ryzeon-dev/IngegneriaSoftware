@@ -21,6 +21,17 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
         return airports;
     }
 
+    @Override
+    public Airport getById(String icao) {
+        // TODO Improve Quick and dirty implementation.
+        // this should be using prepared statement
+        for (Airport airport : this.getAll()) {
+            if (airport.icao.equals(icao)) {
+                return airport;
+            }
+        }
+        return null;
+    }
     public Airport buildFromRow(Vector<String> row) {
         String icao = row.get(0);
 

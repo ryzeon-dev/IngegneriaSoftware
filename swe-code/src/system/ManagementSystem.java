@@ -14,9 +14,9 @@ public class ManagementSystem extends Thread {
     private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
     private Vector<FlightRoute> flightRoutes;
 
-    public ManagementSystem(FlightManager manager) {
+    public ManagementSystem(FlightManager manager,FlightSchedule fSchedule) {
         this.manager = manager;
-        this.flightSchedule = new FlightSchedule(this.manager);
+        this.flightSchedule = fSchedule;
 
         this.flightRoutes = flightRouteDao.getAll();
         clock.start();
@@ -73,5 +73,8 @@ public class ManagementSystem extends Thread {
         return String.join("\n\n", res);
     }
 
+    public void runScheduling(){
+        flightSchedule.makeSchedule();
+    }
 
 }

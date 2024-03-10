@@ -241,7 +241,8 @@ public class CLI {//extends Thread {
     }
 
     private void accessFlightSchedule() {
-
+        managementSystem.runScheduling();
+        waitUntilEnter();
     }
 
     private void accessPersonalArea() {

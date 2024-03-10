@@ -5,4 +5,5 @@ import model.Airport;
 
 public interface AirportDaoI {
     public Vector<Airport> getAll();
+    public Airport getById(String icao);
 }
