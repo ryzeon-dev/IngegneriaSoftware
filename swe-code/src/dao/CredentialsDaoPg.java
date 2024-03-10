@@ -25,7 +25,8 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
     private Credentials buildFromRow(Vector<String> dbRow) {
         String username = dbRow.get(0);
         String passwd = dbRow.get(1);
+        int id = Integer.parseInt(dbRow.get(2));
 
-        return new Credentials(username, passwd);
+        return new Credentials(username, passwd, id);
     }
 }

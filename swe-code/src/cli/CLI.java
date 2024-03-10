@@ -5,6 +5,7 @@ import system.CredentialsManager;
 import system.ManagementSystem;
 
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -20,6 +21,12 @@ public class CLI {//extends Thread {
 
     public void run() {
         while (this.running) {
+            try {
+                Runtime.getRuntime().exec("/bin/bash -c clear");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             System.out.println("##### ITA Airways management system #####");
             System.out.println("Current time: " + this.managementSystem.getTime());
             System.out.println("Main menu:");
@@ -70,6 +77,12 @@ public class CLI {//extends Thread {
         }
     }
 
+    private void waitUntilEnter() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.print("\nPress <Enter> key when you're done");
+        stdin.nextLine();
+    }
+
     private void accessEmployeesData() {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Access to this area requires login");
@@ -116,6 +129,7 @@ public class CLI {//extends Thread {
                     for (var employee : managementSystem.manager.getAllEmployees()) {
                         System.out.println(employee);
                     }
+                    waitUntilEnter();
                     break;
                 }
 
@@ -123,6 +137,7 @@ public class CLI {//extends Thread {
                     for (var commander : managementSystem.manager.getCommanders()) {
                         System.out.println(commander + "\n");
                     }
+                    waitUntilEnter();
                     break;
                 }
 
@@ -130,6 +145,7 @@ public class CLI {//extends Thread {
                     for (var firstOfficer : managementSystem.manager.getFirstOfficiers()) {
                         System.out.println(firstOfficer + "\n");
                     }
+                    waitUntilEnter();
                     break;
                 }
 
@@ -137,6 +153,7 @@ public class CLI {//extends Thread {
                     for (var flightAssistant : managementSystem.manager.getFlightAssistants()) {
                         System.out.println(flightAssistant + "\n");
                     }
+                    waitUntilEnter();
                     break;
                 }
 
@@ -156,6 +173,7 @@ public class CLI {//extends Thread {
 
                     if (requestedId >= 0 && requestedId < managementSystem.manager.employeesNumber()) {
                         System.out.println(managementSystem.manager.getEmployeeById(requestedId).getFullData());
+                        waitUntilEnter();
 
                     } else {
                         System.out.println("ID index out of range");
@@ -169,8 +187,24 @@ public class CLI {//extends Thread {
 
                 default: {
                     System.out.println("Invalid choice\n");
-                    return;
                 }
+            }
+        } else {
+            System.out.println();
+            Credentials credentials = credentialsManager.getCredentialsFromUsername(username);
+
+            if (credentials != null) {
+                if (credentials.passwd.equals(passwd)) {
+                    int id = credentials.id;
+                    System.out.println(managementSystem.manager.getEmployeeById(id).getFullData());
+
+                    waitUntilEnter();
+                } else {
+                    System.out.println("Wrong password");
+                }
+
+            } else {
+                System.out.println("Wrong credentials: username \"" + username + "\" does not exist");
             }
         }
     }
@@ -197,11 +231,13 @@ public class CLI {//extends Thread {
             System.out.println(airctaft.fullData());
             System.out.println();
         }
+        waitUntilEnter();
     }
 
     private void accessRoutesDetails() {
         System.out.println(this.managementSystem.getRouteDetails());
         System.out.println();
+        waitUntilEnter();
     }
 
     private void accessFlightSchedule() {
