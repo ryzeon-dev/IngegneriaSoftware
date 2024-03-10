@@ -95,8 +95,8 @@ public class CLI {//extends Thread {
 
         if (username.equals("admin")) {
             Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
-
-            if (!adminCredentials.username.equals(username) || !adminCredentials.passwd.equals(passwd)) {
+            adminCredentials.checkHash("root-access");
+            if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
                 System.out.println("Login failed");
                 return;
             }
@@ -194,7 +194,7 @@ public class CLI {//extends Thread {
             Credentials credentials = credentialsManager.getCredentialsFromUsername(username);
 
             if (credentials != null) {
-                if (credentials.passwd.equals(passwd)) {
+                if (credentials.checkHash(passwd)) {
                     int id = credentials.id;
                     System.out.println(managementSystem.manager.getEmployeeById(id).getFullData());
 
@@ -221,7 +221,7 @@ public class CLI {//extends Thread {
         String passwd = stdin.nextLine();
 
         Credentials adminCredentials = credentialsManager.getCredentialsFromUsername("admin");
-        if (!username.equals(adminCredentials.username) || !passwd.equals(adminCredentials.passwd)) {
+        if (!username.equals(adminCredentials.username) || !adminCredentials.checkHash(passwd)) {
             System.out.println("Denied access: non-valid credentials");
             return;
         }
