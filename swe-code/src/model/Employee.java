@@ -34,6 +34,8 @@ public class Employee {
                 "Last name: " + this.lastName + "\n" +
                 "ID: " + this.id + "\n" +
                 "Role: " + this.role + "\n" +
-                "Abilitation: " + this.abilitation + "\n";
+                (
+                    abilitation == null ? "" : "Abilitation: " + this.abilitation + "\n"
+                );
     }
 }

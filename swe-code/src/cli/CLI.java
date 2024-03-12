@@ -5,6 +5,7 @@ import system.CredentialsManager;
 import system.ManagementSystem;
 
 
+import java.awt.desktop.SystemSleepEvent;
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -96,116 +97,120 @@ public class CLI {//extends Thread {
         if (username.equals("admin")) {
             Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
             adminCredentials.checkHash("root-access");
+
             if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
                 System.out.println("Login failed");
+                accessEmployeesData();
                 return;
             }
-
-            System.out.println("\nEmployees data menu");
-            System.out.println("1 -> View all employees");
-            System.out.println("2 -> View all commanders");
-
-            System.out.println("3 -> View all first officers");
-            System.out.println("4 -> View all flight assistants");
-
-            System.out.println("5 -> View a specific employee");
-            System.out.println("6 -> back");
-
-            int choice = 0;
             while (true) {
-                try {
-                    System.out.print("View: ");
-                    choice = stdin.nextInt();
-                    break;
+                System.out.println("\nEmployees data menu");
+                System.out.println("1 -> View all employees");
+                System.out.println("2 -> View all commanders");
 
-                } catch (InputMismatchException ex) {
-                    System.out.println("Invalid input: retry");
-                }
-            }
+                System.out.println("3 -> View all first officers");
+                System.out.println("4 -> View all flight assistants");
 
-            System.out.println();
-            switch (choice) {
-                case 1: {
-                    for (var employee : managementSystem.manager.getAllEmployees()) {
-                        System.out.println(employee);
+                System.out.println("5 -> View a specific employee");
+                System.out.println("6 -> back");
+
+                int choice = 0;
+                while (true) {
+                    try {
+                        System.out.print("View: ");
+                        choice = stdin.nextInt();
+                        break;
+
+                    } catch (InputMismatchException ex) {
+                        System.out.println("Invalid input: retry");
                     }
-                    waitUntilEnter();
-                    break;
                 }
 
-                case 2: {
-                    for (var commander : managementSystem.manager.getCommanders()) {
-                        System.out.println(commander + "\n");
-                    }
-                    waitUntilEnter();
-                    break;
-                }
-
-                case 3: {
-                    for (var firstOfficer : managementSystem.manager.getFirstOfficiers()) {
-                        System.out.println(firstOfficer + "\n");
-                    }
-                    waitUntilEnter();
-                    break;
-                }
-
-                case 4: {
-                    for (var flightAssistant : managementSystem.manager.getFlightAssistants()) {
-                        System.out.println(flightAssistant + "\n");
-                    }
-                    waitUntilEnter();
-                    break;
-                }
-
-                case 5: {
-                    int requestedId = -1;
-
-                    while (true) {
-                        try {
-                            System.out.print("Employee id: ");
-                            requestedId = stdin.nextInt();
-                            break;
-
-                        } catch (InputMismatchException ex) {
-                            System.out.println("Invalid input: retry");
+                System.out.println();
+                switch (choice) {
+                    case 1: {
+                        for (var employee : managementSystem.manager.getAllEmployees()) {
+                            System.out.println(employee);
                         }
-                    }
-
-                    if (requestedId >= 0 && requestedId < managementSystem.manager.employeesNumber()) {
-                        System.out.println(managementSystem.manager.getEmployeeById(requestedId).getFullData());
                         waitUntilEnter();
-
-                    } else {
-                        System.out.println("ID index out of range");
+                        break;
                     }
-                    break;
-                }
 
-                case 6: {
-                    return;
-                }
+                    case 2: {
+                        for (var commander : managementSystem.manager.getCommanders()) {
+                            System.out.println(commander + "\n");
+                        }
+                        waitUntilEnter();
+                        break;
+                    }
 
-                default: {
-                    System.out.println("Invalid choice\n");
+                    case 3: {
+                        for (var firstOfficer : managementSystem.manager.getFirstOfficiers()) {
+                            System.out.println(firstOfficer + "\n");
+                        }
+                        waitUntilEnter();
+                        break;
+                    }
+
+                    case 4: {
+                        for (var flightAssistant : managementSystem.manager.getFlightAssistants()) {
+                            System.out.println(flightAssistant + "\n");
+                        }
+                        waitUntilEnter();
+                        break;
+                    }
+
+                    case 5: {
+                        int requestedId = -1;
+
+                        while (true) {
+                            try {
+                                System.out.print("Employee id: ");
+                                requestedId = stdin.nextInt();
+                                break;
+
+                            } catch (InputMismatchException ex) {
+                                System.out.println("Invalid input: retry");
+                            }
+                        }
+
+                        if (requestedId >= 0 && requestedId < managementSystem.manager.employeesNumber()) {
+                            System.out.println(managementSystem.manager.getEmployeeById(requestedId).getFullData());
+                            waitUntilEnter();
+
+                        } else {
+                            System.out.println("ID index out of range");
+                        }
+                        break;
+                    }
+
+                    case 6: {
+                        return;
+                    }
+
+                    default: {
+                        System.out.println("Invalid choice\n");
+                    }
                 }
             }
         } else {
             System.out.println();
             Credentials credentials = credentialsManager.getCredentialsFromUsername(username);
 
-            if (credentials != null) {
-                if (credentials.checkHash(passwd)) {
-                    int id = credentials.id;
-                    System.out.println(managementSystem.manager.getEmployeeById(id).getFullData());
-
-                    waitUntilEnter();
-                } else {
-                    System.out.println("Wrong password");
-                }
-
-            } else {
-                System.out.println("Wrong credentials: username \"" + username + "\" does not exist");
+            if (credentials == null) {
+                System.out.println("Username does not exist");
+                return;
             }
+
+            if (!credentials.checkHash(passwd)) {
+                System.out.println("Wrong password");
+                accessEmployeesData();
+                return;
+            }
+            int id = credentials.id;
+            System.out.println(managementSystem.manager.getEmployeeById(id).getFullData());
+
+            waitUntilEnter();
         }
     }
 
@@ -246,6 +251,47 @@ public class CLI {//extends Thread {
     }
 
     private void accessPersonalArea() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Access to this area requires login");
+
+        System.out.print("Username: ");
+        String username = stdin.nextLine();
+
+        System.out.print("Password: ");
+        String passwd = stdin.nextLine();
+
+        Credentials credentials = this.credentialsManager.getCredentialsFromUsername(username);
+        if (credentials == null) {
+            System.out.println("Username not found");
+            return;
+        }
+        if (!credentials.checkHash(passwd)) {
+            System.out.println("Incorrect password, retry");
+            accessPersonalArea();
+            return;
+        }
+
+        while (true) {
+            System.out.println("\nPersonal area menu:");
+            System.out.println("1 -> Personal data view");
+            System.out.println("2 -> Personal scheduling view");
+            System.out.println("3 -> Quit");
+            System.out.print("Navigate to: ");
+            String choice = stdin.nextLine().trim();
+            System.out.println();
+
+            if (choice.equals("1")) {
+                System.out.println(this.managementSystem.manager.getEmployeeById(credentials.id).getFullData());
+                this.waitUntilEnter();
+
+            } else if (choice.equals("2")) {
+                System.out.println("Scheduling not available yet"); // TODO
+
+            } else {
+                return;
+            }
+        }
+
 
     }
 
