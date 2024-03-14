@@ -3,19 +3,19 @@ package model;
 import java.util.Vector;
 
 public class Flight {
-    private int id;
-    private String departureTime;
+    public final int id;
+    public final String departureTime;
 
-    private int passengersNumber;
-    private int route;
+    public final int passengersNumber;
+    public final int route;
 
-    private String aircraftPlate;
-    private int commander;
-    private int firstOfficial;
-    private Vector<Employee> flightAssistants;
+    public final String aircraftPlate;
+    public final Vector<Employee> commanders;
+    public final Vector<Employee> firstOfficers;
+    public final Vector<Employee> flightAssistants;
     
     public Flight(int id, String departureTime, int passengersNumber, int route,
-                  String aircraftPlate, int commander, int firstOfficial, Vector<Employee> flightAssistants){
+                  String aircraftPlate, Vector<Employee> commanders, Vector<Employee> firstOfficers, Vector<Employee> flightAssistants){
         this.id = id;
         this.departureTime = departureTime;
 
@@ -23,59 +23,9 @@ public class Flight {
         this.route = route;
 
         this.aircraftPlate = aircraftPlate;
-        this.commander = commander;
+        this.commanders = commanders;
 
-        this.firstOfficial = firstOfficial;
+        this.firstOfficers = firstOfficers;
         this.flightAssistants = flightAssistants;
-    }
-    
-    //Getters and setters
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDepartureTime() {
-        return departureTime;
-    }
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public int getPassengersNumber() {
-        return passengersNumber;
-    }
-    public void setPassengersNumber(int passengersNumber) {
-        this.passengersNumber = passengersNumber;
-    }
-
-    public int getRoute() {
-        return route;
-    }
-    public void setRoute(int route) {
-        this.route = route;
-    }
-
-    public String getAircraftPlate() {
-        return aircraftPlate;
-    }
-    public void setAircraftPlate(String aircraftPlate) {
-        this.aircraftPlate = aircraftPlate;
-    }
-
-    public int getCommander() {
-        return commander;
-    }
-    public void setCommander(int commander) {
-        this.commander = commander;
-    }
-
-    public int getFirstOfficial() {
-        return firstOfficial;
-    }
-    public void setFirstOfficial(int firstOfficial) {
-        this.firstOfficial = firstOfficial;
     }
 }
