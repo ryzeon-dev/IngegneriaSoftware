@@ -51,9 +51,8 @@ Flight:
 
 ### Schema Entity-Relationships
 
+![[Screenshot 2024-03-16 015649.png]]
 
-
-![[Screenshot 2024-03-15 222700.png]]
 
 RISTRUTTURAZIONE DELLO SCHEMA E-R
 
