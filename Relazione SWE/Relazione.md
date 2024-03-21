@@ -74,14 +74,23 @@ Siccome non si identificano ridondanze, gerarchie tra le tabelle, attributi mult
 ## Schema Logico
 
 Aircraft (<u>id</u>, manufacturer, model, specification, range, assistants_number, class, seats);
+
 Aircraft_instance (<u>plate</u>, aircraft IR *)
+
 Airport(<u>icao</u>, class, name, nation, city)
+
 Route(<u>id</u>, distance, duration, departure IR* * , stepover IR, arrival IR *)
+
 Parking (<u>aircraft_instance IR, airport IR</u>)
+
 Flight (<u>id </u>, departure_time, passenger_number, route IR *, aircraft_instance IR *)
+
 Command(<u>personal IR, flight IR</u> )
+
 Monitor(<u>personal IR, flight IR</u> )
+
 Assist (<u>personal IR, flight IR</u>)
+
 
 Legenda:
 IR: sull'attributo indicato vige un vincolo di Integrità Referenziale
