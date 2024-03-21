@@ -1,5 +1,5 @@
 
-<a href="/#dizionario-dei-dati" style="text-decoration: none; text-color: red">Dizionario dei Dati</a>
+<a href="#dizionario-dei-dati" style="text-decoration: none; text-color: red">Dizionario dei Dati</a>
 
 [Entità dello schema ER](#entità-dello-schema-er)
 
