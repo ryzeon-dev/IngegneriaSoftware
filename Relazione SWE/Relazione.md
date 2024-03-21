@@ -1,17 +1,17 @@
 
-[[#Dizionario dei dati]]
-[[#Entità dello schema ER]]
-[[#Relazioni dello schema]]
-[[#Regole di vincolo]]
-[[#Schema Entity-Relationships]]
-[[#Ristrutturazione dello schema E-R]]
-[[#Schema Logico]]
+<a href="/#dizionario-dei-dati" style="text-decoration: none; text-color: red">Dizionario dei Dati</a>
 
+[Entità dello schema ER](#entità-dello-schema-er)
 
+[Relazioni dello schema](#relazioni-dello-schema)
 
+[Regole di vincolo](#regole-di-vincolo)
 
+[Schema Entity-Relationship](#schema-entity-relationships)
 
+[Ristrutturazione dello schema E-R](#ristrutturazione-dello-schema-er)
 
+[Schema logico](#schema-logico)
 
 ## Dizionario dei dati
 
@@ -68,7 +68,7 @@ Flight:
 ![[Screenshot 2024-03-19 211010.png]]
 
 
-### Ristrutturazione dello schema E-R
+### Ristrutturazione dello schema ER
 Siccome non si identificano ridondanze, gerarchie tra le tabelle, attributi multivalore e gli identificatori sono già stati definiti per ciascuna tabella, possiamo considerare la fase di ristrutturazione come già implicitamente completata.
 
 ## Schema Logico
