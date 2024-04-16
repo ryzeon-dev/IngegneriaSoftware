@@ -75,6 +75,7 @@ public class PgDB {
                 }
             } catch (Exception e) {
                 // TODO: handle exception
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             System.err.println("fatal error: prepared statement creation generated error: " + e.getMessage());

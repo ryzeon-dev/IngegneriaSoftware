@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import dao.interfaces.AirportDaoI;
 import dao.interfaces.FlightRouteDaoI;
+import dao.interfaces.ParkingDaoI;
 import model.Aircraft;
 import model.Airport;
 import model.Flight;
@@ -18,14 +19,16 @@ import system.scheduling.AirportWeighted;
 public class SimpleSchedule  implements SchedulingStrategy{
     private FlightRouteDaoI flightRouteDao;
     private AirportDaoI airportDao;
+    private ParkingDaoI parkingDao;
     private AirportGraph graph=null;
 
     private Map<Airport,Boolean> visited= new HashMap<>();
     private Map<Airport,Vector<Aircraft>> aircraftLocation =new HashMap<>();
 
-    public SimpleSchedule(FlightRouteDaoI flightRouteDao,AirportDaoI airportDao){
+    public SimpleSchedule(FlightRouteDaoI flightRouteDao,AirportDaoI airportDao,ParkingDaoI parkingDao){
         this.airportDao=airportDao;
         this.flightRouteDao=flightRouteDao;
+        this.parkingDao=parkingDao;
     }
 
     @Override
@@ -41,7 +44,14 @@ public class SimpleSchedule  implements SchedulingStrategy{
 
     private void exploreBfs(){
         for (Airport airport : graph.getVertexList()) {
-            System.err.println("Starting Bfs from: "+airport.toString());
+            System.out.println("Starting Bfs from: "+airport.toString());
+            Vector<Aircraft> parkedAircrafts=parkingDao.getParked(airport.icao);
+            if (!parkedAircrafts.isEmpty()){
+                System.out.println("ParkedAircrafts: "+airport.toString());
+                for (Aircraft a : parkedAircrafts) {
+                    System.out.println(a.toString());
+                }
+            }
             bfs(graph, airport);
         }
     }
