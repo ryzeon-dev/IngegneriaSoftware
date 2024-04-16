@@ -27,22 +27,7 @@ public class PgDB {
                 var dbOutput = statement.executeQuery(query);
 
                 while (dbOutput.next()) {
-                    // Il codice per il fetch del contenuto delle righe itera fino a quando non viene generato un errore
-                    // il che indica la fine della riga (limite dell'indice di colonna raggiunto)
-                    // non ho trovato un metodo che mi dica il numero di colonne da poter usare, quindi bisogna usare
-                    // questo escamotage orrendo
-                    Vector<String> row = new Vector<>();
-                    int i = 1;
-
-                    while (true) {
-                        try {
-                            row.add(dbOutput.getString(i));
-                        } catch (SQLException ex) {
-                            break;
-                        }
-                        i++;
-                    }
-
+                    Vector<String> row = GetRow(dbOutput);
                     result.add(row);
                 }
 
@@ -58,6 +43,42 @@ public class PgDB {
             System.err.println("fatal error: statement creation generated error: " + ex.getMessage());
             System.exit(1);
 
+        }
+        return result;
+    }
+    // Il codice per il fetch del contenuto delle righe itera fino a quando non viene generato un errore
+    // il che indica la fine della riga (limite dell'indice di colonna raggiunto)
+    // non ho trovato un metodo che mi dica il numero di colonne da poter usare, quindi bisogna usare
+    // questo escamotage orrendo
+    private Vector<String> GetRow(ResultSet dbOutput) {
+        Vector<String> row = new Vector<>();
+        try {
+            var metadata=dbOutput.getMetaData();
+            int colCount=metadata.getColumnCount();
+            for (int i = 1; i <= colCount; i++) {
+                row.add(dbOutput.getString(i));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    public Vector<Vector<String>> runPstmtAndFetch(String query,String param ){
+        Vector<Vector<String>> result = new Vector<>();
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query)){
+            pstmt.setString(1,param);
+            try (ResultSet dbOutput = pstmt.executeQuery()){
+                while (dbOutput.next()) {
+                    Vector<String> row = GetRow(dbOutput);
+                    result.add(row);
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        } catch (SQLException e) {
+            System.err.println("fatal error: prepared statement creation generated error: " + e.getMessage());
+            System.exit(1);
         }
         return result;
     }
