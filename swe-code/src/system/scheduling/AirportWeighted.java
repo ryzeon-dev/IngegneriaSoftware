@@ -5,7 +5,7 @@ import model.Airport;
 public class AirportWeighted {
     public final Airport airport;
     public final int weight;
-    public AirportWeighted(Airport airport,int weight){
+    public AirportWeighted(Airport airport,int weight,int route_id){
         this.airport = airport;
         this.weight = weight;
     }

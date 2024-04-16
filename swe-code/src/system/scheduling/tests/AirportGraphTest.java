@@ -18,11 +18,11 @@ public class AirportGraphTest {
         Airport a3= new Airport("a3", DimensionClass.E4, "T3", "T3", "T3");
         Airport a4= new Airport("a4", DimensionClass.E4, "T4", "T4", "T4");
         AirportGraph graph= new AirportGraph();
-        graph.addEdge(a1, a2,10);
-        graph.addEdge(a1, a3, 40);
-        graph.addEdge(a2, a1,10);
-        graph.addEdge(a3, a2,20);
-        assertEquals("a1-10->a2-40->a3\na2-10->a1\na3-20->a2\n", graph.toString());
+        graph.addEdge(a1, a2,10,1);
+        graph.addEdge(a1, a3, 40,2);
+        graph.addEdge(a2, a1,10,3);
+        graph.addEdge(a3, a2,20,4);
+        assertEquals("a1 -10-> a2 -40-> a3\na2 -10-> a1\na3 -20-> a2\n", graph.toString());
         assertTrue(graph.containsVertex(a1));
         assertTrue(graph.containsVertex(a2));
         assertTrue(graph.containsVertex(a3));

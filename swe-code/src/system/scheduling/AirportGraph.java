@@ -22,14 +22,14 @@ public class AirportGraph {
         a1 -> a2 Order matter since this is a directed graph.
     */
 
-    public void addEdge(Airport a1,Airport a2,int weight){
+    public void addEdge(Airport a1,Airport a2,int weight,int routeId){
         if(!adjacencyList.containsKey(a1)){
             addVertex(a1);
         }
         if(!adjacencyList.containsKey(a2)){
             addVertex(a2);
         }
-        adjacencyList.get(a1).add(new AirportWeighted(a2, weight));
+        adjacencyList.get(a1).add(new AirportWeighted(a2, weight,routeId));
     }
 
     public Set<Airport> getVertexList(){
@@ -40,6 +40,10 @@ public class AirportGraph {
         return adjacencyList.containsKey(r);
     }
 
+    public LinkedList<AirportWeighted> getAdjacentVertex(Airport airport){
+        return adjacencyList.get(airport);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder= new StringBuilder();
@@ -48,7 +52,7 @@ public class AirportGraph {
             for ( AirportWeighted airportWeighted : vertex.getValue()) {
                 builder.append(" -"+airportWeighted.weight+"-> "+airportWeighted.airport.icao+"");
             }
-            builder.append("\n\n");
+            builder.append("\n");
         }
         return builder.toString();
     }
