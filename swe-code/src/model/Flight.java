@@ -28,4 +28,9 @@ public class Flight {
         this.firstOfficers = firstOfficers;
         this.flightAssistants = flightAssistants;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
