@@ -1,13 +1,9 @@
-import java.util.Vector;
-
 import cli.CLI;
 import dao.AircraftDaoPg;
 import dao.AirportDaoPg;
 import dao.EmployeeDaoPg;
 import dao.FlightRouteDaoPg;
 import dao.ParkingDaoPg;
-import dao.interfaces.AirportDaoI;
-import model.FlightRoute;
 import system.ManagementSystem;
 import system.scheduling.schedulingStrategy.SimpleSchedule;
 import system.FlightManager;
