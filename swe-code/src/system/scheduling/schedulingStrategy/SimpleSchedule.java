@@ -8,10 +8,12 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
 import dao.interfaces.AirportDaoI;
+import dao.interfaces.EmployeeDaoI;
 import dao.interfaces.FlightRouteDaoI;
 import dao.interfaces.ParkingDaoI;
 import model.Aircraft;
 import model.Airport;
+import model.Employee;
 import model.Flight;
 import model.FlightRoute;
 import system.scheduling.AirportGraph;
@@ -35,12 +37,43 @@ public class SimpleSchedule  implements SchedulingStrategy{
     private Map<Airport,Vector<Aircraft>> aircraftLocation=new HashMap<>();
     private Map<Aircraft,LocalDateTime> aircraftTime=new HashMap<>();
 
-    public SimpleSchedule(FlightRouteDaoI flightRouteDao,AirportDaoI airportDao,ParkingDaoI parkingDao){
+    //Employee
+    private Queue<Employee> commanders = new LinkedList<>();
+    private Queue<Employee> firstOfficers = new LinkedList<>();
+    private Queue<Employee> flightAssistants = new LinkedList<>();
+    private Map<Airport,LinkedList<Employee>> commandersLocation=new HashMap<>();
+    private Map<Airport,LinkedList<Employee>> firstOfficersLocation=new HashMap<>();
+    private Map<Airport,LinkedList<Employee>> flightAssistantsLocation=new HashMap<>();
+
+
+    private EmployeeDaoI employeeDao;
+    public SimpleSchedule(FlightRouteDaoI flightRouteDao,AirportDaoI airportDao,ParkingDaoI parkingDao,EmployeeDaoI employeeDao){
+        this.employeeDao=employeeDao;
         this.airportDao=airportDao;
         this.flightRouteDao=flightRouteDao;
         this.parkingDao=parkingDao;
+        makeEmployeesVectors();
     }
 
+    private void makeEmployeesVectors() {
+        Vector<Employee> employees = employeeDao.getAll();
+        for (Employee employee : employees) {
+            switch (employee.role) {
+                case Commander:
+                    commanders.add(employee);
+                    break;
+
+                case FirstOfficer:
+                    firstOfficers.add(employee);
+                    break;
+
+                case FlightAssistant:
+                    flightAssistants.add(employee);
+                    break;
+            }
+        }
+    }
+    
     @Override
     public Vector<Flight> run() {
         System.out.println("Running Scheduling Algorithm.\n");
@@ -60,6 +93,7 @@ public class SimpleSchedule  implements SchedulingStrategy{
             }
             aircraftLocation.put(airport, parkedAircrafts);
         }
+        
         for (int iteration = 0; iteration < iterations; iteration++) {
             exploreBfs();
         }
@@ -76,14 +110,12 @@ public class SimpleSchedule  implements SchedulingStrategy{
     private void bfs(AirportGraph G,Airport source){
         for (Airport airport : graph.getVertexList()) {
             visited.put(airport, false);
-        }
+        }        
         Queue<Airport> fifo= new LinkedList<>();
         fifo.add(source);
         visited.replace(source, true);
         while (!fifo.isEmpty()) {
             Airport airport= fifo.remove();
-            //Get aircraft that are in this airport and sort them by range.
-
             //Build parked aircraft priorityQueue
             PriorityQueue<Aircraft> parkedAircraftsPq = new PriorityQueue<>(new Comparator<Aircraft>() {
                 @Override
@@ -91,6 +123,7 @@ public class SimpleSchedule  implements SchedulingStrategy{
                     return aircraft1.range - aircraft0.range;
                 }
             });
+
             for (Aircraft a : aircraftLocation.get(airport)) {
                 parkedAircraftsPq.add(a);
             }
@@ -118,6 +151,24 @@ public class SimpleSchedule  implements SchedulingStrategy{
                             System.out.println("Estimated arrival: "+eta.format(dateTimeFormat));
                             System.out.println("Assigned aircraft:\n"+nextAircraft.toString()+"\n");
                             System.out.println("AircraftRange:"+nextAircraft.range+" DistanceOfTravel:"+airportWeighted.weight+"\n");
+                            //assign personal to flight
+                            //chose flightAssistants                
+                            System.out.println("needed number of assistant: "+ nextAircraft.assistantsNumber+ "\n");
+                            var currentFlightAssistants=getFlightAssistants(nextAircraft.assistantsNumber, airport, airportWeighted.airport);
+                            for (var flightAss : currentFlightAssistants) {
+                                System.out.println(flightAss.toString());
+                            }
+                            System.out.println("\n");
+                            int neededCommanders=1;
+                            if((airportWeighted.duration / 60) >= 7){
+                                neededCommanders=2;
+                            }
+                            System.out.println("needed number of commanders: "+ neededCommanders+ "");
+                            var currentCommanders=getCommanders(neededCommanders, airport, airportWeighted.airport,nextAircraft.model);
+                            for (var commander : currentCommanders) {
+                                System.out.println(commander.toString());
+                            }
+                            System.out.println("\n");
 
                             var flight=new Flight(
                                 0, 
@@ -138,9 +189,44 @@ public class SimpleSchedule  implements SchedulingStrategy{
                 
                 }
             }
+
         }
     }
     
+
+    private Vector<Employee> getCommanders(int neededCommanders, Airport source, Airport destination,String aircraftModel) {
+        Vector<Employee> currentCommanders= new Vector<>();
+        //Check if the Commander has the correct aircraft abilitation.
+        for (int i = 0; i < neededCommanders; i++) {
+            Employee selectedCommander=null;
+            if(commandersLocation.containsKey(source) && !commandersLocation.get(source).isEmpty()){
+                for (Employee commander : commandersLocation.get(source)) {
+                    if(isAbilitationValid(commander.abilitation, aircraftModel)){
+                        selectedCommander=commander;
+                        commandersLocation.get(source).remove(selectedCommander);
+                        currentCommanders.add(selectedCommander);
+                        break;
+                    }
+                }
+            }
+            if(selectedCommander == null){
+                for (Employee commander : commanders) {
+                    if(isAbilitationValid(commander.abilitation, aircraftModel)){
+                        selectedCommander=commander;
+                        commanders.remove(selectedCommander);
+                        currentCommanders.add(selectedCommander);
+                        break;
+                        }
+                }
+            }
+
+            if(selectedCommander != null){
+                commandersLocation.putIfAbsent(destination,new LinkedList<>());
+                commandersLocation.get(destination).add(selectedCommander);
+            }
+        }
+        return currentCommanders;
+    }
 
     private AirportGraph buildGraphFromFlightRoute(){
         AirportGraph graph= new AirportGraph();
@@ -164,7 +250,7 @@ public class SimpleSchedule  implements SchedulingStrategy{
         }
         return graph;
     }
-    //Check if aircraft cat fly to given airport.
+    //Check if aircraft can fly to given airport.
     private boolean canFly(Aircraft aircraft,AirportWeighted airportWeighted){
         //Check if the aircraft class is compatible with the airport class.
         if (!aircraft.canGo(airportWeighted.airport)){
@@ -175,4 +261,38 @@ public class SimpleSchedule  implements SchedulingStrategy{
         }
         return true;
     }
+
+    private Vector<Employee> getFlightAssistants(int assistantNumber,Airport source,Airport destination){
+        Vector<Employee> currentFlightAssistants= new Vector<>();
+        for (int i = 0; i < assistantNumber; i++) {
+            Employee flightAssistant=null;
+            //check if there are available flight assistant in the airport
+            if(flightAssistantsLocation.containsKey(source) && !flightAssistantsLocation.get(source).isEmpty()){
+                flightAssistant=flightAssistantsLocation.get(source).remove();
+                currentFlightAssistants.add(flightAssistant);
+            }else{
+                try {
+                    flightAssistant=flightAssistants.remove();
+                    currentFlightAssistants.add(flightAssistant);
+                } catch (Exception e) {
+    
+                }
+            }
+            if(flightAssistant != null){
+                flightAssistantsLocation.putIfAbsent(destination,new LinkedList<>());
+                flightAssistantsLocation.get(destination).add(flightAssistant);
+            }
+        }
+        return currentFlightAssistants;
+    }
+    Boolean isAbilitationValid(String abilitation,String aircraftModel){
+        if(abilitation.equals(aircraftModel)){
+            return true;
+        }
+        if(abilitation.equals("A319")){
+            return aircraftModel.equals("A318") || aircraftModel.equals("A320") ||  aircraftModel.equals("A321");
+        }
+        return false;
+    }
 }
+

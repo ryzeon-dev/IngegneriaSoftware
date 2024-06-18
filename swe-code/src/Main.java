@@ -19,7 +19,7 @@ public class Main {
         ParkingDaoPg parkingDaoPg= new ParkingDaoPg();
         FlightManager manager = new FlightManager(aircraftDao, employeeDao, airportDaoPg);
         //System.out.println(manager);
-        SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg,airportDaoPg,parkingDaoPg);
+        SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg,airportDaoPg,parkingDaoPg,employeeDao);
         FlightSchedule flightSchedule=new FlightSchedule(manager,schedulingStrategy);
         ManagementSystem managementSystem = new ManagementSystem(manager,flightSchedule);
         CLI cli = new CLI(managementSystem);
