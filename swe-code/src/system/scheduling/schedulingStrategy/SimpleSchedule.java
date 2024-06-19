@@ -18,6 +18,9 @@ import model.Flight;
 import model.FlightRoute;
 import system.scheduling.AirportGraph;
 import system.scheduling.AirportWeighted;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -116,6 +119,7 @@ public class SimpleSchedule  implements SchedulingStrategy{
         visited.replace(source, true);
         while (!fifo.isEmpty()) {
             Airport airport= fifo.remove();
+            visited.replace(airport, true);
             //Build parked aircraft priorityQueue
             PriorityQueue<Aircraft> parkedAircraftsPq = new PriorityQueue<>(new Comparator<Aircraft>() {
                 @Override
@@ -169,27 +173,34 @@ public class SimpleSchedule  implements SchedulingStrategy{
                                 System.out.println(commander.toString());
                             }
                             System.out.println("\n");
-
+                            System.out.println("needed number of firstOfficers: "+ neededCommanders+ "");
+                            var currentFirstOfficers=getFirstOfficers(neededCommanders, airport, airportWeighted.airport,nextAircraft.model);
+                            for (var firstOfficer : currentFirstOfficers) {
+                                System.out.println(firstOfficer.toString());
+                            }
+                            System.out.println("\n");
                             var flight=new Flight(
                                 0, 
                                 departure.format(dateTimeFormat), 
                                 0, 
                                 airportWeighted.routeId, 
                                 nextAircraft.plate,
-                                null, 
-                                null, 
-                                null
+                                currentCommanders, 
+                                currentFirstOfficers, 
+                                currentFlightAssistants
                             );
-                            flights.add(flight);
+                            if(isFlightValid(flight, nextAircraft, neededCommanders)){
+                                flights.add(flight);
+                            }else{
+                                System.out.println("generated flight is not valid. \n");
+                            }
                             //Visit the next airports
-                            visited.replace(airportWeighted.airport, true);
                             fifo.add(airportWeighted.airport);
                         }
                     }
                 
                 }
             }
-
         }
     }
     
@@ -228,6 +239,50 @@ public class SimpleSchedule  implements SchedulingStrategy{
         return currentCommanders;
     }
 
+    private Vector<Employee> getFirstOfficers(int neededFirstOfficers, Airport source, Airport destination,String aircraftModel) {
+        Vector<Employee> currentFirstOfficers= new Vector<>();
+        //Check if the firstOfficer has the correct aircraft abilitation.
+        for (int i = 0; i < neededFirstOfficers; i++) {
+            Employee selectedFirstOfficers=null;
+            if(firstOfficersLocation.containsKey(source) && !firstOfficersLocation.get(source).isEmpty()){
+                for (Employee firstOfficer : firstOfficersLocation.get(source)) {
+                    if(isAbilitationValid(firstOfficer.abilitation, aircraftModel)){
+                        selectedFirstOfficers=firstOfficer;
+                        firstOfficersLocation.get(source).remove(selectedFirstOfficers);
+                        currentFirstOfficers.add(selectedFirstOfficers);
+                        break;
+                    }
+                }
+            }
+
+            if(selectedFirstOfficers == null){
+                for (Employee firstOfficer : firstOfficers) {
+                    if(isAbilitationValid(firstOfficer.abilitation, aircraftModel)){
+                        selectedFirstOfficers=firstOfficer;
+                        firstOfficers.remove(selectedFirstOfficers);
+                        currentFirstOfficers.add(selectedFirstOfficers);
+                        break;
+                        }
+                }
+            }
+
+            if(selectedFirstOfficers != null){
+                firstOfficersLocation.putIfAbsent(destination,new LinkedList<>());
+                firstOfficersLocation.get(destination).add(selectedFirstOfficers);
+            }
+        }
+        return currentFirstOfficers;
+    }
+
+    private boolean isFlightValid(Flight f,Aircraft a,int neededCommanders){
+        if(f.commanders.size() < neededCommanders || f.firstOfficers.size() < neededCommanders){
+            return false;
+        }
+        if(f.flightAssistants.size() < a.assistantsNumber){
+            return false;
+        }
+        return true;
+    }
     private AirportGraph buildGraphFromFlightRoute(){
         AirportGraph graph= new AirportGraph();
         Vector<FlightRoute> routes= flightRouteDao.getAll();
