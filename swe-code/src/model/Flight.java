@@ -1,9 +1,11 @@
 package model;
 
+import dao.FlightDaoPg;
+
 import java.util.Vector;
 
 public class Flight {
-    public final int id;
+    public int id;
     public final String departureTime;
 
     public final int passengersNumber;
@@ -41,7 +43,7 @@ public class Flight {
         repr += "\tRoute:" + "\n";
         repr += "\t\tDeparture: " + this.route.departure + "\n";
 
-        if (!this.route.stepover.isEmpty()) {
+        if (this.route.stepover != null) {
             repr += "\t\tStepover: " + this.route.stepover + "\n";
         }
 
@@ -65,5 +67,10 @@ public class Flight {
         }
 
         return repr + "\n";
+    }
+
+    public void commitFlight() {
+        FlightDaoPg flightDaoPg = new FlightDaoPg();
+        this.id = flightDaoPg.commitFlight(this);
     }
 }

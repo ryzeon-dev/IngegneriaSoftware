@@ -2,6 +2,7 @@ package system;
 
 import dao.FlightRouteDaoPg;
 import model.Aircraft;
+import model.Flight;
 import model.FlightRoute;
 
 import java.util.Vector;
@@ -9,7 +10,9 @@ import java.util.Vector;
 public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
     public FlightManager manager;
-    private FlightSchedule flightSchedule;
+
+    public FlightSchedule flightSchedule;
+    public Vector<Flight> scheduledFlights;
 
     private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
     private Vector<FlightRoute> flightRoutes;
@@ -49,6 +52,7 @@ public class ManagementSystem extends Thread {
         for (var route : this.flightRoutes) {
             String departureCity = "";
             String departureCountry = "";
+
             String arrivalCity = "";
             String arrivalCountry = "";
 
@@ -74,7 +78,9 @@ public class ManagementSystem extends Thread {
     }
 
     public void runScheduling(){
-        flightSchedule.makeSchedule();
+        this.scheduledFlights = flightSchedule.makeSchedule();
+
+        System.out.println(scheduledFlights);
     }
 
 }

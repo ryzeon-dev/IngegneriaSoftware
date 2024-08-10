@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 public class SimulatedClock extends Thread {
     private Semaphore mutex = new Semaphore(1);
     private long counter = 0;
+
     public boolean run = true;
     public int timeCoefficient = 60; // impostato a 60, ogni secondo corrisponde ad un minuto
 

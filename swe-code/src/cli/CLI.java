@@ -17,6 +17,7 @@ public class CLI {//extends Thread {
 
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
+        managementSystem.runScheduling();
         this.credentialsManager = new CredentialsManager();
     }
 
@@ -246,6 +247,38 @@ public class CLI {//extends Thread {
     }
 
     private void accessFlightSchedule() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Access to this area requires login");
+
+        System.out.print("Username: ");
+        String username = stdin.nextLine();
+
+        System.out.print("Password: ");
+        String passwd = stdin.nextLine();
+
+        Credentials credentials = this.credentialsManager.getCredentialsFromUsername(username);
+        if (credentials == null) {
+            System.out.println("Username not found");
+            return;
+        }
+
+        if (!credentials.checkHash(passwd)) {
+            System.out.println("Incorrect password, retry");
+            accessFlightSchedule();
+            return;
+        }
+
+        System.out.println("'" + username + "'");
+
+        if (username.equals("admin")) {
+            System.out.println("root access");
+            for (var flight : this.managementSystem.scheduledFlights) {
+                //if (flight.departureTime >= this.managementSystem.getTime())
+                System.out.println(flight.toString());
+            }
+        } else {
+
+        }
 
         waitUntilEnter();
     }
@@ -265,6 +298,7 @@ public class CLI {//extends Thread {
             System.out.println("Username not found");
             return;
         }
+
         if (!credentials.checkHash(passwd)) {
             System.out.println("Incorrect password, retry");
             accessPersonalArea();

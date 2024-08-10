@@ -18,6 +18,7 @@ public class FlightSchedule {
         if(strategy != null){
             return strategy.run();
         }
+
         return null;
     }
 }

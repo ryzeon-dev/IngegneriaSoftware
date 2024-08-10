@@ -47,4 +47,12 @@ public class ConstantQueries {
 
     public static final String getCredentials =
         "select * from credentials";
+
+    public static final String commitFlight(String departureTime, String passengersNumber, String route, String aircraft) {
+        return "insert into flight (departure_time, passengers_number, route, aircraft) values ('" +
+                departureTime + "', " + passengersNumber + ", " + route + ", '" + aircraft + "');";
+    }
+
+    public static String getLastFlightId =
+        "select id from flight group by id having id=max(id);";
 }

@@ -106,6 +106,14 @@ public class PgDB {
         return false;
     }
 
+    public void commit() {
+        try {
+            this.connection.commit();
+        } catch (SQLException e) {
+
+        }
+    }
+
     public void close() {
         try {
             this.connection.close();

@@ -6,6 +6,7 @@ import db.PgDB;
 import model.Employee;
 import model.Flight;
 import model.FlightRoute;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.Vector;
 
@@ -95,5 +96,20 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
         }
 
         return flightAssistants;
+    }
+
+    public int commitFlight(Flight flight) {
+        PgDB db = new PgDB();
+
+        db.run(ConstantQueries.commitFlight (
+            flight.departureTime, String.valueOf(flight.passengersNumber),
+            String.valueOf(flight.route.id), flight.aircraftPlate
+        ));
+
+        var result = db.runAndFetch(ConstantQueries.getLastFlightId);
+        db.commit();
+        db.close();
+
+        return Integer.parseInt(result.get(0).get(0));
     }
 }
