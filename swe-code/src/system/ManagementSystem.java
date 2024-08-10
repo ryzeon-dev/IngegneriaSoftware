@@ -31,10 +31,8 @@ public class ManagementSystem extends Thread {
 
         try {
             this.clock.join();
-            System.out.println("Clock thread closed");
 
         } catch (InterruptedException e) {
-            System.out.println("Error closing clock thread");
         }
     }
 
@@ -79,8 +77,6 @@ public class ManagementSystem extends Thread {
 
     public void runScheduling(){
         this.scheduledFlights = flightSchedule.makeSchedule();
-
-        System.out.println(scheduledFlights);
     }
 
 }
