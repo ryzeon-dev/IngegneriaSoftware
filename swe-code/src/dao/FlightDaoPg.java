@@ -105,9 +105,9 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
             flight.departureTime, String.valueOf(flight.passengersNumber),
             String.valueOf(flight.route.id), flight.aircraftPlate
         ));
+        db.commit();
 
         var result = db.runAndFetch(ConstantQueries.getLastFlightId);
-        db.commit();
         db.close();
 
         return Integer.parseInt(result.get(0).get(0));

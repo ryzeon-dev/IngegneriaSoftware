@@ -54,5 +54,5 @@ public class ConstantQueries {
     }
 
     public static String getLastFlightId =
-        "select id from flight group by id having id=max(id);";
+        "select id from flight where id=(select max(id) from flight);";
 }
