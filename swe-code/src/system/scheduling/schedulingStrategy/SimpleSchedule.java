@@ -113,7 +113,7 @@ public class SimpleSchedule  implements SchedulingStrategy {
     private void bfs(AirportGraph G,Airport source){
         for (Airport airport : graph.getVertexList()) {
             visited.put(airport, false);
-        }        
+        }
         Queue<Airport> fifo= new LinkedList<>();
         fifo.add(source);
         visited.replace(source, true);
@@ -183,7 +183,7 @@ public class SimpleSchedule  implements SchedulingStrategy {
                                     0,
                                     departure.format(dateTimeFormat),
                                     0,
-                                    airportWeighted.routeId,
+                                    airportWeighted.route,
                                     nextAircraft.plate,
                                     currentCommanders,
                                     currentFirstOfficers,
