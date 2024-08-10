@@ -21,6 +21,18 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
         return employees;
     }
 
+    public Employee getEmployeeById(String id) {
+        Employee employee;
+
+        PgDB db = new PgDB();
+        var result = db.runAndFetch(ConstantQueries.getEmployeeInfo(id));
+
+        employee = buildFromRow(result.get(0));
+        db.close();
+
+        return employee;
+    }
+
     public Employee buildFromRow(Vector<String> row) {
         Employee employee;
         int id = Integer.parseInt(row.get(0));

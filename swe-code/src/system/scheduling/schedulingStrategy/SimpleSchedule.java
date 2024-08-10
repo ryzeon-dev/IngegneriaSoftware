@@ -25,7 +25,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class SimpleSchedule  implements SchedulingStrategy{
+public class SimpleSchedule  implements SchedulingStrategy {
     private static final double RangeTollerance = 0.15;
     private FlightRouteDaoI flightRouteDao;
     private AirportDaoI airportDao;
@@ -34,7 +34,7 @@ public class SimpleSchedule  implements SchedulingStrategy{
     private final int turnArountAmountMin=30;
     private final int iterations=2;
     private Vector<Flight> flights= new Vector<>();
-    private Map<Airport,Boolean> visited= new HashMap<>();
+    private Map<Airport, Boolean> visited= new HashMap<>();
     private LocalDateTime StartTime=LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
     private DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     private Map<Airport,Vector<Aircraft>> aircraftLocation=new HashMap<>();
@@ -133,72 +133,71 @@ public class SimpleSchedule  implements SchedulingStrategy{
             }
             while (!parkedAircraftsPq.isEmpty()) {
                 for (var airportWeighted : graph.getAdjacentVertex(airport)) {
-                    if(!parkedAircraftsPq.isEmpty()){
-                        var nextAircraft=parkedAircraftsPq.remove();
+                    if(!parkedAircraftsPq.isEmpty()) {
+                        var nextAircraft = parkedAircraftsPq.remove();
                         if (visited.get(airportWeighted.airport) != true && canFly(nextAircraft, airportWeighted)) {
                             aircraftLocation.get(airport).remove(nextAircraft);
-                            if(aircraftLocation.containsKey(airportWeighted.airport)){
+                            if (aircraftLocation.containsKey(airportWeighted.airport)) {
                                 aircraftLocation.get(airportWeighted.airport).add(nextAircraft);
-                            }else{
-                                Vector<Aircraft> aircrafts=new Vector<>();
+                            } else {
+                                Vector<Aircraft> aircrafts = new Vector<>();
                                 aircrafts.add(nextAircraft);
-                                aircraftLocation.put(airportWeighted.airport,aircrafts);
+                                aircraftLocation.put(airportWeighted.airport, aircrafts);
                             }
                             //Departure
-                            LocalDateTime departure=aircraftTime.get(nextAircraft).plusMinutes(turnArountAmountMin);
+                            LocalDateTime departure = aircraftTime.get(nextAircraft).plusMinutes(turnArountAmountMin);
                             //New AircraftTime
-                            LocalDateTime eta=departure.plusMinutes(airportWeighted.duration);
-                            aircraftTime.replace(nextAircraft,eta);
-                            System.out.println("flight:\n"+airport.toString()+ "->" + airportWeighted.airport.toString());
-                            System.out.println("FlightDuration:"+airportWeighted.duration);
-                            System.out.println("Departure:\n"+departure.format(dateTimeFormat));
-                            System.out.println("Estimated arrival: "+eta.format(dateTimeFormat));
-                            System.out.println("Assigned aircraft:\n"+nextAircraft.toString()+"\n");
-                            System.out.println("AircraftRange:"+nextAircraft.range+" DistanceOfTravel:"+airportWeighted.weight+"\n");
+                            LocalDateTime eta = departure.plusMinutes(airportWeighted.duration);
+                            aircraftTime.replace(nextAircraft, eta);
+                            System.out.println("flight:\n" + airport.toString() + "->" + airportWeighted.airport.toString());
+                            System.out.println("FlightDuration:" + airportWeighted.duration);
+                            System.out.println("Departure:\n" + departure.format(dateTimeFormat));
+                            System.out.println("Estimated arrival: " + eta.format(dateTimeFormat));
+                            System.out.println("Assigned aircraft:\n" + nextAircraft.toString() + "\n");
+                            System.out.println("AircraftRange:" + nextAircraft.range + " DistanceOfTravel:" + airportWeighted.weight + "\n");
                             //assign personal to flight
                             //chose flightAssistants                
-                            System.out.println("needed number of assistant: "+ nextAircraft.assistantsNumber+ "\n");
-                            var currentFlightAssistants=getFlightAssistants(nextAircraft.assistantsNumber, airport, airportWeighted.airport);
+                            System.out.println("needed number of assistant: " + nextAircraft.assistantsNumber + "\n");
+                            var currentFlightAssistants = getFlightAssistants(nextAircraft.assistantsNumber, airport, airportWeighted.airport);
                             for (var flightAss : currentFlightAssistants) {
                                 System.out.println(flightAss.toString());
                             }
                             System.out.println("\n");
-                            int neededCommanders=1;
-                            if((airportWeighted.duration / 60) >= 7){
-                                neededCommanders=2;
+                            int neededCommanders = 1;
+                            if ((airportWeighted.duration / 60) >= 7) {
+                                neededCommanders = 2;
                             }
-                            System.out.println("needed number of commanders: "+ neededCommanders+ "");
-                            var currentCommanders=getCommanders(neededCommanders, airport, airportWeighted.airport,nextAircraft.model);
+                            System.out.println("needed number of commanders: " + neededCommanders + "");
+                            var currentCommanders = getCommanders(neededCommanders, airport, airportWeighted.airport, nextAircraft.model);
                             for (var commander : currentCommanders) {
                                 System.out.println(commander.toString());
                             }
                             System.out.println("\n");
-                            System.out.println("needed number of firstOfficers: "+ neededCommanders+ "");
-                            var currentFirstOfficers=getFirstOfficers(neededCommanders, airport, airportWeighted.airport,nextAircraft.model);
+                            System.out.println("needed number of firstOfficers: " + neededCommanders + "");
+                            var currentFirstOfficers = getFirstOfficers(neededCommanders, airport, airportWeighted.airport, nextAircraft.model);
                             for (var firstOfficer : currentFirstOfficers) {
                                 System.out.println(firstOfficer.toString());
                             }
                             System.out.println("\n");
-                            var flight=new Flight(
-                                0, 
-                                departure.format(dateTimeFormat), 
-                                0, 
-                                airportWeighted.routeId, 
-                                nextAircraft.plate,
-                                currentCommanders, 
-                                currentFirstOfficers, 
-                                currentFlightAssistants
+                            var flight = new Flight(
+                                    0,
+                                    departure.format(dateTimeFormat),
+                                    0,
+                                    airportWeighted.routeId,
+                                    nextAircraft.plate,
+                                    currentCommanders,
+                                    currentFirstOfficers,
+                                    currentFlightAssistants
                             );
-                            if(isFlightValid(flight, nextAircraft, neededCommanders)){
+                            if (isFlightValid(flight, nextAircraft, neededCommanders)) {
                                 flights.add(flight);
-                            }else{
+                            } else {
                                 System.out.println("generated flight is not valid. \n");
                             }
                             //Visit the next airports
                             fifo.add(airportWeighted.airport);
                         }
                     }
-                
                 }
             }
         }

@@ -11,7 +11,7 @@ public class FlightSchedule {
 
     public FlightSchedule(FlightManager manager,SchedulingStrategy strategy) {
         this.manager = manager;
-        this.strategy=strategy;
+        this.strategy = strategy;
     }
 
     public Vector<Flight> makeSchedule() {

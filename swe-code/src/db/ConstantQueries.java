@@ -11,14 +11,26 @@ public class ConstantQueries {
         "select * from personal";
 
     public static final String getFlights =
-        "select f.id, f.departure_time, f.passengers_number, f.route, " +
-        "r.distance, r.duration, r.departure, r.stepover, r.arrival, " +
-        "f.aircraft, f.commander, f.firstOfficial" +
-        "from flight f join route r on" +
-        "f.route = r.id";
+        "select * from flight";
+
+    public static String getCommandersForFlightID(String id) {
+        return "select commander from commanders where flight=" + id + ";";
+    }
+
+    public static String getFirstOfficersForFlightID(String id) {
+        return "select commander from commanders where flight=" + id + ";";
+    }
+
+    public static String getFlightAssistantsForFlightID(String id) {
+        return "select commander from commanders where flight=" + id + ";";
+    }
+
+    public static String getEmployeeInfo(String id) {
+        return "select * from personal where id=" + id + ";";
+    }
 
     public static final String getPersonalForFlight =
-        "select f.id c.commander, fo.first_officer, fa.assistant " +
+        "select f.id, c.commander, fo.first_officer, fa.assistant " +
         "from flight f, commanders c, first_officers fo, flight_assistants fa " +
         "where f.id = c.flight and f.id = fo.flight and f.id = fa.flight_assistants " +
         "order by f.id";
@@ -28,6 +40,10 @@ public class ConstantQueries {
 
     public static final String getRoutes =
         "select * from route";
+
+    public static String getRouteForID(String id) {
+        return "select * from route where id=" + id + ";";
+    }
 
     public static final String getCredentials =
         "select * from credentials";
