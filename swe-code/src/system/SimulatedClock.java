@@ -26,7 +26,6 @@ public class SimulatedClock extends Thread {
     }
 
     public String getTime() {
-        System.out.println("Trying to get time");
         try {
             this.mutex.acquire();
             long current = this.counter;
