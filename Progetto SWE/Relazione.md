@@ -351,12 +351,8 @@ Città servita dall'aeroporto (da specificare che spesso questo non coincide con
 
 ### Dimension Class
 
-Classe rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
+Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
 
-<h5> Metodo costruttore </h5>
-//TODO
-
-<h5> Override String ToString();</h5>
 
 <h5> boolean IsCompatible(); </h5>
 <p align="justify">
@@ -371,9 +367,30 @@ Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce
 
 ### EmployeeRole
 
-### Flight
-
 ### FlightRoute
+<p align="justify">
+Modella le rotte che sono effettuate dalla compagnia (si parla di tragitti generici, per il volo specifico vedremo un'altra entità specifica)
+</p>
+<h5> Metodo Costruttore </h5>
+Inizializza un oggetto di tipo FlightRoute con i valori che gli vengono forniti in input. Gli attributi sono:
+
+<ul>
+<li> id, di tipo Integer <br>
+Un identificatore univoco </li>
+<li> distance, di tipo Integer <br>
+Espressa in chilometri, indica la distanza in linea d'aria tra l'aeroporto di partenza e quello di destinazione (nel caso sia previsto uno scalo saranno sommate le distanze tra, rispettivamente, l'aeroporto di partenza e quello di scalo e quella tra l'aeroporto di scalo e quello di destinazione). Importante notare che queste distanze sono puramente teoriche: un volo può in realtà essere più lungo per motivi meteorologici, particolari procedure di partenza e/o avvicinamento, chiusura spazi aerei...</li>
+<li>duration, di tipo Integer <br>
+Espressa in minuti, indica la durata schedulata del volo tra l'aeroporto di partenza e quello di arrivo; valgono le stesse considerazioni fatte sopra in merito alla distanza.</li>
+<li> departure, di tipo Stringa <br>
+Contiene il codice ICAO dell'aeroporto di partenza </li>
+<li> stepover, di tipo Stringa <br>
+Contiene, se previsto dal piano di volo, il codice ICAO dell'aeroporto di scalo </li>
+<li> arrival, di tipo Stringa <br>
+Contiene il codice ICAO dell'aeroporto di arrivo </li>
+
+<h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
+
+### Flight
 
 ## Business logic
 
@@ -383,5 +400,5 @@ Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce
 ### ManagementSystem
 ### SimulatedClock
 ### SchedulingStrategy
-Pattern strategy
+###Pattern strategy
 ### SimpleSchedule
