@@ -237,13 +237,74 @@ Predispone un menù iniziale che permette di accedere a diverse categorie di inf
 <p align="justify">Predispone l'attesa del comando "Invio" una volta inserito il numero</p>
 
 <h5> (1) void accessEmployeesData(); </h5>
+<p align="justify">
+Stampa le informazioni riguardanti tutti gli impiegati che lavorano in ITA Airways. Per accedere a quest'area è richiesto un login, ci sono due modalità: </p>
+
+<ul align="justify">
+<li>Modalità admin (digitando username "admin", in questo caso sarà possibile accedere a tutti i dati disponibili nel sistema.
+Sarà mostrato un ulteriore menù che consente l'accesso a diverse informazioni in base al numero che viene digitato
+<br>
+	<ol>
+		<li>
+			Visualizza tutti gli impiegati, "View all employees"
+			Stampa i dati riguardanti tutti gli impiegati; questi sono contenuti nel managementSystem e vengono estratti attraverso il metodo getAllEmployees();
+		</li>
+		<li>
+			Visualizza tutti i comandanti, "View all commanders"
+			Stampa i dati sui comandanti della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getCommanders();
+		</li>
+		<li>
+			Visualizza tutti i primi ufficiali, "View all first officers"
+			Stampa i dati sui primi ufficiali della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getFirstOfficers();
+		</li>
+		<li>
+			Visualizza tutti gli assistenti di volo , "View all flight assistants"
+			Stampa i dati sugli assistenti di volo della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getFlightAssistants();
+		</li>
+		<li>
+			Visualizza uno specifico impiegato, "View a specific employee"
+			Dopo aver inserito il suo id, verifica che sia valido (nel caso in cui non lo fosse notifica l'errore e chiede all'utente di riprovare) e stampa poi i suoi dettagli, sempre contenuti in managementSystem, mediante il metodo getEmployeeById(*requestedId*);
+		</li>
+		<li>
+			 Indietro, "back"
+			 Consente di tornare al menù principale
+		</li>
+	</ol>	
+</li>
+<br>
+<li>
+	Modalità user (inserendo username e password personali)
+	A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato; i dati, sempre contenuti in managementSystem, sono ricavati mediante il metodo getEmployeeById(*requestedId*);
+		
+</li>
+</ul>
+
+
 <h5> (2) void accessAircraftDetails(); </h5>
+<p align="justify">
+Stampa i dettagli di tutti gli aeromobili della compagnia.
+L'accesso a queste informazioni è consentito esclusivamente a personale che possegga i privilegi di admin. Le informazioni desiderate, sempre contenute nell'oggetto managementSystem, vengono estratte mediante il metodo getAircraftDetails();
+</p>
 <h5> (3) void accessRoutesDetails();</h5>
 <p align="justify">Stampa i dettagli sulle rotte disponibili in archivio prelevandole dall'oggetto ManagementSystem
 Il metodo eseguito è getRouteDetails(); </p>
 <h5> (4) void accessFlightSchedule();</h5>
-<h5> (5) void accessPersonalArea(); </h5>
+<p align="justify">
+	Stampa tutte le informazioni relative all'operativo voli. 
+	Per accedere a questa sezione è richiesto l'accesso (sono correttamente predisposte  tutte le procedure di riprova e/o negazione dell'accesso nel caso in cui un utente non risulti nel sistema)
+	Sono previste due modalità distinte in base al soggetto che utilizza il programma: </p>
+	
+<ul>
+<li>
+Modalità admin, consente l'accesso a tutti i voli previsti 
+</li>
+<li>
+Modalità user, consente al comandante di verificare solo il suo programma, rivedere questa parte del codice.
+</li>
+</ul>
 
+<h5> (5) void accessPersonalArea(); </h5>
+//FIXME differenza con flight schedule??
 <h5> (6) void quit(); </h5>
 <p align="justify">Consente di uscire dal programma</p>
 
@@ -256,12 +317,55 @@ Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per
 
 
 ## Domain Model
-### Aircraft
+### Aircraft.java
+<div align="justify">
+Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per lo scheduling dei voli
+</div>
+
+<h5> Metodo costruttore </h5>
+Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: //FIXME
+
 ### Airport
+<div align="justify">
+Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
+</div>
+
+<h5>Metodo costruttore </h5>
+<div align="justify">
+Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in input. Gli attributi sono:
+
+<ul>
+<li> ICAO, di tipo Stringa. <br>
+	Contiene il codice alfabetico , assegnato dall'International Civil Aviation Organization, che identifica univocamente ciascun aeroporto (ad esempio l'aeroporto di Firenze Peretola ha ICAO LIRQ)</li>
+<li>dimensionClass, di tipo Stringa <br>
+*Vedi sezione appositamente dedicata*</li>
+<li> name, di tipo Stringa <br>
+Contiene il nome commerciale dell'aeroporto (esempio Aeroporto di Firenze Amerigo Vespucci) </li>
+<li> nation, di tipo Stringa <br>
+Stato in cui l'aeroporto è ubicato (esempio: Aeroporto di Firenze -->Italia)</li>
+<li> city, di tipo Stringa <br>
+Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Miilano) </li>
+</ul>
+
+<h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
+
+### Dimension Class
+
+Classe rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
+
+<h5> Metodo costruttore </h5>
+//TODO
+
+<h5> Override String ToString();</h5>
+
+<h5> boolean IsCompatible(); </h5>
+<p align="justify">
+Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
+</p>
 
 ### Credentials
 
-### Dimension Class
+
 
 ### Employee
 
