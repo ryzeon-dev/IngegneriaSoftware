@@ -361,11 +361,34 @@ Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce
 
 ### Credentials
 
+### EmployeeRole
+Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
+<h5> Override metodo toString() </h5>
+Ritorna una stringa corrispondente al ruolo
 
 
 ### Employee
+Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, anche quelli inerenti alle mansioni lavorative. Viene implementato anche un attributo per tenerne traccia della posizione in tempo reale.
+<h5>Metodo Costruttore </h5>
+Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
 
-### EmployeeRole
+<ul>
+<li> id, di tipo Integer <br>
+Un identificatore univoco </li>
+<li> name, di tipo String <br>
+Nome del dipendente
+<li> lastName, di tipo String  <br>
+Cognome del dipendente </li>
+<li> role, di tipo EmployeeRole <br>
+Contiene il ruolo, uno tra quelli specificati sopra, del soggetto </li>
+<li> abilitation, di tipo String <br>
+Contiene, nel caso in cui il ruolo sia "Commander" o "FirstOfficer", il velivolo sul quale sono abilitati a volare. Le regole dell'aviazione commerciale impongono infatti che si sia abilitati soltanto per una tipologia di velivolo alla volta: l'ottenimento del brevetto per un nuovo modello di aereo (o il cosiddetto passaggio macchina che rinnova una precedente abilitazione) va ad annullare la possibilità di prestare servizio sul velivolo sul quale si è prestato fino a quel momento. Questo non vale per steward e assistenti di volo i quali, a patto di vari corsi, possono essere contemporaneamente abilitati per quanti modelli sia necessario. </li>
+<li> position, di tipo String <br>
+Inizializzato a vuoto dal costruttore, conterrà poi il codice ICAO dell'aeroporto nel quale il dipendente della compagnia si trova. </li>
+
+<h5> Classico override del metodo toString(); e setter per l'attributo position </h5>
+<h5> String getFullData();</h5>
+Reakizza e ritorna una lista puntata con "nome dell'attributo" : "valore"
 
 ### FlightRoute
 <p align="justify">
