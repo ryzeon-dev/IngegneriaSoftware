@@ -307,14 +307,35 @@ Modalità user, consente al comandante di verificare solo il suo programma, rive
 //FIXME differenza con flight schedule??
 <h5> (6) void quit(); </h5>
 <p align="justify">Consente di uscire dal programma</p>
+<h2> DAO </h2>
 
+<p align="justify">
+Il DAO (Data Access Object) è a tutti gli effetti un pattern architetturale usato nelle applicazioni con lo scopo di separare la logica di accesso al Database dal resto delle responsabilità. Non facendo questa divisione si andrebbe a scrivere del codice  poco manutenibile. Volendo citare anche un altro pattern, si noti come ogni classe di questo tipo sia a tutti gli effetti una Factory la quale produce le istanze necessarie dei relativi modelli. </p>
 
-### FlightRouteDaoPg
-### EmployeeDaoPg
+### Package Interfaces
 
+<p align="justify">
+Questo sub-package contiene le interfacce astratte che verranno poi implementate nelle classi fisiche appartenenti al pacchetto DAO. L'utilizzo di quest'ultime, oltre ad essere una buona pratica di programmazione, agevola anche la fase di unit testing, rendendola più semplice ed efficace.
+Di seguito andiamo a riportare il codice per una sola di queste, dato che è uguale per tutte le classi riportarlo per ciascuna di esse sarebbe verboso e ridondante.</p>
+*L'identificatore \$Type$ rappresenta una qualsiasi delle implementazioni dell'interfaccia*
+
+//TODO snippet
+
+### Classi \*DaoPg
+
+Le varie classi \*DaoPg implementano la relativa interfaccia (specificata nel sub-package *interfaces*)
+
+<h5>Metodo $Type$ buildFromRow(Vector [String] row); </h5> //FIXME Parentesi Angolari in questo caso??
+Questo metodo si occupa di generare effettivamente le istanze, accedendo alle caselle opportune della riga prelevata dal database mediante il metodo row.get(integer); e costruendo opportunamente l'oggetto ritornandone uno di tipo \$Type$
+
+//TODO snippet
+
+##### Metodo Vector<\$Type$> getAll();
+
+//TODO snippet
 ### PgDB
 Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
-
+//TODO
 
 ## Domain Model
 ### Aircraft.java
