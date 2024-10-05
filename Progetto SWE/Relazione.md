@@ -307,6 +307,12 @@ Modalità user, consente al comandante di verificare solo il suo programma, rive
 //FIXME differenza con flight schedule??
 <h5> (6) void quit(); </h5>
 <p align="justify">Consente di uscire dal programma</p>
+<h2> db </h2>
+
+### PgDB
+Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
+//TODO
+
 <h2> DAO </h2>
 
 <p align="justify">
@@ -319,26 +325,31 @@ Questo sub-package contiene le interfacce astratte che verranno poi implementate
 Di seguito andiamo a riportare il codice per una sola di queste, dato che è uguale per tutte le classi riportarlo per ciascuna di esse sarebbe verboso e ridondante.</p>
 *L'identificatore \$Type$ rappresenta una qualsiasi delle implementazioni dell'interfaccia*
 
-//TODO snippet
+![[IntelliJ Snippet (1).png]]
 
-### Classi \*DaoPg
+#### Classi \*DaoPg
 
 Le varie classi \*DaoPg implementano la relativa interfaccia (specificata nel sub-package *interfaces*)
 
 <h5>Metodo $Type$ buildFromRow(Vector [String] row); </h5> //FIXME Parentesi Angolari in questo caso??
 Questo metodo si occupa di generare effettivamente le istanze, accedendo alle caselle opportune della riga prelevata dal database mediante il metodo row.get(integer); e costruendo opportunamente l'oggetto ritornandone uno di tipo \$Type$
 
-//TODO snippet
+*A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
+![[IntelliJ Snippet 1.png]]
 
 ##### Metodo Vector<\$Type$> getAll();
 
-//TODO snippet
-### PgDB
-Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
-//TODO
+<p align="justify">
+Questo metodo stabilisce, usando l'oggetto db della classe PgDB, una connessione con il database. Facendo uso di una query costante estrae i dati richiesti e costruisce le necessarie strutture dati (un vettore di $Type$). Come già osservato, l'istanziazione effettiva degli oggetti è delegata al metodo buildFromRow(row); appunto richiamato su ciascuna delle righe estratte dal Database.
+</p>
+
+*A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
+![[IntelliJ Snippet (2).png]]
+
+<h5>Eventuali metodi getter </h5>
 
 ## Domain Model
-### Aircraft.java
+#### Aircraft.java
 <div align="justify">
 Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per lo scheduling dei voli
 </div>
@@ -346,7 +357,7 @@ Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per 
 <h5> Metodo costruttore </h5>
 Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: //FIXME
 
-### Airport
+#### Airport
 <div align="justify">
 Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
 </div>
@@ -370,7 +381,7 @@ Città servita dall'aeroporto (da specificare che spesso questo non coincide con
 
 <h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
 
-### Dimension Class
+#### Dimension Class
 
 Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
 
@@ -380,15 +391,15 @@ Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che i
 Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
 </p>
 
-### Credentials
+#### Credentials
 
-### EmployeeRole
+#### EmployeeRole
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
 <h5> Override metodo toString() </h5>
 Ritorna una stringa corrispondente al ruolo
 
 
-### Employee
+#### Employee
 Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, anche quelli inerenti alle mansioni lavorative. Viene implementato anche un attributo per tenerne traccia della posizione in tempo reale.
 <h5>Metodo Costruttore </h5>
 Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
@@ -411,7 +422,7 @@ Inizializzato a vuoto dal costruttore, conterrà poi il codice ICAO dell'aeropor
 <h5> String getFullData();</h5>
 Reakizza e ritorna una lista puntata con "nome dell'attributo" : "valore"
 
-### FlightRoute
+#### FlightRoute
 <p align="justify">
 Modella le rotte che sono effettuate dalla compagnia (si parla di tragitti generici, per il volo specifico vedremo un'altra entità specifica)
 </p>
@@ -434,15 +445,15 @@ Contiene il codice ICAO dell'aeroporto di arrivo </li>
 
 <h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
 
-### Flight
+#### Flight
 
-## Business logic
+## Business logic (system)
 
-### CredentialsManager
-### FlightManager
-### FlightSchedule
-### ManagementSystem
-### SimulatedClock
-### SchedulingStrategy
-###Pattern strategy
-### SimpleSchedule
+#### CredentialsManager
+#### FlightManager
+#### FlightSchedule
+#### ManagementSystem
+#### SimulatedClock
+#### SchedulingStrategy
+#### Pattern strategy
+#### SimpleSchedule
