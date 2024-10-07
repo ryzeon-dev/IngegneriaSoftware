@@ -13,9 +13,9 @@
 
 
 
-Autori:
-Loris Vettori
-Corrado Duccio Piccioni
+Autori: \
+Loris Vettori \
+Corrado Duccio Piccioni \
 Vincenzo Marturano
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
@@ -99,19 +99,11 @@ Vincenzo Marturano
 
 La compagnia aerea ITA Airways necessita di un software per la gestione giornaliera dell’impiego dei suoi velivoli nelle rotte offerte. Si ha esigenza di includere l’assegnazione degli aeromobili adeguati e del personale alle tratte, compatibilmente con la distanza dalla destinazione e con il numero di passeggeri, in ottemperanza della capacità di un aeroporto di accogliere aerei di una determinata classe.
 
-  
-
 I velivoli, di varia tipologia, devono essere adatti alla tratta, con criteri quali: numero di biglietti prenotati (numero di posti maggiore o uguale alle prenotazioni), range dell’aereo (autonomia dichiarata dalla casa produttrice, che deve consentire l’esecuzione senza scali della tratta), classe degli aeroporti di arrivo, scalo e partenza che devono essere in grado di accogliere quella specifica categoria di aeromobili.
-
-  
 
 A ciascun volo viene assegnato un aeromobile, in base al tipo del quale l’ENAC (Ente Nazionale Aviazione Civile), oltre a comandante e primo ufficiale, prevede un numero minimo di assistenti di volo per poter autorizzare il decollo. Altra norma dell’ aviazione è che, per un volo superiore alle nove ore, ci siano due equipaggi presenti in cabina di pilotaggio.
 
-  
-
-L’abilitazione dei piloti è strettamente legata al modello di aereo. Eccezione risiede nella famiglia Airbus A320: un pilota abilitato per tale modello, può infatti mettersi ai comandi anche di A318, A319, A320 e A321, dovuto al fatto che sono aerei molto simili tra loro. Nel caso in cui un pilota si abiliti per un nuovo velivolo,è previsto il decadimento del brevetto precedente. 
-
-  
+L’abilitazione dei piloti è strettamente legata al modello di aereo. Eccezione risiede nella famiglia Airbus A320: un pilota abilitato per tale modello, può infatti mettersi ai comandi anche di A318, A319, A320 e A321, dovuto al fatto che sono aerei molto simili tra loro. Nel caso in cui un pilota si abiliti per un nuovo velivolo,è previsto il decadimento del brevetto precedente. 
 
 Ciascun velivolo è tracciato; in particolare è necessario conoscere, in ogni momento, se stia effettuando una tratta o se si trovi parcheggiato in qualche aeroporto. E’ il pilota a comunicare alla compagnia il distacco dal gate e l’atterraggio. Tramite un orologio simulato è possibile interagire con la funzione di monitoraggio degli aerei, conoscendo lo stato dei voli in ogni momento.
 
@@ -173,22 +165,30 @@ Flight:
 
 
 ### Ristrutturazione dello schema E-R
-Siccome non si identificano ridondanze, gerarchie tra le tabelle, attributi multivalore e gli identificatori sono già stati definiti per ciascuna tabella, possiamo considerare la fase di ristrutturazione come già implicitamente completata.
+Dato che non si identificano ridondanze, gerarchie tra le tabelle, attributi multivalore e gli identificatori sono già stati definiti per ciascuna tabella, possiamo considerare la fase di ristrutturazione come già implicitamente completata.
 
 ## Schema Logico
 
 Aircraft (<u>id</u>, manufacturer, model, specification, range, assistants_number, class, seats);
+
 Aircraft_instance (<u>plate</u>, aircraft IR *)
 Airport(<u>icao</u>, class, name, nation, city)
+
 Route(<u>id</u>, distance, duration, departure IR* * , stepover IR, arrival IR *)
+
 Parking (<u>aircraft_instance IR, airport IR</u>)
+
 Flight (<u>id </u>, departure_time, passenger_number, route IR *, aircraft_instance IR *)
+
 Command(<u>personal IR, flight IR</u> )
+
 Monitor(<u>personal IR, flight IR</u> )
+
 Assist (<u>personal IR, flight IR</u>)
 
+
 Legenda:
-IR: sull'attributo indicato vige un vincolo di Integrità Referenziale
+- IR: sull'attributo indicato vige un vincolo di Integrità Referenziale
 "*" attributo not null
 
 
@@ -216,244 +216,216 @@ IR: sull'attributo indicato vige un vincolo di Integrità Referenziale
 
 ### CLI.java
 
-<p align="justify">La classe `CLI` (Command Line Interface) è resposabile dell'interazione con l'utente, fornendo le possibilità di navigazione all'interno del sistema, per poter consultare le informazioni relative a voli e personale.
-Contiene diversi metodi, andremo ad esaminarli uno ad uno comprendendone a pieno il funzionamento.</p>
-<h5> Metodo Costruttore </h5>
-<p align="justify">Prende in input un oggetto di tipo ManagementSystem, che sarà poi consultato per la lettura dei dati, e istanzia un oggetto del tipo CredentialsManager, il quale sarà invece impiegato per autenticare gli utenti e quindi fornire i corretti privilegi di accesso nelle varie sezioni del sistema.</p>
+La classe `CLI` (Command Line Interface) è resposabile dell'interazione con l'utente, fornendo le possibilità di navigazione all'interno del sistema, per poter consultare le informazioni relative a voli e personale.
+Contiene diversi metodi, andremo ad esaminarli uno ad uno comprendendone a pieno il funzionamento.
+
+####  Metodo Costruttore 
+Prende in input un oggetto di tipo `ManagementSystem`, che sarà poi consultato per la lettura dei dati, e istanzia un oggetto del tipo `CredentialsManager`, il quale sarà invece impiegato per autenticare gli utenti e quindi fornire i corretti privilegi di accesso nelle varie sezioni del sistema.
 
 //TODO Spiegazione Privilegi
 
-<h5> void run(); </h5>
+#### `void run()`
 Predispone un menù iniziale che permette di accedere a diverse categorie di informazioni in base al numero da 1 a 6 che viene inserito:
 
-1 - Dati degli impiegati 
-2 - Dati degli aeromobili
-3 - Dati delle rotte disponibili
-4 - Dati dei voli disponibili
-5 - Area del personale
-6 - Esci
+1. Dati degli impiegati 
+2. Dati degli aeromobili 
+3. Dati delle rotte disponibili 
+4. Dati dei voli disponibili 
+5. Area del personale 
+6. Esci
 
-<h5>void  waitUntilEnter(); </h5>
+#### `void  waitUntilEnter()`
 <p align="justify">Predispone l'attesa del comando "Invio" una volta inserito il numero</p>
 
-<h5> (1) void accessEmployeesData(); </h5>
-<p align="justify">
-Stampa le informazioni riguardanti tutti gli impiegati che lavorano in ITA Airways. Per accedere a quest'area è richiesto un login, ci sono due modalità: </p>
+#### (1) `void accessEmployeesData()`
 
-<ul align="justify">
-<li>Modalità admin (digitando username "admin", in questo caso sarà possibile accedere a tutti i dati disponibili nel sistema.
+Stampa le informazioni riguardanti tutti gli impiegati che lavorano in ITA Airways. Per accedere a quest'area è richiesto un login, ci sono due modalità:
+
+
+- Modalità admin (digitando username "admin", in questo caso sarà possibile accedere a tutti i dati disponibili nel sistema.
 Sarà mostrato un ulteriore menù che consente l'accesso a diverse informazioni in base al numero che viene digitato
-<br>
-	<ol>
-		<li>
-			Visualizza tutti gli impiegati, "View all employees"
-			Stampa i dati riguardanti tutti gli impiegati; questi sono contenuti nel managementSystem e vengono estratti attraverso il metodo getAllEmployees();
-		</li>
-		<li>
-			Visualizza tutti i comandanti, "View all commanders"
-			Stampa i dati sui comandanti della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getCommanders();
-		</li>
-		<li>
-			Visualizza tutti i primi ufficiali, "View all first officers"
-			Stampa i dati sui primi ufficiali della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getFirstOfficers();
-		</li>
-		<li>
-			Visualizza tutti gli assistenti di volo , "View all flight assistants"
-			Stampa i dati sugli assistenti di volo della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo getFlightAssistants();
-		</li>
-		<li>
-			Visualizza uno specifico impiegato, "View a specific employee"
-			Dopo aver inserito il suo id, verifica che sia valido (nel caso in cui non lo fosse notifica l'errore e chiede all'utente di riprovare) e stampa poi i suoi dettagli, sempre contenuti in managementSystem, mediante il metodo getEmployeeById(*requestedId*);
-		</li>
-		<li>
-			 Indietro, "back"
-			 Consente di tornare al menù principale
-		</li>
-	</ol>	
-</li>
-<br>
-<li>
-	Modalità user (inserendo username e password personali)
-	A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato; i dati, sempre contenuti in managementSystem, sono ricavati mediante il metodo getEmployeeById(*requestedId*);
+  - Visualizza tutti gli impiegati, "View all employees"
+    - Stampa i dati riguardanti tutti gli impiegati; questi sono contenuti nel managementSystem e vengono estratti attraverso il metodo `getAllEmployees()`
+  - Visualizza tutti i comandanti, "View all commanders"
+    - Stampa i dati sui comandanti della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getCommanders()`
+
+  - Visualizza tutti i primi ufficiali, "View all first officers"
+    - Stampa i dati sui primi ufficiali della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getFirstOfficers()`
+  - Visualizza tutti gli assistenti di volo , "View all flight assistants"
+    - Stampa i dati sugli assistenti di volo della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getFlightAssistants()`
+
+  - Visualizza uno specifico impiegato, "View a specific employee"
+    - Dopo aver inserito il suo id, verifica che sia valido (nel caso in cui non lo fosse notifica l'errore e chiede all'utente di riprovare) e stampa poi i suoi dettagli, sempre contenuti in managementSystem, mediante il metodo `getEmployeeById(requestedId)`
+
+  - Indietro, "back"
+    - Consente di tornare al menù principale
+
+- Modalità user (inserendo username e password personali)
+  - A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato; i dati, sempre contenuti in `ManagementSystem`, sono ricavati mediante il metodo `getEmployeeById(requestedId)`
 		
-</li>
-</ul>
 
 
-<h5> (2) void accessAircraftDetails(); </h5>
-<p align="justify">
+#### (2) `void accessAircraftDetails()`
 Stampa i dettagli di tutti gli aeromobili della compagnia.
-L'accesso a queste informazioni è consentito esclusivamente a personale che possegga i privilegi di admin. Le informazioni desiderate, sempre contenute nell'oggetto managementSystem, vengono estratte mediante il metodo getAircraftDetails();
-</p>
-<h5> (3) void accessRoutesDetails();</h5>
-<p align="justify">Stampa i dettagli sulle rotte disponibili in archivio prelevandole dall'oggetto ManagementSystem
-Il metodo eseguito è getRouteDetails(); </p>
-<h5> (4) void accessFlightSchedule();</h5>
-<p align="justify">
-	Stampa tutte le informazioni relative all'operativo voli. 
-	Per accedere a questa sezione è richiesto l'accesso (sono correttamente predisposte  tutte le procedure di riprova e/o negazione dell'accesso nel caso in cui un utente non risulti nel sistema)
-	Sono previste due modalità distinte in base al soggetto che utilizza il programma: </p>
-	
-<ul>
-<li>
-Modalità admin, consente l'accesso a tutti i voli previsti 
-</li>
-<li>
-Modalità user, consente al comandante di verificare solo il suo programma, rivedere questa parte del codice.
-</li>
-</ul>
+L'accesso a queste informazioni è consentito esclusivamente a personale che possegga i privilegi di admin. Le informazioni desiderate, sempre contenute nell'oggetto `ManagementSystem`, vengono estratte mediante il metodo `getAircraftDetails()`
 
-<h5> (5) void accessPersonalArea(); </h5>
+
+#### (3) `void accessRoutesDetails()`
+Stampa i dettagli sulle rotte disponibili in archivio prelevandole dall'oggetto ManagementSystem
+Il metodo eseguito è getRouteDetails(); 
+
+#### (4) `void accessFlightSchedule()`
+
+Stampa tutte le informazioni relative all'operativo voli. 
+Per accedere a questa sezione è richiesto l'accesso (sono correttamente predisposte  tutte le procedure di riprova e/o negazione dell'accesso nel caso in cui un utente non risulti nel sistema)
+Sono previste due modalità distinte in base al soggetto che utilizza il programma: </p>
+- Modalità admin, consente l'accesso a tutti i voli previsti
+- Modalità user, consente al comandante di verificare solo il suo programma, rivedere questa parte del codice.
+
+
+#### (5) `void accessPersonalArea()`
+
 //FIXME differenza con flight schedule??
-<h5> (6) void quit(); </h5>
-<p align="justify">Consente di uscire dal programma</p>
-<h2> db </h2>
+#### (6) `void quit()`
+Consente di uscire dal programma
+ 
+---
+
+# db
 
 ### PgDB
 Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
 //TODO
 
-<h2> DAO </h2>
+## DAO
 
-<p align="justify">
-Il DAO (Data Access Object) è a tutti gli effetti un pattern architetturale usato nelle applicazioni con lo scopo di separare la logica di accesso al Database dal resto delle responsabilità. Non facendo questa divisione si andrebbe a scrivere del codice  poco manutenibile. Volendo citare anche un altro pattern, si noti come ogni classe di questo tipo sia a tutti gli effetti una Factory la quale produce le istanze necessarie dei relativi modelli. </p>
+
+Il DAO (Data Access Object) è a tutti gli effetti un pattern architetturale usato nelle applicazioni con lo scopo di separare la logica di accesso al Database dal resto delle responsabilità. Non facendo questa divisione si andrebbe a scrivere del codice  poco manutenibile. Volendo citare anche un altro pattern, si noti come ogni classe di questo tipo sia a tutti gli effetti una Factory la quale produce le istanze necessarie dei relativi modelli.
 
 ### Package Interfaces
 
-<p align="justify">
 Questo sub-package contiene le interfacce astratte che verranno poi implementate nelle classi fisiche appartenenti al pacchetto DAO. L'utilizzo di quest'ultime, oltre ad essere una buona pratica di programmazione, agevola anche la fase di unit testing, rendendola più semplice ed efficace.
 Di seguito andiamo a riportare il codice per una sola di queste, dato che è uguale per tutte le classi riportarlo per ciascuna di esse sarebbe verboso e ridondante.</p>
-*L'identificatore \$Type$ rappresenta una qualsiasi delle implementazioni dell'interfaccia*
+_L'identificatore `<Type>` rappresenta una qualsiasi delle implementazioni dell'interfaccia_
 
 ![[IntelliJ Snippet (1).png]]
 
-#### Classi \*DaoPg
+#### Classi `*DaoPg`
 
-Le varie classi \*DaoPg implementano la relativa interfaccia (specificata nel sub-package *interfaces*)
+Le varie classi `*DaoPg` implementano la relativa interfaccia (specificata nel sub-package *interfaces*)
 
-<h5>Metodo $Type$ buildFromRow(Vector [String] row); </h5> //FIXME Parentesi Angolari in questo caso??
-Questo metodo si occupa di generare effettivamente le istanze, accedendo alle caselle opportune della riga prelevata dal database mediante il metodo row.get(integer); e costruendo opportunamente l'oggetto ritornandone uno di tipo \$Type$
+#### Metodo `<Type>buildFromRow(Vector [String] row)`
+Questo metodo si occupa di generare effettivamente le istanze, accedendo alle caselle opportune della riga prelevata dal database mediante il metodo row.get(integer); e costruendo opportunamente l'oggetto ritornandone uno di tipo &lt;Type&gt;
 
 *A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
 ![[IntelliJ Snippet 1.png]]
 
-##### Metodo Vector<\$Type$> getAll();
-
-<p align="justify">
-Questo metodo stabilisce, usando l'oggetto db della classe PgDB, una connessione con il database. Facendo uso di una query costante estrae i dati richiesti e costruisce le necessarie strutture dati (un vettore di $Type$). Come già osservato, l'istanziazione effettiva degli oggetti è delegata al metodo buildFromRow(row); appunto richiamato su ciascuna delle righe estratte dal Database.
-</p>
+##### Metodo `Vector<Type> getAll()`
+Questo metodo stabilisce, usando l'oggetto db della classe PgDB, una connessione con il database. Facendo uso di una query costante estrae i dati richiesti e costruisce le necessarie strutture dati (un vettore di &lt;Type&gt;). Come già osservato, l'istanziazione effettiva degli oggetti è delegata al metodo buildFromRow(row); appunto richiamato su ciascuna delle righe estratte dal Database.
 
 *A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
 ![[IntelliJ Snippet (2).png]]
 
-<h5>Eventuali metodi getter </h5>
+##### Eventuali metodi getter
 
 ## Domain Model
 #### Aircraft.java
-<div align="justify">
 Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per lo scheduling dei voli
-</div>
 
-<h5> Metodo costruttore </h5>
+
+#### Metodo costruttore 
 Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: //FIXME
 
 #### Airport
-<div align="justify">
 Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
-</div>
 
-<h5>Metodo costruttore </h5>
-<div align="justify">
+
+#### Metodo costruttore
 Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in input. Gli attributi sono:
 
-<ul>
-<li> ICAO, di tipo Stringa. <br>
-	Contiene il codice alfabetico , assegnato dall'International Civil Aviation Organization, che identifica univocamente ciascun aeroporto (ad esempio l'aeroporto di Firenze Peretola ha ICAO LIRQ)</li>
-<li>dimensionClass, di tipo Stringa <br>
-*Vedi sezione appositamente dedicata*</li>
-<li> name, di tipo Stringa <br>
-Contiene il nome commerciale dell'aeroporto (esempio Aeroporto di Firenze Amerigo Vespucci) </li>
-<li> nation, di tipo Stringa <br>
-Stato in cui l'aeroporto è ubicato (esempio: Aeroporto di Firenze -->Italia)</li>
-<li> city, di tipo Stringa <br>
-Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Miilano) </li>
-</ul>
 
-<h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
+-  `ICAO`, di tipo Stringa. \
+	Contiene il codice alfabetico , assegnato dall'International Civil Aviation Organization, che identifica univocamente ciascun aeroporto (ad esempio l'aeroporto di Firenze Peretola ha ICAO LIRQ)
+- `dimensionClass`, di tipo Stringa \
+    *Vedi sezione appositamente dedicata*
+- `name`, di tipo Stringa \
+    Contiene il nome commerciale dell'aeroporto (esempio Aeroporto di Firenze Amerigo Vespucci)
+- `nation`, di tipo Stringa \
+    Stato in cui l'aeroporto è ubicato (esempio: Aeroporto di Firenze -->Italia)
+- `city`, di tipo Stringa \
+    Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Miilano)
 
-#### Dimension Class
 
+
+#### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
+
+#### `Dimension` Class
 Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
 
 
-<h5> boolean IsCompatible(); </h5>
-<p align="justify">
+#### `boolean IsCompatible()`
 Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
-</p>
 
-#### Credentials
+#### `Credentials`
 
-#### EmployeeRole
+#### `EmployeeRole`
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
-<h5> Override metodo toString() </h5>
+#### Override metodo `toString()`
 Ritorna una stringa corrispondente al ruolo
 
 
-#### Employee
+#### `Employee`
 Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, anche quelli inerenti alle mansioni lavorative. Viene implementato anche un attributo per tenerne traccia della posizione in tempo reale.
-<h5>Metodo Costruttore </h5>
+#### Metodo Costruttore
 Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
 
-<ul>
-<li> id, di tipo Integer <br>
-Un identificatore univoco </li>
-<li> name, di tipo String <br>
+- `id`, di tipo Integer \
+Un identificatore univoco 
+- `name`, di tipo String \
 Nome del dipendente
-<li> lastName, di tipo String  <br>
-Cognome del dipendente </li>
-<li> role, di tipo EmployeeRole <br>
-Contiene il ruolo, uno tra quelli specificati sopra, del soggetto </li>
-<li> abilitation, di tipo String <br>
-Contiene, nel caso in cui il ruolo sia "Commander" o "FirstOfficer", il velivolo sul quale sono abilitati a volare. Le regole dell'aviazione commerciale impongono infatti che si sia abilitati soltanto per una tipologia di velivolo alla volta: l'ottenimento del brevetto per un nuovo modello di aereo (o il cosiddetto passaggio macchina che rinnova una precedente abilitazione) va ad annullare la possibilità di prestare servizio sul velivolo sul quale si è prestato fino a quel momento. Questo non vale per steward e assistenti di volo i quali, a patto di vari corsi, possono essere contemporaneamente abilitati per quanti modelli sia necessario. </li>
-<li> position, di tipo String <br>
-Inizializzato a vuoto dal costruttore, conterrà poi il codice ICAO dell'aeroporto nel quale il dipendente della compagnia si trova. </li>
+- `lastName`, di tipo String  \
+Cognome del dipendente 
+- `role`, di tipo EmployeeRole \
+Contiene il ruolo, uno tra quelli specificati sopra, del soggetto
+- `abilitation`, di tipo String \
+    Contiene, nel caso in cui il ruolo sia `Commander` o `FirstOfficer`, il velivolo sul quale sono abilitati a volare. Le regole dell'aviazione commerciale impongono infatti che si sia abilitati soltanto per una tipologia di velivolo alla volta: l'ottenimento del brevetto per un nuovo modello di aereo (o il cosiddetto passaggio macchina che rinnova una precedente abilitazione) va ad annullare la possibilità di prestare servizio sul velivolo sul quale si è prestato fino a quel momento. Questo non vale per steward e assistenti di volo i quali, a patto di vari corsi, possono essere contemporaneamente abilitati per quanti modelli sia necessario. 
+- `position`, di tipo String \
+Inizializzato a vuoto dal costruttore, conterrà poi il codice ICAO dell'aeroporto nel quale il dipendente della compagnia si trova. 
 
-<h5> Classico override del metodo toString(); e setter per l'attributo position </h5>
-<h5> String getFullData();</h5>
-Reakizza e ritorna una lista puntata con "nome dell'attributo" : "valore"
+####  Classico override del metodo `toString()` e setter per l'attributo `position`
+#### `String getFullData()`
+Realizza e restituisce una lista puntata con "nome dell'attributo" : "valore"
 
-#### FlightRoute
-<p align="justify">
+#### `FlightRoute`
 Modella le rotte che sono effettuate dalla compagnia (si parla di tragitti generici, per il volo specifico vedremo un'altra entità specifica)
-</p>
-<h5> Metodo Costruttore </h5>
-Inizializza un oggetto di tipo FlightRoute con i valori che gli vengono forniti in input. Gli attributi sono:
 
-<ul>
-<li> id, di tipo Integer <br>
-Un identificatore univoco </li>
-<li> distance, di tipo Integer <br>
-Espressa in chilometri, indica la distanza in linea d'aria tra l'aeroporto di partenza e quello di destinazione (nel caso sia previsto uno scalo saranno sommate le distanze tra, rispettivamente, l'aeroporto di partenza e quello di scalo e quella tra l'aeroporto di scalo e quello di destinazione). Importante notare che queste distanze sono puramente teoriche: un volo può in realtà essere più lungo per motivi meteorologici, particolari procedure di partenza e/o avvicinamento, chiusura spazi aerei...</li>
-<li>duration, di tipo Integer <br>
+#### Metodo Costruttore 
+Inizializza un oggetto di tipo `FlightRoute` con i valori che gli vengono forniti in input. Gli attributi sono:
+
+- `id`, di tipo Integer \
+Un identificatore univoco 
+- `distance`, di tipo Integer \
+Espressa in chilometri, indica la distanza in linea d'aria tra l'aeroporto di partenza e quello di destinazione (nel caso sia previsto uno scalo saranno sommate le distanze tra, rispettivamente, l'aeroporto di partenza e quello di scalo e quella tra l'aeroporto di scalo e quello di destinazione). Importante notare che queste distanze sono puramente teoriche: un volo può in realtà essere più lungo per motivi meteorologici, particolari procedure di partenza e/o avvicinamento, chiusura spazi aerei...
+- `duration`, di tipo Integer \
 Espressa in minuti, indica la durata schedulata del volo tra l'aeroporto di partenza e quello di arrivo; valgono le stesse considerazioni fatte sopra in merito alla distanza.</li>
-<li> departure, di tipo Stringa <br>
-Contiene il codice ICAO dell'aeroporto di partenza </li>
-<li> stepover, di tipo Stringa <br>
-Contiene, se previsto dal piano di volo, il codice ICAO dell'aeroporto di scalo </li>
-<li> arrival, di tipo Stringa <br>
-Contiene il codice ICAO dell'aeroporto di arrivo </li>
+- `departure`, di tipo Stringa \
+Contiene il codice ICAO dell'aeroporto di partenza 
+- `stepover`, di tipo Stringa \
+Contiene, se previsto dal piano di volo, il codice ICAO dell'aeroporto di scalo 
+- `arrival`, di tipo Stringa \
+Contiene il codice ICAO dell'aeroporto di arrivo 
 
-<h5>Classico Override dei metodi hashCode();, equals(Object obj); e toString(); </h5>
+#### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
 
-#### Flight
+#### `Flight`
 
 ## Business logic (system)
 
-#### CredentialsManager
-#### FlightManager
-#### FlightSchedule
-#### ManagementSystem
-#### SimulatedClock
-#### SchedulingStrategy
-#### Pattern strategy
-#### SimpleSchedule
+#### `CredentialsManager`
+#### `FlightManager`
+#### `FlightSchedule`
+#### `ManagementSystem`
+#### `SimulatedClock`
+#### `SchedulingStrategy`
+### Pattern strategy
+#### `SimpleSchedule`
