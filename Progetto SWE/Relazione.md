@@ -291,11 +291,10 @@ Consente di uscire dal programma
  
 ---
 
-# db
+## db
 
 ### PgDB
 Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
-//TODO
 
 ## DAO
 
@@ -366,7 +365,7 @@ Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che i
 #### `boolean IsCompatible()`
 Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
 
-#### `Credentials`
+### `Credentials`
 
 #### `EmployeeRole`
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
@@ -426,6 +425,31 @@ Contiene il codice ICAO dell'aeroporto di arrivo
 #### `FlightSchedule`
 #### `ManagementSystem`
 #### `SimulatedClock`
+
+Questa classe implementa un orologio simulato, il quale consente di eseguire la simulazione dei voli eseguiti e delle posizioni dei velivoli e del personale in ogni momento. La classe SimulatedClock estende la classe Thread. Include un counter che scandisce lo scorrere dei secondi: per mantenerne sincronizzato il valore ed evitare disallineamenti si ricorre al semaforo mutex. 
+Il metodo principale è il metodo `run()`; secondari sono poi i metodi `getTime()` e `getCounter()`  
+##### Metodo costruttore di default
+##### Metodo `void run()`
+Questo metodo fa partire il SimulatedClock.
+Dopo 1000 millisecondi (1 secondo) verrà acquisito, attraverso `mutex.acquire()` il valore del counter che sarà incrementato di uno (questo valore indica sostanzialmente il numero di secondi trascorsi fino a quel momento). Una volta fatto ciò il counter viene rilasciato.
+L'utilizzo del metodo `sleep()` impone la gestione dell'eccezione InterruptedException, che è comunque lasciata di default.
+
+![[SimulatedClockrun.png]]
+
+##### Metodo `String getTime()`
+Restituisce una stringa composta "ore trascorse : minuti trascorsi".
+Usando sempre nelle stesse modalità descritte precedentemente il semaforo mutex, questo metodo assegna il valore del contatore all'intero lungo current.
+A partire da questo valore vengono poi calcolate:
+- le ore, String hour
+	Tale valore è dato dal quoziente intero della divisione tra current e timeCoefficient, un integer uguale a 60. La conversione a String viene poi eseguita con il metodo `valueOf($string$)`
+- i minuti, String minutes
+	Tale valore è dato dal resto della divisione tra current e timeCoefficient, un integer uguale a 60. La conversione a String viene poi eseguita come sopra
+
+*Quella riportata è solo una sezione del metodo descritto sopra*
+![[SimulatedClockgetTime.png]]
+
+##### Metodo `long getCounter()`
+Semplice metodo getter che però accede alla risorsa condivisa per mezzo del semaforo mutex e la restituisce in output.
 #### `SchedulingStrategy`
 ### Pattern strategy
 #### `SimpleSchedule`
