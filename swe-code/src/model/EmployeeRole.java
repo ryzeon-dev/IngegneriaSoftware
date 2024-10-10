@@ -3,7 +3,6 @@ package model;
 public enum EmployeeRole {
     Commander, FirstOfficer, FlightAssistant;
 
-    @Override
     public String toString() {
         if (this.equals(EmployeeRole.Commander)) {
             return "Commander";

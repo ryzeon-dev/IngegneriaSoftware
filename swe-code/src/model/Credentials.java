@@ -16,7 +16,6 @@ public class Credentials {
         this.passwd = passwd;
     }
 
-    @Override
     public String toString() {
         return "{ username: " + this.username + " ; passwd: " + this.passwd + " }";
     }

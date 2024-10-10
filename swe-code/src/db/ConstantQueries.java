@@ -18,11 +18,11 @@ public class ConstantQueries {
     }
 
     public static String getFirstOfficersForFlightID(String id) {
-        return "select commander from commanders where flight=" + id + ";";
+        return "select firstOfficer from firstOfficer where flight=" + id + ";";
     }
 
     public static String getFlightAssistantsForFlightID(String id) {
-        return "select commander from commanders where flight=" + id + ";";
+        return "select assistant from flight_assistants where flight=" + id + ";";
     }
 
     public static String getEmployeeInfo(String id) {

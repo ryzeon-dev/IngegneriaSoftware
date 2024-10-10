@@ -55,7 +55,6 @@ public class FlightManager {
         }
     }
 
-    @Override
     public String toString() {
         String res = "{\n";
         res += "\tAircrafts: " + aircrafts + "\n\n";

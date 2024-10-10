@@ -24,7 +24,6 @@ public class Employee {
         this.position = icao;
     }
 
-    @Override
     public String toString() {
         return this.role + " {" + this.name + " " + this.lastName + "}";
     }

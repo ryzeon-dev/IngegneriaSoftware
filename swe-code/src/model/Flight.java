@@ -32,7 +32,6 @@ public class Flight {
         this.flightAssistants = flightAssistants;
     }
 
-    @Override
     public String toString() {
         String repr = "Flight " + this.id + "\n";
         repr += "\tAircraft: " + this.aircraftPlate + "\n";

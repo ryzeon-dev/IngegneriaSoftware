@@ -19,7 +19,6 @@ public class  FlightRoute {
         this.arrival = arrival;
     }
 
-    @Override
 	public boolean equals(Object obj) {
         if(this == obj)
             return true;
@@ -29,12 +28,10 @@ public class  FlightRoute {
         return (this.id == other.id);
     }
 
-    @Override
     public int hashCode() {
         return id*(departure.hashCode()+stepover.hashCode()+arrival.hashCode());
     }
 
-    @Override
     public String toString() {
         return "Route {" + this.departure + "->" + this.arrival + "}";
     }

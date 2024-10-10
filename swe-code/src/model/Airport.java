@@ -18,11 +18,11 @@ public class Airport {
     }
     
 
-    @Override
+
     public int hashCode() {
         return icao.hashCode();
     }
-    @Override
+
     public boolean equals(Object obj) {
         if(this == obj)
             return true;
@@ -31,7 +31,7 @@ public class Airport {
         Airport other = (Airport) obj;
         return (this.icao.equals(other.icao));
     }
-    @Override
+
     public String toString() {
         return "model.Airport {" + this.icao + " " + this.dimensionClass + " " + this.city + "}";
     }

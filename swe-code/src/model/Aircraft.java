@@ -49,7 +49,6 @@ public class Aircraft {
         return this.dimensionClass.isCompatible(airport.dimensionClass);
     }
 
-    @Override
     public String toString() {
         return "Aircraft {" + this.manufacturer + " " + this.model + " " + this.plate + "}";
     }

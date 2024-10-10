@@ -1,11 +1,12 @@
 package cli;
 
 import model.Credentials;
+import model.Employee;
+import model.Flight;
 import system.CredentialsManager;
 import system.ManagementSystem;
 
 
-import java.awt.desktop.SystemSleepEvent;
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -104,6 +105,7 @@ public class CLI {//extends Thread {
                 accessEmployeesData();
                 return;
             }
+
             while (true) {
                 System.out.println("\nEmployees data menu");
                 System.out.println("1 -> View all employees");
@@ -115,7 +117,7 @@ public class CLI {//extends Thread {
                 System.out.println("5 -> View a specific employee");
                 System.out.println("6 -> back");
 
-                int choice = 0;
+                int choice;
                 while (true) {
                     try {
                         System.out.print("View: ");
@@ -130,7 +132,7 @@ public class CLI {//extends Thread {
                 System.out.println();
                 switch (choice) {
                     case 1: {
-                        for (var employee : managementSystem.manager.getAllEmployees()) {
+                        for (var employee : managementSystem.flightManeger.getAllEmployees()) {
                             System.out.println(employee);
                         }
                         waitUntilEnter();
@@ -138,7 +140,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 2: {
-                        for (var commander : managementSystem.manager.getCommanders()) {
+                        for (var commander : managementSystem.flightManeger.getCommanders()) {
                             System.out.println(commander + "\n");
                         }
                         waitUntilEnter();
@@ -146,7 +148,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 3: {
-                        for (var firstOfficer : managementSystem.manager.getFirstOfficiers()) {
+                        for (var firstOfficer : managementSystem.flightManeger.getFirstOfficiers()) {
                             System.out.println(firstOfficer + "\n");
                         }
                         waitUntilEnter();
@@ -154,7 +156,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 4: {
-                        for (var flightAssistant : managementSystem.manager.getFlightAssistants()) {
+                        for (var flightAssistant : managementSystem.flightManeger.getFlightAssistants()) {
                             System.out.println(flightAssistant + "\n");
                         }
                         waitUntilEnter();
@@ -175,8 +177,8 @@ public class CLI {//extends Thread {
                             }
                         }
 
-                        if (requestedId >= 0 && requestedId < managementSystem.manager.employeesNumber()) {
-                            System.out.println(managementSystem.manager.getEmployeeById(requestedId).getFullData());
+                        if (requestedId >= 0 && requestedId < managementSystem.flightManeger.employeesNumber()) {
+                            System.out.println(managementSystem.flightManeger.getEmployeeById(requestedId).getFullData());
                             waitUntilEnter();
 
                         } else {
@@ -209,7 +211,7 @@ public class CLI {//extends Thread {
                 return;
             }
             int id = credentials.id;
-            System.out.println(managementSystem.manager.getEmployeeById(id).getFullData());
+            System.out.println(managementSystem.flightManeger.getEmployeeById(id).getFullData());
 
             waitUntilEnter();
         }
@@ -268,8 +270,6 @@ public class CLI {//extends Thread {
             return;
         }
 
-        System.out.println("'" + username + "'");
-
         if (username.equals("admin")) {
             System.out.println("root access");
             for (var flight : this.managementSystem.scheduledFlights) {
@@ -305,6 +305,8 @@ public class CLI {//extends Thread {
             return;
         }
 
+        Employee employee = this.managementSystem.flightManeger.getEmployeeById(credentials.id);
+
         while (true) {
             System.out.println("\nPersonal area menu:");
             System.out.println("1 -> Personal data view");
@@ -315,18 +317,22 @@ public class CLI {//extends Thread {
             System.out.println();
 
             if (choice.equals("1")) {
-                System.out.println(this.managementSystem.manager.getEmployeeById(credentials.id).getFullData());
+                System.out.println(employee.getFullData());
                 this.waitUntilEnter();
 
             } else if (choice.equals("2")) {
-                System.out.println("Scheduling not available yet"); // TODO
+                for (Flight flight : this.managementSystem.scheduledFlights) {
+                    if (flight.commanders.contains(employee) || flight.firstOfficers.contains(employee) || flight.flightAssistants.contains(employee)) {
+                        System.out.println(flight.toString());
+                        System.out.println();
+                    }
+                }
+                this.waitUntilEnter();
 
             } else {
                 return;
             }
         }
-
-
     }
 
     private void quit() {

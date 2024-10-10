@@ -1,11 +1,8 @@
 package model;
 
-import system.ManagementSystem;
-
 public enum DimensionClass {
     C4, C3, E4;
 
-    @Override
     public String toString() {
         if (this.equals(DimensionClass.C3)) {
             return "3C";
@@ -20,6 +17,7 @@ public enum DimensionClass {
             return "";
         }
     }
+
     //Aircraft is lhs Airport is rhs
     //Check if an Aircraft(lhs) can land on Airport(rhs) 
     public boolean isCompatible(DimensionClass other) {
