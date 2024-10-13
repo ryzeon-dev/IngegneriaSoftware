@@ -23,12 +23,15 @@ public class AirportGraph {
     */
 
     public void addEdge(Airport a1,Airport a2,int weight,int routeId,int routeDuration){
+        
         if(!adjacencyList.containsKey(a1)){
             addVertex(a1);
         }
+
         if(!adjacencyList.containsKey(a2)){
             addVertex(a2);
         }
+        
         adjacencyList.get(a1).add(new AirportWeighted(a2, weight,routeId,routeDuration));
     }
 
