@@ -214,7 +214,7 @@ Legenda:
 
 # Classi principali
 
-### CLI.java
+## CLI.java
 
 La classe `CLI` (Command Line Interface) è resposabile dell'interazione con l'utente, fornendo le possibilità di navigazione all'interno del sistema, per poter consultare le informazioni relative a voli e personale.
 Contiene diversi metodi, andremo ad esaminarli uno ad uno comprendendone a pieno il funzionamento.
@@ -278,7 +278,7 @@ Il metodo eseguito è getRouteDetails();
 
 Stampa tutte le informazioni relative all'operativo voli. 
 Per accedere a questa sezione è richiesto l'accesso (sono correttamente predisposte  tutte le procedure di riprova e/o negazione dell'accesso nel caso in cui un utente non risulti nel sistema)
-Sono previste due modalità distinte in base al soggetto che utilizza il programma: </p>
+Sono previste due modalità distinte in base al soggetto che utilizza il programma: 
 - Modalità admin, consente l'accesso a tutti i voli previsti
 - Modalità user, consente al comandante di verificare solo il suo programma, rivedere questa parte del codice.
 
@@ -309,7 +309,7 @@ _L'identificatore `<Type>` rappresenta una qualsiasi delle implementazioni dell'
 
 ![[IntelliJ Snippet (1).png]]
 
-#### Classi `*DaoPg`
+### Classi `*DaoPg`
 
 Le varie classi `*DaoPg` implementano la relativa interfaccia (specificata nel sub-package *interfaces*)
 
@@ -319,23 +319,22 @@ Questo metodo si occupa di generare effettivamente le istanze, accedendo alle ca
 *A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
 ![[IntelliJ Snippet 1.png]]
 
-##### Metodo `Vector<Type> getAll()`
+#### Metodo `Vector<Type> getAll()`
 Questo metodo stabilisce, usando l'oggetto db della classe PgDB, una connessione con il database. Facendo uso di una query costante estrae i dati richiesti e costruisce le necessarie strutture dati (un vettore di &lt;Type&gt;). Come già osservato, l'istanziazione effettiva degli oggetti è delegata al metodo buildFromRow(row); appunto richiamato su ciascuna delle righe estratte dal Database.
 
 *A titolo di esempio è riportato lo snippet del metodo relativo alla classe Employee*
 ![[IntelliJ Snippet (2).png]]
 
-##### Eventuali metodi getter
+#### Eventuali metodi getter
 
 ## Domain Model
-#### Aircraft.java
+### Aircraft
 Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per lo scheduling dei voli
-
 
 #### Metodo costruttore 
 Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: //FIXME
 
-#### Airport
+### Airport
 Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
 
 
@@ -358,7 +357,7 @@ Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in i
 
 #### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
 
-#### `Dimension` Class
+### `DimensionClass`
 Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che indica la lunghezza maggiore tra tutte le piste di decollo/atterraggio (da 1, la minore possibile, inferiore a 800m, a 4, la maggiore, superiore a 1800m) e una lettera che si riferisce alle dimensioni degli aeromobile che l'aeroporto può ospitare (da A a F, in ordine crescente) 
 
 
@@ -366,14 +365,14 @@ Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che i
 Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
 
 ### `Credentials`
+//TODO
 
 #### `EmployeeRole`
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
 #### Override metodo `toString()`
 Ritorna una stringa corrispondente al ruolo
 
-
-#### `Employee`
+### `Employee`
 Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, anche quelli inerenti alle mansioni lavorative. Viene implementato anche un attributo per tenerne traccia della posizione in tempo reale.
 #### Metodo Costruttore
 Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
@@ -395,9 +394,8 @@ Inizializzato a vuoto dal costruttore, conterrà poi il codice ICAO dell'aeropor
 #### `String getFullData()`
 Realizza e restituisce una lista puntata con "nome dell'attributo" : "valore"
 
-#### `FlightRoute`
+### `FlightRoute`
 Modella le rotte che sono effettuate dalla compagnia (si parla di tragitti generici, per il volo specifico vedremo un'altra entità specifica)
-
 #### Metodo Costruttore 
 Inizializza un oggetto di tipo `FlightRoute` con i valori che gli vengono forniti in input. Gli attributi sono:
 
@@ -416,27 +414,27 @@ Contiene il codice ICAO dell'aeroporto di arrivo
 
 #### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
 
-#### `Flight`
+### `Flight`
 
 ## Business logic (system)
 
-#### `CredentialsManager`
-#### `FlightManager`
-#### `FlightSchedule`
-#### `ManagementSystem`
-#### `SimulatedClock`
+### `CredentialsManager`
+### `FlightManager`
+### `FlightSchedule`
+### `ManagementSystem`
+### `SimulatedClock`
 
 Questa classe implementa un orologio simulato, il quale consente di eseguire la simulazione dei voli eseguiti e delle posizioni dei velivoli e del personale in ogni momento. La classe SimulatedClock estende la classe Thread. Include un counter che scandisce lo scorrere dei secondi: per mantenerne sincronizzato il valore ed evitare disallineamenti si ricorre al semaforo mutex. 
 Il metodo principale è il metodo `run()`; secondari sono poi i metodi `getTime()` e `getCounter()`  
-##### Metodo costruttore di default
-##### Metodo `void run()`
+#### Metodo costruttore di default
+#### Metodo `void run()`
 Questo metodo fa partire il SimulatedClock.
 Dopo 1000 millisecondi (1 secondo) verrà acquisito, attraverso `mutex.acquire()` il valore del counter che sarà incrementato di uno (questo valore indica sostanzialmente il numero di secondi trascorsi fino a quel momento). Una volta fatto ciò il counter viene rilasciato.
 L'utilizzo del metodo `sleep()` impone la gestione dell'eccezione InterruptedException, che è comunque lasciata di default.
 
 ![[SimulatedClockrun.png]]
 
-##### Metodo `String getTime()`
+#### Metodo `String getTime()`
 Restituisce una stringa composta "ore trascorse : minuti trascorsi".
 Usando sempre nelle stesse modalità descritte precedentemente il semaforo mutex, questo metodo assegna il valore del contatore all'intero lungo current.
 A partire da questo valore vengono poi calcolate:
@@ -448,8 +446,31 @@ A partire da questo valore vengono poi calcolate:
 *Quella riportata è solo una sezione del metodo descritto sopra*
 ![[SimulatedClockgetTime.png]]
 
-##### Metodo `long getCounter()`
+#### Metodo `long getCounter()`
 Semplice metodo getter che però accede alla risorsa condivisa per mezzo del semaforo mutex e la restituisce in output.
-#### `SchedulingStrategy`
-### Pattern strategy
-#### `SimpleSchedule`
+
+## scheduling
+
+### `AirportWeighted`
+Questa classe istanzia oggetti che saranno di ausilio per la realizzazione del grafo degli aeroporti.
+#### Metodo costruttore
+Inizializza un oggetto di tipo `AirportWeighted` con i valori che gli vengono forniti in input. Gli attributi di questa classe sono:
+- airport, di tipo Airport
+- weight, di tipo int
+	Questo valore associa all'aeroporto in questione un "peso", pari alla distanza tra l'aeroporto  in questione ed un altro. Ad esempio sia `airport=A` e la route considerata quella tra A e un secondo aeroporto che indichiamo con B, il peso è la distanza tra A e B.
+- routeId, di tipo Int
+	Identifica univocamente la tratta cui la classe si riferisce
+- route, di tipo FlightRoute
+	Una tratta che ha origine nell'aeroporto in questione	
+	Questa viene prelavata dal Database per mezzo del FlightRouteDaoPg `routedao` chiamandoci il metodo `getRouteById(String.valueOf(this.routeId))`
+- duration, di tipo Int
+	Contiene la durata del volo
+#### Classico Override dei metodi `hashCode()`e `equals(Object obj)`
+
+### `AirportGraph`
+### `SchedulingStrategy`
+Interfaccia che implementa il design pattern Strategy. Questo design pattern di tipo comportamentale (facente parte dei design pattern della Gang of Four GoF, un gruppo di quattro soggetti che misero assieme 23 design pattern ponendo a tutti gli effetto la base dell'ingegneria del software) consente di definire una famiglia di algoritmi rendendoli intercambiabili; in base alle necessità e al contesto specifico si seleziona a runtime un algoritmo piuttosto che un altro. Questa classe definisce tramite il metodo `Vector<Flight> run()` il comportamento generico che devono implementare tutto gli algoritmi concreti implementati in classi separate. L'utilizzo di questo design pattern consente di cambiare con facilità l'algoritmo che viene effettivamente impiegato per operare lo scheduling.
+### `SimpleSchedule`
+Classe che si occupa effettivamente dello scheduling dei voli.
+Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia
+
