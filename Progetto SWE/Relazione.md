@@ -329,15 +329,28 @@ Questo metodo stabilisce, usando l'oggetto db della classe PgDB, una connessione
 
 ## Domain Model
 ### Aircraft
-Modella le tipologie di aeromobili disponibili e tutti i dettagli necessari per lo scheduling dei voli
+Modella gli aeromobili specificandone tutti i dettagli necessari per lo scheduling dei voli
 
 #### Metodo costruttore 
-Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: //FIXME
+Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in input. Gli attributi usati sono: 
+- `plate`, di tipo Stringa
+	Talvolta chiamato erroneamente codice di registrazione o targa, in realtà ne eseguono la medesima funzione; sono una stringa di caratteri alfanumerici, impressi e ben visibili tipicamente vicino alla coda e sulle ali di un aeromobile, che lo identificano univocamente 
+- `manufacturer`, di tipo Stringa
+	Contiene il nome del produttore dell'aereo. In aviazione commerciale i più comuni sono: Airbus, Boeing, Embraer e Bombardier. 
+- `model`, di tipo Stringa
+	Indica il modello dell'aereo (es. A320, 737...)
+- `specification`
+	Di ogni modello di aereo ne vengono realizzate diverse specifiche: la struttura generale/i sistemi/i motori
+- `dimensionClass`
+- `assistantsNumber`
+- `range`
+- `seats`
+- `busy`
+- `position`
 
+//FIXME, continuare...
 ### Airport
 Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
-
-
 #### Metodo costruttore
 Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in input. Gli attributi sono:
 
@@ -352,7 +365,6 @@ Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in i
     Stato in cui l'aeroporto è ubicato (esempio: Aeroporto di Firenze -->Italia)
 - `city`, di tipo Stringa \
     Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Miilano)
-
 
 
 #### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
@@ -468,9 +480,47 @@ Inizializza un oggetto di tipo `AirportWeighted` con i valori che gli vengono fo
 #### Classico Override dei metodi `hashCode()`e `equals(Object obj)`
 
 ### `AirportGraph`
+Questa classe rappresenta il grafo contenente gli aeroporti e le loro interconnessioni. 
+I metodi principali sono quelli per l'aggiunta dei nodi e degli archi
+
+#### Metodo costruttore
+Il costruttore crea una HashMap, implementazione più comune della classe Map. La mappa è  struttura dati nella quale i dati sono memorizzati come coppie chiave-valore; nel nostro caso è chiamata `adjacencyList` ed ha come chiave un oggetto di tipo `Airport` e come valore una lista collegata di `AirportWeighted`
+
+#### Metodo `void addVertex(Airport airport)`
+Dopo aver effettuato grazie al metodo `containsKey(airport)` la verifica che l'aeroporto non sia già contenuto nella mappa, utilizza il metodo `put(...)` per inserircelo.
+
+#### Metodo `void addEdge(Airport a1,Airport a2,int weight,int routeId,int routeDuration)`
+La prima operazione di questo metodo è il controllo che ambedue gli aeroporti inseriti tra i parametri siano già presenti in `adjacencyList`; in caso contrario viene richiamato il metodo sovrastante `addVertex(airport)` che si occupa di eseguire l'aggiunta.
+L'operazione successiva è l'addizione dell'arco tra a1 e a2. L'ordine dei due parametri è molto importante in quanto, trattandosi di un grafo diretto, si crea esclusivamente l'arco a1-->a2 e non il viceversa. In sostanza, alla lista collegata di `AiportWeighted` dell'aeroporto a1 si va ad aggiungere un nuovo oggetto che rappresenti la connessione con l'aeroporto a2 e che abbia come altri parametri quelli forniti in input al metodo.
+
+![[AirportGraphAddEdge.png]]
+
+#### Metodo `Set<Airport> getVertexList()`
+Restituisce semplicemente, usando il metodo `adjacencyList.keySet()`, la lista di tutti gli aeroporti contenuti nel grafo.
+
+#### Metodo `boolean containsVertex(Airport r)`
+Ritorna vero se l'aeroporto r è contenuto in `adjacencyList`, falso altrimenti
+
+#### Metodo `LinkedList<AirportWeighted> getAdjacentVertex(Airport airport)`
+
+Restituisce la lista collegata di `AirportWeighted` associata all'aeroporto airport
+
+
 ### `SchedulingStrategy`
 Interfaccia che implementa il design pattern Strategy. Questo design pattern di tipo comportamentale (facente parte dei design pattern della Gang of Four GoF, un gruppo di quattro soggetti che misero assieme 23 design pattern ponendo a tutti gli effetto la base dell'ingegneria del software) consente di definire una famiglia di algoritmi rendendoli intercambiabili; in base alle necessità e al contesto specifico si seleziona a runtime un algoritmo piuttosto che un altro. Questa classe definisce tramite il metodo `Vector<Flight> run()` il comportamento generico che devono implementare tutto gli algoritmi concreti implementati in classi separate. L'utilizzo di questo design pattern consente di cambiare con facilità l'algoritmo che viene effettivamente impiegato per operare lo scheduling.
 ### `SimpleSchedule`
 Classe che si occupa effettivamente dello scheduling dei voli.
-Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia
+Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente il core dell'applicazione.
+//FIXME descrivi meglio in generale la classe e le sue funzioni
+
+#### Metodo `AirportGraph buildGraphFromFlightRoute()`
+Questo metodo si occupa concretamente della creazione del grafo degli aeroporti.
+Viene infatti dichiarato un oggetto `graph` di tipo `AirportGraph`. 
+Il passo successivo è la creazione di due vettori: il primo, `routes`, contenente tutte le tratte presenti nel database e ricavate mediante l'uso di un `flightRouteDao`, il secondo, `airports`, contenente gli aeroporti, ricavati mediante un `airportDao`
+Si inseriscono poi tutti gli aeroporti nella mappa `airportDict`, avente come chiave l'icao dell'aeroporto e come valore un oggetto di tipo `airport`; questo è importante per effettuare quella che in base di dati si direbbe una "join" tra i dati contenuti in `routes` e quelli contenuti in `airports`. Infine, si scorrono tutte le rotte andando ad aggiungere per ognuna di esse un arco del grafo e passandole come parametri i due aeroporti (partenza e arrivo), l'id della rotta, la distanza e la durata. Si restituisce in output il grado appena creato.
+
+![[SimpleSchedulebuildGraphFromFlightRoute.png]]
+
+
+
 
