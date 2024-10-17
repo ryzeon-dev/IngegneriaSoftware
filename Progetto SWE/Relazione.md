@@ -90,11 +90,6 @@ Vincenzo Marturano
 
 
 
-
-
-
-
-
 # Statement 
 
 La compagnia aerea ITA Airways necessita di un software per la gestione giornaliera dell’impiego dei suoi velivoli nelle rotte offerte. Si ha esigenza di includere l’assegnazione degli aeromobili adeguati e del personale alle tratte, compatibilmente con la distanza dalla destinazione e con il numero di passeggeri, in ottemperanza della capacità di un aeroporto di accogliere aerei di una determinata classe.
@@ -107,6 +102,7 @@ L’abilitazione dei piloti è strettamente legata al modello di aereo. Eccezion
 
 Ciascun velivolo è tracciato; in particolare è necessario conoscere, in ogni momento, se stia effettuando una tratta o se si trovi parcheggiato in qualche aeroporto. E’ il pilota a comunicare alla compagnia il distacco dal gate e l’atterraggio. Tramite un orologio simulato è possibile interagire con la funzione di monitoraggio degli aerei, conoscendo lo stato dei voli in ogni momento.
 
+---
 
 # Il database
 ## Dizionario dei dati
@@ -121,6 +117,7 @@ Ciascun velivolo è tracciato; in particolare è necessario conoscere, in ogni m
 | Route             | Tragitto collegato dalla compagnia | id, distance, duration                                                         | id             |
 | Flight            | Specifico volo                     | id, departure_time, passengers_number                                          | id             |
 | Personal          | Operatori della compagnia          | id, name, lastName, role, abilitation                                          | id             |
+|                   |                                    |                                                                                |                |
 |                   |                                    |                                                                                |                |
 
 
@@ -339,16 +336,28 @@ Inizializza un oggetto di tipo Aircraft con i valori che vengono forniti in inpu
 	Contiene il nome del produttore dell'aereo. In aviazione commerciale i più comuni sono: Airbus, Boeing, Embraer e Bombardier. 
 - `model`, di tipo Stringa
 	Indica il modello dell'aereo (es. A320, 737...)
-- `specification`
-	Di ogni modello di aereo ne vengono realizzate diverse specifiche: la struttura generale/i sistemi/i motori
+- `specification`, di tipo Stringa
+	Di ogni modello di aereo ne vengono realizzate diverse specifiche: la struttura generale dell'aereo è la medesima ma cambia la lunghezza della fusoliera (blocchi in meno o in più di sedili, motori/sistemi/controlli diversi). Ad esempio del Boeing 737 ne esistono moltissime specifiche: dal 737-100 che risale al 1967, passando per 200,300,400...fino alla versione più recente, il 737-MAX 10 in produzione dal 2017.
 - `dimensionClass`
-- `assistantsNumber`
-- `range`
-- `seats`
-- `busy`
-- `position`
+	*Vedi sezione appositamente dedicata*
+- `assistantsNumber`, di tipo Integer
+	Contiene il numero di assistenti di volo che sono richiesti dalla normativa per poter operare voli commerciali con quel velivolo. Una rule of the thumb, che ne impone un limite minimo, è quella di avere uno steward/hostess ogni 50 passeggeri. Ci sono poi aeromobili che per altri motivi (numero di porte, dimensione della fusoliera,...) ne possono richiedere anche un numero ad essa maggiore.
+- `range`, di tipo Integer
+	Autonomia del velivolo. Questo parametro, misurato in condizioni ideali (assenza di vento contrario, volo alla IAS (Indicated Air Speed) e altitudine ideali garantendo all'aereo la più grande autonomia possibile), non è da considerarsi in maniera precisa ma indicativa; ci sono infatti moltissimi parametri durante il volo che possono andare a ridurre il valore effettivo della distanza percorribile.
+- `seats`, di tipo Integer
+	Numero di passeggeri che un aeromobile può ospitare
+- `busy`, di tipo Boolean 
+	Attributo di tipo booleano, indica se l'aeromobile è impiegato in un volo (true) oppure è fermo e pronto ad operarne uno (false).
+- `position`, di tipo String
+	Contiene il codice icao dell'aeroporto in cui è localizzato l'aeromobile (secondo la simulazione oraria scandita da `SimulatedClock`)
+	
+#### Metodo `boolean canGo(Airport airport)`
+Dato in input un aeroporto, restituisce vero se la dimensione dell'aereo è tale da poter atterrare in `airport`, falso se l'aeroporto è invece sottodimensionato rispetto all'aeromobile, che quindi non potrà operarvici.
 
-//FIXME, continuare...
+#### Metodo `String fullData()`
+Restituisce una stringa contenente, sotto forma di elenco "attributo: valore", tutti i dati di un aeromobile.
+
+#### Classici metodi getter, setter e metodo `toString()`
 ### Airport
 Modella tutti gli aeroporti usati dalla compagnia; per ognuno di essi sono specificate chiaramente solo le caratteristiche che si rivelano utili per lo scheduling.
 #### Metodo costruttore
@@ -357,14 +366,14 @@ Inizializza un oggetto di tipo Airport con i valori che gli vengono forniti in i
 
 -  `ICAO`, di tipo Stringa. \
 	Contiene il codice alfabetico , assegnato dall'International Civil Aviation Organization, che identifica univocamente ciascun aeroporto (ad esempio l'aeroporto di Firenze Peretola ha ICAO LIRQ)
-- `dimensionClass`, di tipo Stringa \
+- `dimensionClass`
     *Vedi sezione appositamente dedicata*
 - `name`, di tipo Stringa \
     Contiene il nome commerciale dell'aeroporto (esempio Aeroporto di Firenze Amerigo Vespucci)
 - `nation`, di tipo Stringa \
     Stato in cui l'aeroporto è ubicato (esempio: Aeroporto di Firenze -->Italia)
 - `city`, di tipo Stringa \
-    Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Miilano)
+    Città servita dall'aeroporto (da specificare che spesso questo non coincide con l'esatta ubicazione della struttura aeroportuale; se di grande dimensione si trovano infatti fuori città: l'aeroporto di Milano Malpensa, che serve Milano, si trova in realtà nei pressi di Busto Arsizio, a 35km dal centro di Milano)
 
 
 #### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
@@ -374,7 +383,7 @@ Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che i
 
 
 #### `boolean IsCompatible()`
-Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabulisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false
+Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabilisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false.
 
 ### `Credentials`
 //TODO
@@ -469,7 +478,7 @@ Questa classe istanzia oggetti che saranno di ausilio per la realizzazione del g
 Inizializza un oggetto di tipo `AirportWeighted` con i valori che gli vengono forniti in input. Gli attributi di questa classe sono:
 - airport, di tipo Airport
 - weight, di tipo int
-	Questo valore associa all'aeroporto in questione un "peso", pari alla distanza tra l'aeroporto  in questione ed un altro. Ad esempio sia `airport=A` e la route considerata quella tra A e un secondo aeroporto che indichiamo con B, il peso è la distanza tra A e B.
+	Questo valore associa all'aeroporto in questione un "peso", pari alla distanza tra l'aeroporto  in questione ed un altro. Ad esempio sia l'aeroporto corrente A e la rotta considerata quella tra A e un secondo aeroporto che indichiamo con B, il peso è la distanza tra A e B.
 - routeId, di tipo Int
 	Identifica univocamente la tratta cui la classe si riferisce
 - route, di tipo FlightRoute
@@ -513,6 +522,8 @@ Classe che si occupa effettivamente dello scheduling dei voli.
 Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente il core dell'applicazione.
 //FIXME descrivi meglio in generale la classe e le sue funzioni
 
+#### Metodo costruttore
+//TODO
 #### Metodo `AirportGraph buildGraphFromFlightRoute()`
 Questo metodo si occupa concretamente della creazione del grafo degli aeroporti.
 Viene infatti dichiarato un oggetto `graph` di tipo `AirportGraph`. 
@@ -521,6 +532,40 @@ Si inseriscono poi tutti gli aeroporti nella mappa `airportDict`, avente come ch
 
 ![[SimpleSchedulebuildGraphFromFlightRoute.png]]
 
+#### Metodo `boolean canFly(Aircraft aircraft,AirportWeighted airportWeighted)`
 
+Il compito di questo metodo è la verifica che un aereo `aircraft` sia in grado di volare verso un aeroporto `airportWeighted`: si deve controllare sia la compatibilità dimensionale di aeromobile  e aeroporto che la distanza tra due, garantendo che il `range` del velivolo sia ad essa inferiore.
+Per evitare il rischio di un emergenza carburante a bordo dovuta al margine troppo ridotto tra i due valori soprastanti (ad esempio aereo con range di 6500 km si trova a percorrere una rotta di 6495 km; è sufficiente la più piccola deviazione per i più banali motivi per causare un emergenza carburante e di conseguenza un atterraggio di emergenza nell'aeroporto più vicino) è stata introdotta una tolleranza, `RangeTollerance`, pari al 15% della distanza della rotta.
+Viene quindi effettuata la verifica aggiuntiva `(aircraft.range-airportWeighted.weight) < airportWeighted.weight*RangeTollerance)`
 
+![[SimpleSchedulecanFly.png]]
 
+#### Gestione del personale
+#### Metodo `makeEmployeesVectors()`
+Si occupa di prelevare i dati di tutti i dipendenti operanti sui velivoli della compagnia e suddividerli in diverse strutture dati in base ai loro effettivi ruoli. In dettaglio, in prima battuta vengono prelevati dal database, per mezzo di `employeedao.getall(),` tutti i dipendenti della compagnia e inseriti nel vettore di dipendenti `employees`. Viene poi fatto partire un ciclo `for` che scorre tutto il vettore andando ad aggiungere alla lista collegata corrispondente con il suo valore di `role`.
+Le tre strutture dati sono:
+- `Queue<Employee> commanders`
+- `Queue<Employee> firstOfficers`
+- `Queue<Employee> flightAssistants`
+
+#### Metodo `Vector<Employee> getFlightAssistants(int assistantNumber,Airport source,Airport destination)`
+Questo metodo esegue l'assegnazione degli assistenti di volo ad uno specifico volo.
+Al suo interno, oltre a quanto dichiarato e già descritto precedentemente, viene usata la mappa `flightAssistantsLocation`che ha come chiave un `aiport` e come valore una lista di impiegati; in realtà, per quanto sottolineato sopra, la lista è di soli assistenti di volo.
+Si dichiara un vettore di impiegati, `currentFlightAssistants`, che sarà la struttura nel quale andremo mano a mano ad aggiungere le hostess/steward associati a quel volo.
+Viene innanzitutto fatto partire un ciclo `for`, con un numero di iterazioni pari ad `assistantNumber`, numero persone da assegnare; ad ogni ciclo verrà infatti compiuto un assegnamento.
+
+I primi assistenti di volo ad essere assegnati sono quelli già disponibili all'aeroporto di partenza (le condizioni imposte sulla mappa perchè questa condizione sia soddisfatta sono che la chiave esista e che la lista collegata ad essa associata non sia vuota). Si procede quindi con la rimozione dalla mappa con il metodo `remove()` e l'aggiunta a `currentFlightAssistants` con il metodo `add(flightAssistant).
+
+Se il personale disponibile in aeroporto non dovesse essere sufficiente, verrà prelevato dalla lista generale `flightAssistants`, effettuando rimozione e aggiunta usando i metodi sopra descritti. Volendola spiegare da un punto di vista pratico, verrà chiesto (con l'opportuno preavviso) agli assistenti di volo di presentarsi in un aeroporto per effettuare il servizio.
+
+Infine verrà aggiunta, se mancante, la destinazione del volo (lista collegata compresa) alla mappa `flightAssistantsLocation` e proprio in questa lista vengono aggiunti tutti gli assistenti di volo in  `currentFlightAssistants`. In quest'ultimo passaggio è come se fossimo andati a simulare l'effettuarsi del volo e il conseguente spostamento del personale di cabina nell'aeroporto di destinazione.
+
+Si ritorna infine il vettore `currentFlightAssistants`.
+
+![[SimpleSchedulegetFlightAssistants.png]]
+#### Metodo `Boolean isAbilitationValid(String abilitation,String aircraftModel)`
+#### Metodo `Vector<Employee> getCommanders(int neededCommanders, Airport source, Airport destination,String aircraftModel)`
+
+#### Metodo `Vector<Employee> getFirstOfficers(int neededFirstOfficers, Airport source, Airport destination,String aircraftModel)`
+
+#### Metodo `boolean isFlightValid(Flight f,Aircraft a,int neededCommanders)`
