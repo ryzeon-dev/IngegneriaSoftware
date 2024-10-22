@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class SimpleSchedule  implements SchedulingStrategy {
+    private static final int MinutesPerHour = 60;
+    private static final int LONG_FLIGHT_TIME = 9;
     //Constraints
     private static final double RangeTollerance = 0.15;
     private final int turnArountAmountMin=30;
@@ -205,7 +207,7 @@ public class SimpleSchedule  implements SchedulingStrategy {
 
     //Check if flight is longer than 7 hours.
     private boolean isLongFlight(AirportWeighted airportWeighted) {
-        return (airportWeighted.duration / 60) >= 7;
+        return (airportWeighted.duration / MinutesPerHour) >= LONG_FLIGHT_TIME;
     }
     
 
@@ -321,7 +323,7 @@ public class SimpleSchedule  implements SchedulingStrategy {
             return false;
         }
 
-        if(aircraft.range < airportWeighted.weight || (aircraft.range-airportWeighted.weight) < aircraft.range*RangeTollerance){
+        if(aircraft.range < airportWeighted.weight || (aircraft.range-airportWeighted.weight) < airportWeighted.weight*RangeTollerance){
             return false;
         }
 
