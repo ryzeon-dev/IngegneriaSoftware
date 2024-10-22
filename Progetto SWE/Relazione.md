@@ -72,12 +72,13 @@ Vincenzo Marturano
 [[#Domain Model]]
 * [[#Aircraft]]
 * [[#Airport]]
+* [[#`DimensionClass`]]
 * [[#Credentials]]
-* [[#Dimension Class]]
+* [[#`EmployeeRole`]]
 * [[#Employee]]
-* [[#EmployeeRole]]
+ * [[#`FlightRoute`]]
 * [[#Flight]]
-* [[#FlightRoute]]
+
 
 [[#Business logic]]
 * [[#CredentialsManager]]
@@ -85,8 +86,11 @@ Vincenzo Marturano
 * [[#FlightSchedule]]
 * [[#ManagementSystem]]
 * [[#SimulatedClock]]
-* [[#SchedulingStrategy]]
-* [[#SimpleSchedule]]
+* [[#scheduling]]
+	* [[#`AirportWeighted`]]
+	* [[#`AirportGraph`]]
+	* [[#SchedulingStrategy]]
+	* [[#SimpleSchedule]]
 
 
 
@@ -388,7 +392,7 @@ Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabilisce
 ### `Credentials`
 //TODO
 
-#### `EmployeeRole`
+### `EmployeeRole`
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
 #### Override metodo `toString()`
 Ritorna una stringa corrispondente al ruolo
@@ -512,7 +516,7 @@ Ritorna vero se l'aeroporto r è contenuto in `adjacencyList`, falso altrimenti
 
 #### Metodo `LinkedList<AirportWeighted> getAdjacentVertex(Airport airport)`
 
-Restituisce la lista collegata di `AirportWeighted` associata all'aeroporto airport
+Restituisce la lista collegata di `AirportWeighted` associata all'aeroporto `airport`
 
 
 ### `SchedulingStrategy`
@@ -523,7 +527,15 @@ Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia;
 //FIXME descrivi meglio in generale la classe e le sue funzioni
 
 #### Metodo costruttore
-//TODO
+Inizializza `SimpleSchedule` con i Dao che vengono forniti in input; essi sono sono:
+- `employeeDao`, di tipo `EmployeeDaoI`
+- `airportDao`, di tipo `AirportDaoI`
+- `flightRouteDao`, di tipo `FlightRouteDaoI`
+- `parkingDao`, di tipo  `ParkingDaoI`
+Infine, nel costruttore viene chiamato il metodo `makeEmployeesVectors()`
+*per dettagli sul funzionamento di quest'ultimo, leggere la relativa sezione sottostante*
+[[#Metodo `makeEmployeesVectors()`]]
+
 #### Metodo `AirportGraph buildGraphFromFlightRoute()`
 Questo metodo si occupa concretamente della creazione del grafo degli aeroporti.
 Viene infatti dichiarato un oggetto `graph` di tipo `AirportGraph`. 
@@ -564,8 +576,43 @@ Si ritorna infine il vettore `currentFlightAssistants`.
 
 ![[SimpleSchedulegetFlightAssistants.png]]
 #### Metodo `Boolean isAbilitationValid(String abilitation,String aircraftModel)`
+Effettua il controllo che l'abilitazione dei piloti sia coerente con il modello dell'aereo.
+Prende come parametri due stringhe, `abilitation` e `aircraftModel`. Nel primo costrutto condizionale si effettua con il metodo `equals()` che questi due valori siano uguali.
+In caso affermativo restituisce `true`. Il secondo `if` è stato inserito per gestire il caso della famiglia Airbus 318/319/320/321, che richiedono tutti la stessa abilitazione; per un pilota abilitato all'A318, ad esempio, questo metodo deve ritornare `true` anche per tutti gli altri modelli sopra elencati. Se non viene trovata alcuna corrispondenza tra i due valori, viene restituito invece `false`.
+
 #### Metodo `Vector<Employee> getCommanders(int neededCommanders, Airport source, Airport destination,String aircraftModel)`
+Il metodo è molto simile a quanto visto per gli assistenti di volo, con l'unica differenza che sta nella verifica dell''aeromobile per cui ha l'abilitazione del comandante prima di assegnarlo al volo.
 
 #### Metodo `Vector<Employee> getFirstOfficers(int neededFirstOfficers, Airport source, Airport destination,String aircraftModel)`
+*Metodo concettualmente identico a quello sopra, cambiano soltanto i nomi degli oggetti usati; per delucidazioni confrontare la relativa documentazione*
 
 #### Metodo `boolean isFlightValid(Flight f,Aircraft a,int neededCommanders)`
+Metodo il cui scopo è la verifica che ci siano in numero di comandanti/primi ufficiali richiesti dal volo e il numero di assistenti di volo richiesti invece dall'aeromobile; restituisce `true` se queste condizioni sono sodisfatte, `false` altrimenti.
+
+#### Metodo `boolean isLongFlight(AirportWeighted airportWeighted)`
+Restituisce `true` se il volo è "lungo" ovvero, secondo quanto previsto in fase di progettazione, superiore a nove ore, `false` altrimenti.
+
+### Il cuore dell'applicazione: l'algoritmo di scheduling
+
+#### Metodo `Vector<Flight> run()` 
+Implementa il metodo omonimo presente nella classe `SchedulingStrategy`.
+E' il metodo centrale della nostra applicazione: si occupa di schedulare i voli, assegnargli il personale e i velivoli rispettando tutti i vincoli.
+
+Il tutto inizia costruendo il grafo per mezzo del metodo `buildGraphFromFlightRoute()`, già spiegato nei minimi dettagli in un paragrafo precedente, e ordinando le liste di adiacenza in modo tale che gli aeroporti contenuti siano ordinati per distanza crescente. Sulla lista di adiacenza di ciascun aeroporto (uno per uno per mezzo di un ciclo `for` su tutti i nodi del grafo) viene richiamato `sort()`. Il comparatore  che gli viene passato calcola semplicemente la distanza tra due aeroporti. 
+
+Sempre nel ciclo `for` ,tramite il `parkingDao`, estrae tutti gli aerei parcheggiati nell'aeroporto
+e tramite un altro ciclo va ad inserirli uno ad uno nella mappa `aircraftTime`, una `HashMap` avente come chiave un aereo e come valore `StartTime`. Quest'ultimo è un oggetto di tipo `LocalTime`, una classe Java che rappresenta il tempo usando il formato ore-minuti-secondi, e contiene il valore del tempo corrente ottenuto, per mezzo del metodo `now()`, dall'orologio di sistema e nel fuso orario di default; è troncato alle sole ore (metodo `truncatedTo(ChronoUnit.HOURS`)).
+
+L'ultima parte di questo primo ciclo riguarda il popolamento della mappa `aircraftLocation`, che ha come chiave un aeroporto e come valore un `Vector <Aircraft>`; rappresenta quindi per ciascun aeroporto l'insieme degli aerei che vi sono in quel momento in sosta.
+
+Per un numero di iterazioni stabilito a priori (queste rappresentano il numero di "spostamenti" di velivoli che vogliamo andare a simulare), viene poi richiamato`exploreBfs()`, *che esamineremo nel dettaglio subito dopo*.
+
+Questo metodo ritorna il vettore di voli richiesto.
+
+![[SimpleScheduleRun.png]]
+
+#### Metodo `void exploreBfs()`
+Questo metodo scorre tutti gli aeroporti presenti come vertici nel grafo e per ciascuno di essi chiama il metodo `bfs(graph, airport)`, passandogli appunto come parametri il grafo che abbiamo costruito e l'aeroporto in esame.
+
+#### Metodo void `bfs(AirportGraph G,Airport source)`
+Si realizza un attraversamento di tipo BFS sul grafo degli aeroporti. Questo algoritmo, spesso chiamato anche di ricerca in ampiezza agisce per livelli, scoprendo prima tutti i vertici che si trovano a distanza k dall'origine `airport` , poi tutti quelli che si trovano a distanza k+1 e così via...
