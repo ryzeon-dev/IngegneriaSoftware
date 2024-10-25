@@ -522,10 +522,7 @@ Restituisce la lista collegata di `AirportWeighted` associata all'aeroporto `air
 ### `SchedulingStrategy`
 Interfaccia che implementa il design pattern Strategy. Questo design pattern di tipo comportamentale (facente parte dei design pattern della Gang of Four GoF, un gruppo di quattro soggetti che misero assieme 23 design pattern ponendo a tutti gli effetto la base dell'ingegneria del software) consente di definire una famiglia di algoritmi rendendoli intercambiabili; in base alle necessità e al contesto specifico si seleziona a runtime un algoritmo piuttosto che un altro. Questa classe definisce tramite il metodo `Vector<Flight> run()` il comportamento generico che devono implementare tutto gli algoritmi concreti implementati in classi separate. L'utilizzo di questo design pattern consente di cambiare con facilità l'algoritmo che viene effettivamente impiegato per operare lo scheduling.
 ### `SimpleSchedule`
-Classe che si occupa effettivamente dello scheduling dei voli.
-Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente il core dell'applicazione.
-//FIXME descrivi meglio in generale la classe e le sue funzioni
-
+Classe che si occupa effettivamente dello scheduling dei voli, assegnando aeromobili e personale alle rotte garantendo il rispetto di tutti in vincoli. Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente la mission dell'applicazione.
 #### Metodo costruttore
 Inizializza `SimpleSchedule` con i Dao che vengono forniti in input; essi sono sono:
 - `employeeDao`, di tipo `EmployeeDaoI`
@@ -616,3 +613,33 @@ Questo metodo scorre tutti gli aeroporti presenti come vertici nel grafo e per c
 
 #### Metodo void `bfs(AirportGraph G,Airport source)`
 Si realizza un attraversamento di tipo BFS sul grafo degli aeroporti. Questo algoritmo, spesso chiamato anche di ricerca in ampiezza agisce per livelli, scoprendo prima tutti i vertici che si trovano a distanza k dall'origine `airport` , poi tutti quelli che si trovano a distanza k+1 e così via...
+Questo procedimento si realizza per mezzo dell'inserimento di tutti i nodi che non sono ancora stati esaminati in una coda con politica First In First Out, collocandoli in un'altra struttura dati una volta che lo saranno.
+
+Questo metodo rende in input due parametri: `G`, il grafo degli aeroporti e `source`, il nodo radice dal quale viene dato inizio all'attraversamento BFS.
+
+Per prima cosa vado a popolare `visited`: una Mappa avente come chiave un aeroporto e come valore un booleano; l'utilità di questa è indicare se un aeroporto è stato visitato o man mano che si procede con l'esecuzione dell'attraversamento. Questa viene inizializzata per mezzo di un ciclo `for` che inserisce tutti gli aeroporti ponendo a `false`il valore (all'inizio infatti nessuno degli aeroporti è stato visitato). Il paso successivo è la creazione di una coda FIFO di aeroporti, nella quale si va ad aggiungere `source`; contestualmente si effettua anche la modifica anche, per mezzo del metodo `replace(aiport,newValue)`, del valore in `visited` a `true`.
+
+Inizia poi il ciclo principale, che agisce finche `fifo` non è vuota. 
+Ad ogni iterazione si inizia rimuovendo un aeroporto, modificandone il valore  in `visited` a `true`. Si procede poi con al costruzione della lista con priorità `parkedAircraftsPq`, una lista di `aircraft` nella quale gli aerei vengono ordinati sulla base del range, da quello con l'autonomia minore a quello con l'autonomia maggiore; viene riempita estraendo gli aerei da `aircraftLocation` limitandosi però esclusivamente a quelli parcheggiati nell'aeroporto in esame dal ciclo in quel momento.
+
+Viene fatto partire un ciclo interno, il quale procederà fino a quando ci saranno elementi in `parkedAircraftsPq`. E entriamo in un altro ciclo annidato, che scorrerà su tutti gli aeroporti connessi con quello considerato (che corrispondono a quelli adiacenti nel grafo).
+In questo ciclo, oltre al controllo iniziale se ci siano ancora oggetti `parkedAircraftsPq` (potrebbe capitare che non ci siano, visto che il ciclo ne prevede una rimozione), viene estratto `nextAircraft`, aereo candidato ad effettuare la rotta; se sono soddisfatti tutti i vincoli (ovvero l'aeroporto di destinazione non è ancora stato visitato e l'aereo scelto è in grado di effettuare il volo, metodo `canFly()`), si può proseguire con la modifica della posizione del velivolo dall'aeroporto corrente a quello di destinazione, tutto questo andando ad agire sulla Hash `aircraftLocation`. Nel caso in cui un aeroporto non sia presente in tale struttura, si rimedia operando l'aggiunta.  *Il codice di tutto quest'ultimo paragrafo è visibile nell'immagine sottostante*
+
+![[SimpleSchedulebfs1.png]]
+
+Una volta scelto il velivolo, si procede a:
+- calcolare il tempo di decollo,(dato dal "tempo di simulazione" corrente sommato al tempo di turnaround (Il turnaround, dichiarato come intero, è il tempo d sosta a terra di un aeromobile necessario per le operazioni di sbarco passeggeri, imbarco passeggeri, rifornimento carburante, pulizie, imbarco del catering, merce e posta)
+- modificare il suo "tempo di simulazione", rendendolo pari all'orario in cui questo sarà disponibile nel nuovo aeroporto.
+- assegnare le assistenti di volo, richiamando la funzione `getFlightAssistants(nextAircraft.assistantsNumber, airport, airportWeighted.airport)`
+- Definire il numero di comandanti e primi ufficiali, pari a 2 nel caso in cui il metodo `isLongFlight(airportWeighted)` restituisca `true`, 1 altrimenti
+- assegnare comandanti e primi ufficiali, rispettivamente attraverso `getCommanders(neededCommanders, airport, airportWeighted.airport, nextAircraft.model)` e `getFirstOfficers(neededCommanders, airport, airportWeighted.airport, nextAircraft.model);`
+
+Fatto tutto questo, si costruisce finalmente il volo fornendo tutti i parametri; si istanzia quindi un nuovo oggetto `flight` di tipo `Flight`. *Vedi immagine sottostante*
+
+![[SimpleSchedulebfs2.png]]
+
+Prima di registrarlo ufficialmente, si fa infine un ultimo controllo sul numero di componenti dell'equipaggio usando `isFlightValid(flight, nextAircraft, neededCommanders)`.
+Se tutto va a buon fine, si aggiunge il volo al vettore `flights` di tutti i voli e lo si registra nel database.
+
+Come da procedura BFS, si aggiunge poi l'aeroporto di destinazione alla coda `fifo`.
+ 
