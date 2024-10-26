@@ -6,11 +6,9 @@ import model.Flight;
 import system.scheduling.schedulingStrategy.SchedulingStrategy;
 
 public class FlightSchedule {
-    FlightManager manager;
-    SchedulingStrategy strategy=null;
+    private SchedulingStrategy strategy=null;
 
-    public FlightSchedule(FlightManager manager,SchedulingStrategy strategy) {
-        this.manager = manager;
+    public FlightSchedule(SchedulingStrategy strategy) {
         this.strategy = strategy;
     }
 

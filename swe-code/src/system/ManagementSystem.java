@@ -9,7 +9,7 @@ import java.util.Vector;
 
 public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
-    public FlightManager flightManeger;
+    public FlightManager flightManager;
 
     public FlightSchedule flightSchedule;
     public Vector<Flight> scheduledFlights;
@@ -18,7 +18,7 @@ public class ManagementSystem extends Thread {
     private Vector<FlightRoute> flightRoutes;
 
     public ManagementSystem(FlightManager manager,FlightSchedule fSchedule) {
-        this.flightManeger = manager;
+        this.flightManager = manager;
         this.flightSchedule = fSchedule;
 
         this.flightRoutes = flightRouteDao.getAll();
@@ -41,7 +41,7 @@ public class ManagementSystem extends Thread {
     }
 
     public Vector<Aircraft> getAircraftDetails() {
-        return this.flightManeger.aircrafts;
+        return this.flightManager.getAircrafts();
     }
 
     public String getRouteDetails() {
@@ -54,7 +54,7 @@ public class ManagementSystem extends Thread {
             String arrivalCity = "";
             String arrivalCountry = "";
 
-            for (var airport : this.flightManeger.airports) {
+            for (var airport : this.flightManager.getAirports()) {
                 if (airport.icao.equals(route.departure)) {
                     departureCity = airport.city;
                     departureCountry = airport.nation;

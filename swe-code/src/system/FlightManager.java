@@ -8,20 +8,19 @@ import dao.interfaces.EmployeeDaoI;
 import model.Aircraft;
 import model.Airport;
 import model.Employee;
-import model.EmployeeRole;
 
 public class FlightManager {
     private AircraftDaoI aircraftDao;
-    public Vector<Aircraft> aircrafts;
+    private Vector<Aircraft> aircrafts;
 
     private EmployeeDaoI employeeDao;
-    public Vector<Employee> employees;
-    public Vector<Employee> commanders = new Vector<>();
-    public Vector<Employee> firstOfficers = new Vector<>();
-    public Vector<Employee> flightAssistants = new Vector<>();
+    private Vector<Employee> employees;
+    private Vector<Employee> commanders = new Vector<>();
+    private Vector<Employee> firstOfficers = new Vector<>();
+    private Vector<Employee> flightAssistants = new Vector<>();
 
     private AirportDaoI airportDao;
-    public Vector<Airport> airports = new Vector<>();
+    private Vector<Airport> airports = new Vector<>();
 
 
     public FlightManager(AircraftDaoI aircraftDao, EmployeeDaoI employeeDao, AirportDaoI airportDao) {
@@ -35,8 +34,8 @@ public class FlightManager {
     }
 
     private void makeEmployeesVectors() {
-        Vector<Employee> employees = employeeDao.getAll();
-        this.employees = employees;
+
+        this.employees = employeeDao.getAll();
 
         for (Employee employee : employees) {
             switch (employee.role) {
@@ -91,6 +90,15 @@ public class FlightManager {
 
         return null;
     }
+
+    public Vector<Airport> getAirports(){
+        return this.airports;
+    }
+
+    public Vector<Aircraft> getAircrafts(){
+        return this.aircrafts;
+    }
+
 
     public int employeesNumber() {
         return this.employees.size();

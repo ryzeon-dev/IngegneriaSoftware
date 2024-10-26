@@ -132,7 +132,7 @@ public class CLI {//extends Thread {
                 System.out.println();
                 switch (choice) {
                     case 1: {
-                        for (var employee : managementSystem.flightManeger.getAllEmployees()) {
+                        for (var employee : managementSystem.flightManager.getAllEmployees()) {
                             System.out.println(employee);
                         }
                         waitUntilEnter();
@@ -140,7 +140,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 2: {
-                        for (var commander : managementSystem.flightManeger.getCommanders()) {
+                        for (var commander : managementSystem.flightManager.getCommanders()) {
                             System.out.println(commander + "\n");
                         }
                         waitUntilEnter();
@@ -148,7 +148,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 3: {
-                        for (var firstOfficer : managementSystem.flightManeger.getFirstOfficiers()) {
+                        for (var firstOfficer : managementSystem.flightManager.getFirstOfficiers()) {
                             System.out.println(firstOfficer + "\n");
                         }
                         waitUntilEnter();
@@ -156,7 +156,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 4: {
-                        for (var flightAssistant : managementSystem.flightManeger.getFlightAssistants()) {
+                        for (var flightAssistant : managementSystem.flightManager.getFlightAssistants()) {
                             System.out.println(flightAssistant + "\n");
                         }
                         waitUntilEnter();
@@ -177,8 +177,8 @@ public class CLI {//extends Thread {
                             }
                         }
 
-                        if (requestedId >= 0 && requestedId < managementSystem.flightManeger.employeesNumber()) {
-                            System.out.println(managementSystem.flightManeger.getEmployeeById(requestedId).getFullData());
+                        if (requestedId >= 0 && requestedId < managementSystem.flightManager.employeesNumber()) {
+                            System.out.println(managementSystem.flightManager.getEmployeeById(requestedId).getFullData());
                             waitUntilEnter();
 
                         } else {
@@ -211,7 +211,7 @@ public class CLI {//extends Thread {
                 return;
             }
             int id = credentials.id;
-            System.out.println(managementSystem.flightManeger.getEmployeeById(id).getFullData());
+            System.out.println(managementSystem.flightManager.getEmployeeById(id).getFullData());
 
             waitUntilEnter();
         }
@@ -305,7 +305,7 @@ public class CLI {//extends Thread {
             return;
         }
 
-        Employee employee = this.managementSystem.flightManeger.getEmployeeById(credentials.id);
+        Employee employee = this.managementSystem.flightManager.getEmployeeById(credentials.id);
 
         while (true) {
             System.out.println("\nPersonal area menu:");
