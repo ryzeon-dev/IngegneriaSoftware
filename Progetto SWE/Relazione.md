@@ -445,8 +445,29 @@ Contiene il codice ICAO dell'aeroporto di arrivo
 
 ### `CredentialsManager`
 ### `FlightManager`
-### `FlightSchedule`
-### `ManagementSystem`
+
+Può essere vista come un "aggregatore di dati";  riceve vari DAO come parametri e, grazie ad essi, va a costruire oggetti utili per varie operazioni dell'applicazione. In questo modo può essere passato un oggetto di tipo `manager` come parametro, invece di andare a passare verbosamente ogni volta tutti i singoli DAO.
+#### Metodo costruttore
+A partire dai DAO che riceve in input, inizializza tutta una serie di strutture dati utili nell'applicazione:
+- `aircrafts`, un vettore di aerei
+	Ci vengono inseriti, prelevandoli da `aircraftDao`, tutti gli aeromobili
+- `airports` un vettore di aeroporti
+	Ci vengono inseriti, prelevandoli da `airportDao`, tutti gli aeroporti
+- `employees`, `commanders`, `firstOfficers` e` flightAssistants`
+	*Vedi metodo sottostante*
+
+#### Metodo `makeEmployeesVectors()`
+Si occupa di prelevare i dati di tutti i dipendenti operanti sui velivoli della compagnia e suddividerli in diverse strutture dati in base ai loro effettivi ruoli. In dettaglio, in prima battuta vengono prelevati dal database, per mezzo di `employeedao.getall(),` tutti i dipendenti della compagnia e inseriti nel vettore di dipendenti `employees`. Viene poi fatto partire un ciclo `for` che scorre tutto il vettore andando ad aggiungere alla lista collegata corrispondente con il suo valore di `role`.
+Le tre strutture dati sono:
+- `Queue<Employee> commanders`
+- `Queue<Employee> firstOfficers`
+- `Queue<Employee> flightAssistants`
+
+#### Metodo `int employeesNumber()`
+Metodo che restituisce semplicemente il numero degli impiegati
+
+#### Classici metodo getter e setter, metodo `toString()`
+
 ### `SimulatedClock`
 
 Questa classe implementa un orologio simulato, il quale consente di eseguire la simulazione dei voli eseguiti e delle posizioni dei velivoli e del personale in ogni momento. La classe SimulatedClock estende la classe Thread. Include un counter che scandisce lo scorrere dei secondi: per mantenerne sincronizzato il valore ed evitare disallineamenti si ricorre al semaforo mutex. 
@@ -519,7 +540,7 @@ Ritorna vero se l'aeroporto r è contenuto in `adjacencyList`, falso altrimenti
 Restituisce la lista collegata di `AirportWeighted` associata all'aeroporto `airport`
 
 
-### `SchedulingStrategy`
+### `SchedulingStrategy`  //FIXME refactoring has been made
 Interfaccia che implementa il design pattern Strategy. Questo design pattern di tipo comportamentale (facente parte dei design pattern della Gang of Four GoF, un gruppo di quattro soggetti che misero assieme 23 design pattern ponendo a tutti gli effetto la base dell'ingegneria del software) consente di definire una famiglia di algoritmi rendendoli intercambiabili; in base alle necessità e al contesto specifico si seleziona a runtime un algoritmo piuttosto che un altro. Questa classe definisce tramite il metodo `Vector<Flight> run()` il comportamento generico che devono implementare tutto gli algoritmi concreti implementati in classi separate. L'utilizzo di questo design pattern consente di cambiare con facilità l'algoritmo che viene effettivamente impiegato per operare lo scheduling.
 ### `SimpleSchedule`
 Classe che si occupa effettivamente dello scheduling dei voli, assegnando aeromobili e personale alle rotte garantendo il rispetto di tutti in vincoli. Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente la mission dell'applicazione.
@@ -550,13 +571,6 @@ Viene quindi effettuata la verifica aggiuntiva `(aircraft.range-airportWeighted.
 ![[SimpleSchedulecanFly.png]]
 
 #### Gestione del personale
-#### Metodo `makeEmployeesVectors()`
-Si occupa di prelevare i dati di tutti i dipendenti operanti sui velivoli della compagnia e suddividerli in diverse strutture dati in base ai loro effettivi ruoli. In dettaglio, in prima battuta vengono prelevati dal database, per mezzo di `employeedao.getall(),` tutti i dipendenti della compagnia e inseriti nel vettore di dipendenti `employees`. Viene poi fatto partire un ciclo `for` che scorre tutto il vettore andando ad aggiungere alla lista collegata corrispondente con il suo valore di `role`.
-Le tre strutture dati sono:
-- `Queue<Employee> commanders`
-- `Queue<Employee> firstOfficers`
-- `Queue<Employee> flightAssistants`
-
 #### Metodo `Vector<Employee> getFlightAssistants(int assistantNumber,Airport source,Airport destination)`
 Questo metodo esegue l'assegnazione degli assistenti di volo ad uno specifico volo.
 Al suo interno, oltre a quanto dichiarato e già descritto precedentemente, viene usata la mappa `flightAssistantsLocation`che ha come chiave un `aiport` e come valore una lista di impiegati; in realtà, per quanto sottolineato sopra, la lista è di soli assistenti di volo.
@@ -642,4 +656,26 @@ Prima di registrarlo ufficialmente, si fa infine un ultimo controllo sul numero 
 Se tutto va a buon fine, si aggiunge il volo al vettore `flights` di tutti i voli e lo si registra nel database.
 
 Come da procedura BFS, si aggiunge poi l'aeroporto di destinazione alla coda `fifo`.
- 
+
+### `FlightSchedule`
+Classe che va ad implementare il design pattern Strategy; può infatti prendere in input e poi eseguire una qualsiasi `SchedulingStrategy` ed andarla ad eseguire (nel nostro caso al momento l'utilità, rispettando però l'Open-Closed Principle, è puramente concettuale data l'esistenza di una solo strategia, `SimpleSchedule`, ma potrebbero esserne definite di nuove in futuro...  )
+
+#### Metodo Costruttore
+Prende in input un oggetto di tipo `SchedulingStretegy` che assegna all'attributo `strategy` e che rappresenta la strategia di scheduling da applicare.
+
+#### Metodo `Vector<Flight> makeSchedule()`
+Se l'attributo `strategy` è diverso da `null` ,ovvero è stata assegnata una strategia, ne va ad eseguire il metodo `run()` andando così ad effettuare lo scheduling. Nel caso in cui `strategy=null`invece esce subito. 
+Restituisce in output tutti i voli che sono stati generati dall'algoritmo.
+### `ManagementSystem`
+ E' la classe che istanzia praticamente tutto ciò che serve per il funzionamento dall'applicazione e ne controlla l'andamento. L'oggetto di questa classe viene inoltre fornito alla `CLI` per la resa grafica delle informazioni.
+#### Metodo costruttore
+Oltre assegnare gli oggetti di tipo `FlightManager`, `FlightSchedule` e inserire tutte le rotte, al solito prelevate per mezzo di `flightRouteDao.getAll()`, il costruttore si occupa anche di far partire l'orologio simulato `clock`. Assolve a questo compito il metodo `start()` ,che fa cambiare lo stato dell'istanza del Thread sul quale viene richiamato in Running.
+
+#### Metodo void `runScheduling()`
+Lancia lo scheduling richiamano il metodo `makeSchedule()` su `flightSchedule`
+
+#### Metodo `void quit()`
+Ferma lo scorrere dell'orologio bloccando il Thread `clock`. Prima viene chiamato il metodo `interrupt()` che lo interrompe e poi il metodo `join()` per l'attesa che questo abbia finito quanto doveva prima di "morire". Come previsto da quest'ultimo metodo si gestisce l'eccezione `InterruptedException`.
+
+![[ManagementSystem.png]]
+#### Vari metodi getter
