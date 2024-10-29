@@ -222,9 +222,6 @@ Contiene diversi metodi, andremo ad esaminarli uno ad uno comprendendone a pieno
 
 ####  Metodo Costruttore 
 Prende in input un oggetto di tipo `ManagementSystem`, che sarà poi consultato per la lettura dei dati, e istanzia un oggetto del tipo `CredentialsManager`, il quale sarà invece impiegato per autenticare gli utenti e quindi fornire i corretti privilegi di accesso nelle varie sezioni del sistema.
-
-//TODO Spiegazione Privilegi
-
 #### `void run()`
 Predispone un menù iniziale che permette di accedere a diverse categorie di informazioni in base al numero da 1 a 6 che viene inserito:
 
@@ -235,36 +232,48 @@ Predispone un menù iniziale che permette di accedere a diverse categorie di inf
 5. Area del personale 
 6. Esci
 
+Il caso in cui non sia inserito uno di questi caratteri prevede il lancio dell'eccezione di tipo `InputMismatchException`, che sarà gestita chiedendo di digitare nuovamente un comando ricordando che deve essere un numero da 1 a 6.
+
+![[CLIMainPage.png|400]]
+
 #### `void  waitUntilEnter()`
 <p align="justify">Predispone l'attesa del comando "Invio" una volta inserito il numero</p>
 
 #### (1) `void accessEmployeesData()`
 
-Stampa le informazioni riguardanti tutti gli impiegati che lavorano in ITA Airways. Per accedere a quest'area è richiesto un login, ci sono due modalità:
+Stampa le informazioni riguardanti tutti gli impiegati che lavorano in ITA Airways. 
 
+*Tutti i dati relativi al personale vengono restituiti in questa forma*
+![[CLI1format.png|300]]
 
-- Modalità admin (digitando username "admin", in questo caso sarà possibile accedere a tutti i dati disponibili nel sistema.
+Per accedere a quest'area è richiesto un login, ci sono due modalità:
+
+- #### Modalità admin 
+(digitando username "admin", in questo caso sarà possibile accedere a tutti i dati disponibili nel sistema)
+
+![[CLI1gen.png|300]]
+
 Sarà mostrato un ulteriore menù che consente l'accesso a diverse informazioni in base al numero che viene digitato
   - Visualizza tutti gli impiegati, "View all employees"
-    - Stampa i dati riguardanti tutti gli impiegati; questi sono contenuti nel managementSystem e vengono estratti attraverso il metodo `getAllEmployees()`
+	    Stampa i dati riguardanti tutti gli impiegati; questi sono contenuti nel `managementSystem` e vengono estratti attraverso il metodo `getAllEmployees()`
   - Visualizza tutti i comandanti, "View all commanders"
-    - Stampa i dati sui comandanti della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getCommanders()`
-
+	    Stampa i dati sui comandanti della compagnia; questi sono contenuti in `managementSystem` e vengono estratti mediante il metodo `getCommanders()`
   - Visualizza tutti i primi ufficiali, "View all first officers"
-    - Stampa i dati sui primi ufficiali della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getFirstOfficers()`
+	    Stampa i dati sui primi ufficiali della compagnia; questi sono contenuti in `managementSystem` e vengono estratti mediante il metodo `getFirstOfficers()`
   - Visualizza tutti gli assistenti di volo , "View all flight assistants"
-    - Stampa i dati sugli assistenti di volo della compagnia; questi sono contenuti in managementSystem e vengono estratti mediante il metodo `getFlightAssistants()`
-
+		Stampa i dati sugli assistenti di volo della compagnia; questi sono contenuti in `managementSystem` e vengono estratti mediante il metodo `getFlightAssistants()`
   - Visualizza uno specifico impiegato, "View a specific employee"
-    - Dopo aver inserito il suo id, verifica che sia valido (nel caso in cui non lo fosse notifica l'errore e chiede all'utente di riprovare) e stampa poi i suoi dettagli, sempre contenuti in managementSystem, mediante il metodo `getEmployeeById(requestedId)`
+	    Dopo aver inserito il suo id, verifica che sia valido (nel caso in cui non lo fosse notifica l'errore e chiede all'utente di riprovare) e stampa poi i suoi dettagli, sempre contenuti in `managementSystem`, mediante il metodo `getEmployeeById(requestedId)`
 
+	![[CLI1_5.png|200]]
+			
   - Indietro, "back"
-    - Consente di tornare al menù principale
+	    Consente di tornare al menù principale
 
-- Modalità user (inserendo username e password personali)
+- #### Modalità user 
+	(inserendo username e password personali)
   - A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato; i dati, sempre contenuti in `ManagementSystem`, sono ricavati mediante il metodo `getEmployeeById(requestedId)`
 		
-
 
 #### (2) `void accessAircraftDetails()`
 Stampa i dettagli di tutti gli aeromobili della compagnia.
@@ -295,7 +304,7 @@ Consente di uscire dal programma
 ## db
 
 ### PgDB
-Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
+//TODO Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
 
 ## DAO
 
