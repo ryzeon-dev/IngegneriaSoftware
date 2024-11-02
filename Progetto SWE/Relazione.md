@@ -272,17 +272,25 @@ Sarà mostrato un ulteriore menù che consente l'accesso a diverse informazioni 
 
 - #### Modalità user 
 	(inserendo username e password personali)
-  - A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato; i dati, sempre contenuti in `ManagementSystem`, sono ricavati mediante il metodo `getEmployeeById(requestedId)`
+  - A seguito di un controllo della correttezza dei dati di login, verranno mostrati i dettagli sull'utente che ha effettuato l'accesso; i dati, sempre contenuti in `ManagementSystem`, sono ricavati mediante il metodo `getEmployeeById(requestedId)`
+	
+	
+	![[CLI1_user.png|300]]
 		
 
 #### (2) `void accessAircraftDetails()`
 Stampa i dettagli di tutti gli aeromobili della compagnia.
 L'accesso a queste informazioni è consentito esclusivamente a personale che possegga i privilegi di admin. Le informazioni desiderate, sempre contenute nell'oggetto `ManagementSystem`, vengono estratte mediante il metodo `getAircraftDetails()`
 
+*Formato col quale vengono presentati i dati di un aeromobile*
+![[CLI2.png|200]]
 
 #### (3) `void accessRoutesDetails()`
 Stampa i dettagli sulle rotte disponibili in archivio prelevandole dall'oggetto ManagementSystem
 Il metodo eseguito è getRouteDetails(); 
+
+*Formato col quale vengono presentati i dati relativo alle rotte*
+![[CLI3.png|350]]
 
 #### (4) `void accessFlightSchedule()`
 
@@ -292,10 +300,20 @@ Sono previste due modalità distinte in base al soggetto che utilizza il program
 - Modalità admin, consente l'accesso a tutti i voli previsti
 - Modalità user, consente al comandante di verificare solo il suo programma, rivedere questa parte del codice.
 
+*Ecco ad esempio la visualizzazione di un volo*
+![[CLI4.png|350]]
 
 #### (5) `void accessPersonalArea()`
 
-//FIXME differenza con flight schedule??
+Consente a ciascun utente, tramite autenticazione con username e password, di accedere ad un'area personale: quest'ultima si presenta con un ulteriore menù, le cui voci sono:
+- Visualizza i dai personali, "Personal data view"
+	Vengono stampati tutti i dati dell'utente che ha effettuato l'accesso
+- Visualizza lo scheduling personale, "Personal scheduling view"
+	Stampa tutti i voli in cui colui che ha effettuato l'accesso dovrà prestare servizio
+- Indietro, "Quit"
+	    Consente di tornare al menù principale
+	
+(Le visualizzazioni usate in questa sezione sono le medesime che sono già state mostrate nella documentazione delle altre)
 #### (6) `void quit()`
 Consente di uscire dal programma
  
@@ -412,7 +430,7 @@ Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, an
 Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
 
 - `id`, di tipo Integer \
-Un identificatore univoco 
+	Un identificatore univoco 
 - `name`, di tipo String \
 Nome del dipendente
 - `lastName`, di tipo String  \
@@ -449,6 +467,28 @@ Contiene il codice ICAO dell'aeroporto di arrivo
 #### Classico Override dei metodi `hashCode()`, `equals(Object obj)` e `toString()`
 
 ### `Flight`
+Modella i singoli voli che sono effettuati dalla compagnia (si intendono proprio voli singoli, ciascuno con del personale, un aereo specifico)
+#### Metodo costruttore 
+Inizializza un oggetto di tipo `Flight` con i valori che gli vengono forniti in input. Gli attributi sono:
+- `id`, di tipo Integer \
+Un identificatore univoco
+- `departureTime`, di tipo Stringa \
+Orario di partenza previsto per il volo
+- `passengerNumber`, di tipo Integer \
+Numero di passeggeri che saliranno sul volo. La gestione dei passeggeri, per la maggior parte trascurata in questo applicativo, potrebbe essere effettuata da un altro sistema che si occupi della gestione delle prenotazioni e che vada poi a integrarsi con questo (nonostante non sia stato fatto, abbiamo ugualmente fornito tutti gli attributi perchè questo possa eventualmente essere implementato in versioni future)
+- `route`, di tipo Flightroute \
+Tratta che effettuerà questo volo
+*Per approfondimenti sulla rotta, consultare l'apposita sezione dedicata*
+- `aircraftPlate`, di tipo Stringa 
+Contiene l'identificatore univoco dell'aeromobile che è stato assegnato al volo
+- `commanders`, `firstOfficers` e `flightAssistants`; vettori di `Employee`
+Contengono rispettivamente il/i comandante/i, il/i primo/i ufficiale/i e gli assistenti di volo che presteranno servizio su questo volo.
+
+#### Metodo `void commitFlight()`
+Questo metodo permette di aggiungere un volo al database.
+Innanzitutto si istanza un oggetto di tipo `FlightDaoPg` e poi si va a richiamarne il metodo `commitFlight(this)` per operarne l'aggiunta.
+
+#### Override metodo `toString()`
 
 ## Business logic (system)
 
@@ -487,7 +527,7 @@ Questo metodo fa partire il SimulatedClock.
 Dopo 1000 millisecondi (1 secondo) verrà acquisito, attraverso `mutex.acquire()` il valore del counter che sarà incrementato di uno (questo valore indica sostanzialmente il numero di secondi trascorsi fino a quel momento). Una volta fatto ciò il counter viene rilasciato.
 L'utilizzo del metodo `sleep()` impone la gestione dell'eccezione InterruptedException, che è comunque lasciata di default.
 
-![[SimulatedClockrun.png]]
+![[SimulatedClockrun.png|400]]
 
 #### Metodo `String getTime()`
 Restituisce una stringa composta "ore trascorse : minuti trascorsi".
@@ -555,13 +595,13 @@ Interfaccia che implementa il design pattern Strategy. Questo design pattern di 
 Classe che si occupa effettivamente dello scheduling dei voli, assegnando aeromobili e personale alle rotte garantendo il rispetto di tutti in vincoli. Viene implementato il metodo `Vector<Flight> run()` dichiarato nell'interfaccia; è questo il metodo che effettua concretamente la mission dell'applicazione.
 #### Metodo costruttore
 Inizializza `SimpleSchedule` con i Dao che vengono forniti in input; essi sono sono:
-- `employeeDao`, di tipo `EmployeeDaoI`
-- `airportDao`, di tipo `AirportDaoI`
 - `flightRouteDao`, di tipo `FlightRouteDaoI`
 - `parkingDao`, di tipo  `ParkingDaoI`
-Infine, nel costruttore viene chiamato il metodo `makeEmployeesVectors()`
-*per dettagli sul funzionamento di quest'ultimo, leggere la relativa sezione sottostante*
-[[#Metodo `makeEmployeesVectors()`]]
+Inizializza anche `manager`, di tipo `FlightManager`, con l'omonimo parametro
+Infine, nel costruttore viene chiamato il metodo `makeEmployeesQueues()`
+
+#### Metodo `void makeEmployeesQueues()`
+Questo metodo opera semplicemente un trasferimento di dati, prelevando i dipendenti dalle liste dell'oggetto `manager` e inserendoli nelle omonime code, funzionali all'esecuzione dell'algoritmo
 
 #### Metodo `AirportGraph buildGraphFromFlightRoute()`
 Questo metodo si occupa concretamente della creazione del grafo degli aeroporti.
