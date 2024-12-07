@@ -1,7 +1,7 @@
 package db;
 
 public class ConstantQueries {
-    /*public static final String getCompanyAircrafts =
+    public static final String getCompanyAircrafts =
         "select ai.plate, a.manufacturer, a.model, a.specification, " +
         "a.range, a.assistants_number, a.class, a.seats " +
         "from aircraft_instance ai join aircraft a on " +
@@ -53,6 +53,22 @@ public class ConstantQueries {
                 departureTime + "', " + passengersNumber + ", " + route + ", '" + aircraft + "');";
     }
 
-    public static String getLastFlightId =
-        "select id from flight where id=(select max(id) from flight);";*/
+    public static final String getLastFlightId =
+        "select id from flight where id=(select max(id) from flight);";
+
+    public static final String getParkedAirfrafts(String icao) {
+        return "select ai.plate, a.manufacturer, a.model, a.specification, a.range, a.assistants_number, a.class, a.seats "+
+                "from parking p "+
+                "join aircraft_instance ai on ai.plate = p.aircraft "+
+                "join aircraft a on ai.aircraft = a.id "+
+                "where p.airport = " + icao + ";";
+    }
+
+    public static final String insertAircraft(String manufacturer, String model, String specification, String range, String assistantsNumber, String dimensionClass, String seats) {
+        return "INSERT INTO aircraft " +
+            "(manufacturer, model, specification, range, assistants_number, class, seats) values (" +
+            "'" + manufacturer + "', '" + model + "', '" + specification + "', " + range + ", " + assistantsNumber + ", '" + dimensionClass + "', " + seats + ");";
+    }
+
+
 }

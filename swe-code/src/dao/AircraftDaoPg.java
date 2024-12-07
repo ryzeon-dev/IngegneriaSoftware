@@ -50,7 +50,10 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
         params.add(model);
         params.add(specification);
 
-        Vector<Vector<String>> modelId = db.runPstmtAndFetch(PreparedStatementQueries.getAircraftId, params);
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getAircraftId);
+
+
+        Vector<Vector<String>> modelId = db.runPstmtAndFetch(, params);
 
         params.clear();
         params.add(plate);

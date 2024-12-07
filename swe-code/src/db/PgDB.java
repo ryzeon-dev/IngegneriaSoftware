@@ -65,15 +65,26 @@ public class PgDB {
         return row;
     }
 
+    public PreparedStatement makePreparedStatement(String query) {
+        try {
+            return this.connection.prepareStatement(query);
+
+        } catch (SQLException e) {
+            System.out.println("fatal error: cannot create prepared statment for query \"" + query + "\" because of: " + e.toString());
+            return null;
+        }
+    }
+
+    /*
     public Vector<Vector<String>> runPstmtAndFetch(String query, ArrayList<String> params){
         Vector<Vector<String>> result = new Vector<>();
-        System.out.println(query);
-        System.out.println(params);
-        try (PreparedStatement pstmt = this.connection.prepareStatement(query)){
+
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             int index = 1;
 
             for (var param : params) {
-                pstmt.setString(index, param);
+                preparedStatement.setS
                 index += 1;
             }
 
@@ -93,9 +104,9 @@ public class PgDB {
             System.exit(1);
         }
 
-
         return result;
     }
+    */
 
     public boolean run(String query) {
         try {
