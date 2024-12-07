@@ -1,13 +1,16 @@
 package dao;
 
 
-import db.ConstantQueries;
+import dao.interfaces.ParkingDaoI;
+import db.PreparedStatementQueries;
 import db.PgDB;
+import db.PreparedStatementQueries;
 import model.Employee;
 import model.Flight;
 import model.FlightRoute;
 import org.checkerframework.checker.units.qual.C;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class FlightDaoPg implements dao.interfaces.FlightDaoI {
@@ -16,7 +19,7 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
        Vector<Flight> flights = new Vector<>();
 
         PgDB db = new PgDB();
-        Vector<Vector<String>> res = db.runAndFetch(ConstantQueries.getFlights);
+        Vector<Vector<String>> res = db.runAndFetch(PreparedStatementQueries.getFlights);
         db.close();
 
         for (var row : res) {
@@ -47,7 +50,10 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
     private Vector<Employee> getCommanders(String id) {
         PgDB db = new PgDB();
 
-        var result = db.runAndFetch(ConstantQueries.getCommandersForFlightID(id));
+        ArrayList<String> params = new ArrayList<>();
+        params.add(id);
+
+        var result = db.runPstmtAndFetch(PreparedStatementQueries.getCommandersForFlightID, params);
         db.close();
 
         Vector<Employee> commanders = new Vector<>();
@@ -65,7 +71,10 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
     private Vector<Employee> getFirstOfficers(String id) {
         PgDB db = new PgDB();
 
-        var result = db.runAndFetch(ConstantQueries.getFirstOfficersForFlightID(id));
+        ArrayList<String> params = new ArrayList<>();
+        params.add(id);
+
+        var result = db.runPstmtAndFetch(PreparedStatementQueries.getFirstOfficersForFlightID, params);
         db.close();
 
         Vector<Employee> firstOfficers = new Vector<>();
@@ -83,7 +92,10 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
     private Vector<Employee> getFlightAssistants(String id) {
         PgDB db = new PgDB();
 
-        var result = db.runAndFetch(ConstantQueries.getFlightAssistantsForFlightID(id));
+        ArrayList<String> params = new ArrayList<>();
+        params.add(id);
+
+        var result = db.runPstmtAndFetch(PreparedStatementQueries.getFlightAssistantsForFlightID, params);
         db.close();
 
         Vector<Employee> flightAssistants = new Vector<>();
@@ -101,13 +113,17 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
     public int commitFlight(Flight flight) {
         PgDB db = new PgDB();
 
-        db.run(ConstantQueries.commitFlight (
-            flight.departureTime, String.valueOf(flight.passengersNumber),
-            String.valueOf(flight.route.id), flight.aircraftPlate
-        ));
+        ArrayList<String> params = new ArrayList<>();
+        params.add(flight.departureTime);
+        params.add(String.valueOf(flight.passengersNumber));
+
+        params.add(String.valueOf(flight.route.id));
+        params.add(flight.aircraftPlate);
+
+        db.runPstmtAndFetch(PreparedStatementQueries.commitFlight, params);
         db.commit();
 
-        var result = db.runAndFetch(ConstantQueries.getLastFlightId);
+        var result = db.runAndFetch(PreparedStatementQueries.getLastFlightId);
         db.close();
 
         return Integer.parseInt(result.get(0).get(0));

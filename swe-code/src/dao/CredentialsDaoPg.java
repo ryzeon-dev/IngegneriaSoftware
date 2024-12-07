@@ -2,6 +2,7 @@ package dao;
 
 import db.ConstantQueries;
 import db.PgDB;
+import db.PreparedStatementQueries;
 import model.Credentials;
 
 
@@ -11,7 +12,7 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
     public Vector<Credentials> getAll() {
         PgDB db = new PgDB();
 
-        var result = db.runAndFetch(ConstantQueries.getCredentials);
+        var result = db.runAndFetch(PreparedStatementQueries.getCredentials);
         Vector<Credentials> credentials = new Vector<>();
 
         for (var row : result) {

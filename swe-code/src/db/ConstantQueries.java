@@ -1,7 +1,7 @@
 package db;
 
 public class ConstantQueries {
-    public static final String getCompanyAircrafts =
+    /*public static final String getCompanyAircrafts =
         "select ai.plate, a.manufacturer, a.model, a.specification, " +
         "a.range, a.assistants_number, a.class, a.seats " +
         "from aircraft_instance ai join aircraft a on " +
@@ -54,5 +54,5 @@ public class ConstantQueries {
     }
 
     public static String getLastFlightId =
-        "select id from flight where id=(select max(id) from flight);";
+        "select id from flight where id=(select max(id) from flight);";*/
 }

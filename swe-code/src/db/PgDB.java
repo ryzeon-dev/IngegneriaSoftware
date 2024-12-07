@@ -1,5 +1,6 @@
 package db;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class PgDB {
@@ -27,7 +28,7 @@ public class PgDB {
                 var dbOutput = statement.executeQuery(query);
 
                 while (dbOutput.next()) {
-                    Vector<String> row = GetRow(dbOutput);
+                    Vector<String> row = getRow(dbOutput);
                     result.add(row);
                 }
 
@@ -50,7 +51,7 @@ public class PgDB {
     // il che indica la fine della riga (limite dell'indice di colonna raggiunto)
     // non ho trovato un metodo che mi dica il numero di colonne da poter usare, quindi bisogna usare
     // questo escamotage orrendo
-    private Vector<String> GetRow(ResultSet dbOutput) {
+    private Vector<String> getRow(ResultSet dbOutput) {
         Vector<String> row = new Vector<>();
         try {
             var metadata=dbOutput.getMetaData();
@@ -64,23 +65,35 @@ public class PgDB {
         return row;
     }
 
-    public Vector<Vector<String>> runPstmtAndFetch(String query,String param ){
+    public Vector<Vector<String>> runPstmtAndFetch(String query, ArrayList<String> params){
         Vector<Vector<String>> result = new Vector<>();
+        System.out.println(query);
+        System.out.println(params);
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)){
-            pstmt.setString(1,param);
-            try (ResultSet dbOutput = pstmt.executeQuery()){
-                while (dbOutput.next()) {
-                    Vector<String> row = GetRow(dbOutput);
-                    result.add(row);
-                }
-            } catch (Exception e) {
-                // TODO: handle exception
-                e.printStackTrace();
+            int index = 1;
+
+            for (var param : params) {
+                pstmt.setString(index, param);
+                index += 1;
             }
+
+            System.out.println(pstmt.toString());
+
+            try (ResultSet dbOutput = pstmt.executeQuery()){
+
+            } catch (Exception e) {
+                System.err.println("fatal error: prepared statement parameter insertion failed: " + e.getMessage());
+
+            } finally {
+                this.commit();
+            }
+
         } catch (SQLException e) {
             System.err.println("fatal error: prepared statement creation generated error: " + e.getMessage());
             System.exit(1);
         }
+
+
         return result;
     }
 

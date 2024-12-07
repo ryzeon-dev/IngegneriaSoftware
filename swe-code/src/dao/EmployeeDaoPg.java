@@ -3,15 +3,18 @@ package dao;
 import dao.interfaces.EmployeeDaoI;
 import db.ConstantQueries;
 import db.PgDB;
+import db.PreparedStatementQueries;
 import model.Employee;
 import model.EmployeeRole;
+import org.checkerframework.checker.units.qual.A;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
     public Vector<Employee> getAll() {
         PgDB db = new PgDB();
-        var result = db.runAndFetch(ConstantQueries.getCompanyEmployees);
+        var result = db.runAndFetch(PreparedStatementQueries.getCompanyEmployees);
         Vector<Employee> employees = new Vector<>();
 
         for (var row : result) {
@@ -24,8 +27,11 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
     public Employee getEmployeeById(String id) {
         Employee employee;
 
+        ArrayList<String> params = new ArrayList<>();
+        params.add(id);
+
         PgDB db = new PgDB();
-        var result = db.runAndFetch(ConstantQueries.getEmployeeInfo(id));
+        var result = db.runPstmtAndFetch(PreparedStatementQueries.getEmployeeInfo, params);
 
         employee = buildFromRow(result.get(0));
         db.close();
@@ -63,5 +69,35 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
         String abilitation = row.get(4);
 
         return new Employee(id, name, lastName, role, abilitation);
+    }
+
+    @Override
+    public void create(String name, String lastName, String role, String abilitation) {
+        PgDB pgDB = new PgDB();
+        ArrayList<String> params = new ArrayList<>();
+
+        params.add(name);
+        params.add(lastName);
+
+        params.add(role);
+        params.add(abilitation);
+
+        pgDB.runPstmtAndFetch(PreparedStatementQueries.insertPersonal, params);
+
+        pgDB.commit();
+        pgDB.close();
+    }
+
+    @Override
+    public void delete(String id) {
+        PgDB pgDB = new PgDB();
+
+        ArrayList<String> params = new ArrayList<>();
+        params.add(id);
+
+        pgDB.runPstmtAndFetch(PreparedStatementQueries.deletePersonal, params);
+
+        pgDB.commit();
+        pgDB.close();
     }
 }

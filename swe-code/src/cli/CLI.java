@@ -3,11 +3,13 @@ package cli;
 import model.Credentials;
 import model.Employee;
 import model.Flight;
+import org.checkerframework.checker.units.qual.A;
 import system.CredentialsManager;
 import system.ManagementSystem;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -38,7 +40,8 @@ public class CLI {//extends Thread {
             System.out.println("3 -> Access routes details"); // tutti a tutto
             System.out.println("4 -> Access flight schedule"); // admin -> tutto, pilota -> solo i suoi
             System.out.println("5 -> Access personal area"); // admin -> tutto, impigati -> solo il suo
-            System.out.println("6 -> Quit");
+            System.out.println("6 -> Add/remove aircraft/employees/routes"); // solo admin
+            System.out.println("7 -> Quit");
 
             System.out.print("\nNavigate to: ");
 
@@ -69,6 +72,10 @@ public class CLI {//extends Thread {
                         break;
 
                     case 6:
+                        this.systemCrud();
+                        break;
+
+                    case 7:
                         this.quit();
                         break;
                 }
@@ -332,6 +339,144 @@ public class CLI {//extends Thread {
             } else {
                 return;
             }
+        }
+    }
+
+    public void systemCrud() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Access to this area requires login");
+
+        System.out.print("Username: ");
+        String username = stdin.nextLine();
+
+        System.out.print("Password: ");
+        String passwd = stdin.nextLine();
+
+        if (username.equals("admin")) {
+            Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
+
+            if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
+                System.out.println("Login failed");
+                accessEmployeesData();
+                return;
+            }
+
+        } else {
+            System.out.println("Only system administrator(s) can access this area");
+            run();
+            return;
+        }
+
+        while (true) {
+            System.out.println("\nOptions:");
+            System.out.println("1 -> Insert/Remove aircraft");
+            System.out.println("2 -> Insert/Remove airport");
+            System.out.println("3 -> Insert/Remove employee");
+            System.out.println("4 -> Insert/Remove flight route");
+            System.out.println("5 -> Exit");
+            System.out.print("Navigate to: ");
+
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.aircraftCrud();
+                        break;
+
+                    case 2:
+                        this.accessAircraftDetails();
+                        break;
+
+                    case 3:
+                        this.accessRoutesDetails();
+                        break;
+
+                    case 4:
+                        this.accessFlightSchedule();
+                        break;
+
+                    case 5:
+                        return;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                continue;
+            }
+
+        }
+    }
+
+    public void aircraftCrud() {
+        Scanner stdin = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Select action:");
+            System.out.println("1 -> List");
+            System.out.println("2 -> Insert");
+            System.out.println("3 -> Remove");
+            System.out.println("4 -> Exit");
+            System.out.print("Choice: ");
+            System.out.print("Navigate to: ");
+
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.listAircrafts();
+                        break;
+
+                    case 2:
+                        this.accessAircraftDetails();
+                        break;
+
+                    case 3:
+                        this.deleteAircraft();
+                        break;
+
+                    case 4:
+                        return;
+
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                continue;
+            }
+
+        }
+    }
+
+    public void listAircrafts() {
+        for (var airctaft : this.managementSystem.getAircraftDetails()) {
+            System.out.println(airctaft.fullData());
+            System.out.println();
+        }
+        waitUntilEnter();
+    }
+
+    public void deleteAircraft() {
+        Scanner stdin = new Scanner(System.in);
+        ArrayList<String> plates = new ArrayList<>();
+
+        for (var aircraft : this.managementSystem.getAircraftDetails()) {
+            System.out.println(aircraft.toString());
+            plates.add(aircraft.plate);
+        }
+
+        System.out.print("\nEnter aircraft plate: ");
+        String plate = stdin.nextLine();
+
+        if (plates.contains(plate)) {
+            this.managementSystem.deleteAircraft(plate);
+
+            System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
+            aircraftCrud();
+            return;
         }
     }
 

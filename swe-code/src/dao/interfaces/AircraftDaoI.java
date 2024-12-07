@@ -2,7 +2,11 @@ package dao.interfaces;
 
 import java.util.Vector;
 import model.Aircraft;
+import org.checkerframework.checker.units.qual.A;
 
 public interface AircraftDaoI {
   public Vector<Aircraft> getAll();
+  public void create(Aircraft airctaft);
+  public void createInstance(String manufacturer, String model, String specification, String plate);
+  public void deleteInstance(String plate);
 }

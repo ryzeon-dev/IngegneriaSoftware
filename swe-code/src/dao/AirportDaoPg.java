@@ -3,15 +3,18 @@ package dao;
 
 import db.ConstantQueries;
 import db.PgDB;
+import db.PreparedStatementQueries;
 import model.Airport;
 import model.DimensionClass;
+import org.checkerframework.checker.units.qual.A;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     public Vector<Airport> getAll() {
         PgDB db = new PgDB();
-        var result = db.runAndFetch(ConstantQueries.getAirports);
+        var result = db.runAndFetch(PreparedStatementQueries.getAirports);
         Vector<Airport> airports = new Vector<>();
 
         for (var row : result) {
@@ -60,5 +63,49 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
         String city = row.get(4);
 
         return new Airport(icao, dimensionClass, name, nation, city);
+    }
+
+    @Override
+    public void create(String icao, DimensionClass dimensionClass, String name, String nation, String city) {
+        PgDB db = new PgDB();
+
+        ArrayList<String> params = new ArrayList<>();
+        params.add(icao);
+
+        params.add(dimensionClass.toString());
+        params.add(name);
+
+        params.add(nation);
+        params.add(city);
+
+        db.runPstmtAndFetch(PreparedStatementQueries.insertAirport, params);
+        db.commit();
+        db.close();
+    }
+
+    @Override
+    public void delete(String icao) {
+        PgDB db = new PgDB();
+
+        ArrayList<String> params = new ArrayList<>();
+        params.add(icao);
+
+        db.runPstmtAndFetch(PreparedStatementQueries.deleteAirport, params);
+        db.commit();
+        db.close();
+    }
+
+    @Override
+    public void update(String icao, DimensionClass dimensionClass) {
+        PgDB pgDB = new PgDB();
+
+        ArrayList<String> params = new ArrayList<>();
+        params.add(dimensionClass.toString());
+        params.add(icao);
+
+        pgDB.runPstmtAndFetch(PreparedStatementQueries.updateAirport, params);
+
+        pgDB.commit();
+        pgDB.close();
     }
 }

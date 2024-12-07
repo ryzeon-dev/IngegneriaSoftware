@@ -16,8 +16,6 @@ public class Airport {
         this.nation = nation;
         this.city = city;
     }
-    
-
 
     public int hashCode() {
         return icao.hashCode();

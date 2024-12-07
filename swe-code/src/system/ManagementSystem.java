@@ -1,5 +1,6 @@
 package system;
 
+import dao.AircraftDaoPg;
 import dao.FlightRouteDaoPg;
 import model.Aircraft;
 import model.Flight;
@@ -77,6 +78,10 @@ public class ManagementSystem extends Thread {
 
     public void runScheduling(){
         this.scheduledFlights = flightSchedule.makeSchedule();
+    }
+
+    public void deleteAircraft(String plate) {
+        this.flightManager.removeAircraft(plate);
     }
 
 }

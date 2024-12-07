@@ -99,9 +99,11 @@ public class FlightManager {
         return this.aircrafts;
     }
 
-
     public int employeesNumber() {
         return this.employees.size();
     }
 
+    public void removeAircraft(String plate) {
+        aircraftDao.deleteInstance(plate);
+    }
 }
