@@ -20,7 +20,10 @@ public class CLI {//extends Thread {
 
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
+        System.out.println("---Beginning scheduling");
         managementSystem.runScheduling();
+        System.out.println("---End scheduling");
+
         this.credentialsManager = new CredentialsManager();
     }
 

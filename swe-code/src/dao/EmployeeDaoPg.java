@@ -38,7 +38,6 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
             result = preparedStatement.executeQuery();
 
-            var row = result.next();
             Vector<String> vectorRow = new Vector<>();
 
             for (int i = 0; i < 4; i++) {
@@ -55,7 +54,6 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
     }
 
     public Employee buildFromRow(Vector<String> row) {
-        Employee employee;
         int id = Integer.parseInt(row.get(0));
         String name = row.get(1);
 

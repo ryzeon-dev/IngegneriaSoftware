@@ -55,7 +55,6 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
 
             preparedStatement.setInt(2, Integer.parseInt(modelId));
             preparedStatement.executeQuery();
-
             db.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);

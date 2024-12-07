@@ -34,4 +34,26 @@ public enum DimensionClass {
         }
         return false;
     }
+
+    public static DimensionClass fromString(String dimClass){
+        DimensionClass dimensionClass;
+        switch (dimClass) {
+            case "3C":
+                dimensionClass = DimensionClass.C3;
+                break;
+
+            case "4C":
+                dimensionClass = DimensionClass.C4;
+                break;
+
+            case "4E":
+                dimensionClass = DimensionClass.E4;
+                break;
+
+            default:
+                dimensionClass = DimensionClass.E4;
+                break;
+        }
+            return dimensionClass;
+    }
 }

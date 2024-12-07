@@ -16,22 +16,28 @@ public class helpers {
 
         int range = Integer.parseInt(dbRow.get(4));
         int assistantsNumber = Integer.parseInt(dbRow.get(5));
-
+        DimensionClass dimensionClass;
         String dClass = dbRow.get(6);
+        switch (dClass) {
+            case "3C":
+                dimensionClass = DimensionClass.C3;
+                break;
 
-        DimensionClass dimClass;
-        if (dClass.equals("3C")) {
-            dimClass = DimensionClass.C3;
+            case "4C":
+                dimensionClass = DimensionClass.C4;
+                break;
 
-        } else if (dClass.equals("4C")) {
-            dimClass = DimensionClass.C4;
+            case "4E":
+                dimensionClass = DimensionClass.E4;
+                break;
 
-        } else {
-            dimClass = DimensionClass.E4;
+            default:
+                dimensionClass = DimensionClass.E4;
+                break;
         }
 
         int seats = Integer.parseInt(dbRow.get(7));
 
-        return new Aircraft(plate, manufacturer, model, specification, dimClass, assistantsNumber, range, seats);
+        return new Aircraft(plate, manufacturer, model, specification, dimensionClass, assistantsNumber, range, seats);
     }
 }

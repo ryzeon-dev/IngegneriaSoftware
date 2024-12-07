@@ -1,6 +1,10 @@
 package dao;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
+
+import org.postgresql.core.SqlCommand;
 
 import db.ConstantQueries;
 import db.PgDB;
@@ -10,69 +14,84 @@ import model.FlightRoute;
 public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
     public Vector<FlightRoute> getAll() {
         PgDB db = new PgDB();
-        var result = db.runAndFetch(PreparedStatementQueries.getRoutes);
         Vector<FlightRoute> routes = new Vector<>();
-
-        for (var row : result) {
-            routes.add(this.buildFromRow(row));
+        try {
+            var result = db.makePreparedStatement(PreparedStatementQueries.getRoutes).executeQuery();
+            while (result.next()) {
+                routes.add(buildFromRow(result));
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
         db.close();
         return routes;
     }
 
-    public FlightRoute getRouteById(String id) {
+    public FlightRoute getRouteById(int id) {
+        ResultSet result=null;
         PgDB db = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
-        var result = db.runPstmtAndFetch(PreparedStatementQueries.getRouteForID, params);
-
-        db.close();
-        return buildFromRow(result.get(0));
+        FlightRoute route=null;
+        try{
+            var preparedStatement= db.makePreparedStatement(PreparedStatementQueries.getRouteForID);
+            preparedStatement.setInt(1, id);
+            result = preparedStatement.executeQuery();
+            result.next();
+            route=buildFromRow(result);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally{
+            db.close();
+        }
+        return route;
     }
 
-    public static FlightRoute buildFromRow(Vector<String> row) {
-        int id = Integer.parseInt(row.get(0));
-        int distance = Integer.parseInt(row.get(1));
+    public static FlightRoute buildFromRow(ResultSet res) throws SQLException {
+        int id = res.getInt(1);
+        int distance = res.getInt(2);
 
-        int duration = Integer.parseInt(row.get(2));
-        String departure = row.get(3);
+        int duration = res.getInt(3);
+        String departure = res.getString(4);
 
-        String stepover = row.get(4);
-        String arrival = row.get(5);
+        String stepover = res.getString(5);
+        String arrival = res.getString(6);
 
         return new FlightRoute(id, distance, duration, departure, stepover, arrival);
     }
 
     @Override
-    public void create(String distance, String duration, String departure, String arrival) {
+    public void create(int distance, int duration, String departure, String arrival) {
         PgDB pgDB = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(distance);
-        params.add(duration);
-
-        params.add(departure);
-        params.add(arrival);
-
-        pgDB.runPstmtAndFetch(PreparedStatementQueries.insertRoute, params);
-
-        pgDB.commit();
-        pgDB.close();
+        var preparedStatement= pgDB.makePreparedStatement(PreparedStatementQueries.insertRoute);
+        try {
+            preparedStatement.setInt(1,distance);
+            preparedStatement.setInt(2,duration);
+            preparedStatement.setString(3, departure);
+            preparedStatement.setString(4, arrival);
+            preparedStatement.execute();
+            pgDB.commit();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            pgDB.close();
+        }
     }
 
     @Override
     public void delete(String id) {
         PgDB pgDB = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
-        pgDB.runPstmtAndFetch(PreparedStatementQueries.deleteRoute, params);
-
-        pgDB.commit();
-        pgDB.close();
+        var preparedStatement= pgDB.makePreparedStatement(PreparedStatementQueries.getRouteForID);
+        try {
+            preparedStatement.setString(1, id);
+            preparedStatement.execute();
+            pgDB.commit();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            pgDB.close();
+        }
     }
 }

@@ -21,7 +21,7 @@ public class AirportWeighted {
         this.routeId=route_id;
 
         FlightRouteDaoPg routeDao = new FlightRouteDaoPg();
-        this.route = routeDao.getRouteById(String.valueOf(this.routeId));
+        this.route = routeDao.getRouteById(this.routeId);
     }
 
     @Override

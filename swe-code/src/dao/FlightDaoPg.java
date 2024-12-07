@@ -10,6 +10,8 @@ import model.Flight;
 import model.FlightRoute;
 import org.checkerframework.checker.units.qual.C;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -19,71 +21,93 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
        Vector<Flight> flights = new Vector<>();
 
         PgDB db = new PgDB();
-        Vector<Vector<String>> res = db.runAndFetch(PreparedStatementQueries.getFlights);
-        db.close();
-
-        for (var row : res) {
-            flights.add(buildFromRow(row));
+        try {
+            var res = db.makePreparedStatement(PreparedStatementQueries.getFlights).executeQuery();
+            while (res.next()) {
+                flights.add(buildFromRow(res));
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            db.close();
         }
 
         return flights;
     }
 
-    public Flight buildFromRow(Vector<String> row) {
-        String stringID = row.get(0);
-        int id = Integer.parseInt(row.get(0));
-        String departureTime = row.get(1);
+    public Flight buildFromRow(ResultSet row) {
+        String id;
+        String departureTime;
+        int passengerNumber;
+        FlightRoute route;
+        String aircraft;
+        Vector<Employee> commanders;
+        Vector<Employee> firstOfficers;
+        Vector<Employee> flightAssistants;
+        try {
+            int intId=row.getInt(1);
+            id = row.getString(1);
+            departureTime = row.getString(2);
 
-        int passengerNumber = Integer.parseInt(row.get(2));
-        FlightRouteDaoPg routeDao = new FlightRouteDaoPg();
-        FlightRoute route = routeDao.getRouteById(row.get(3));
+            passengerNumber = row.getInt(3);
+            FlightRouteDaoPg routeDao = new FlightRouteDaoPg();
+            route = routeDao.getRouteById(row.getInt(3));
 
-        String aircraft = row.get(4);
-
-        Vector<Employee> commanders = getCommanders(stringID);
-        Vector<Employee> firstOfficers = getFirstOfficers(stringID);
-        Vector<Employee> flightAssistants = getFlightAssistants(stringID);
-
-        return new Flight(id, departureTime, passengerNumber, route, aircraft, commanders, firstOfficers, flightAssistants);
+            aircraft = row.getString(4);
+            commanders = getCommanders(id);
+            firstOfficers = getFirstOfficers(id);
+            flightAssistants = getFlightAssistants(id);
+            return new Flight(intId, departureTime, passengerNumber, route, aircraft, commanders, firstOfficers, flightAssistants);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private Vector<Employee> getCommanders(String id) {
         PgDB db = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
-        var result = db.runPstmtAndFetch(PreparedStatementQueries.getCommandersForFlightID, params);
-        db.close();
-
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getCommandersForFlightID);
         Vector<Employee> commanders = new Vector<>();
-        EmployeeDaoPg employeeDao = new EmployeeDaoPg();
-
-        for (var commanderId : result) {
-            commanders.add(
-                employeeDao.getEmployeeById(commanderId.get(0))
-            );
+        try {
+            preparedStatement.setString(1, id);
+            var res=preparedStatement.executeQuery();
+            EmployeeDaoPg employeeDao = new EmployeeDaoPg();
+            while (res.next()) {
+                commanders.add(
+                    employeeDao.getEmployeeById(res.getString(1))
+                );
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            db.close();
         }
+
 
         return commanders;
     }
 
     private Vector<Employee> getFirstOfficers(String id) {
         PgDB db = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
-        var result = db.runPstmtAndFetch(PreparedStatementQueries.getFirstOfficersForFlightID, params);
-        db.close();
-
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getFirstOfficersForFlightID);
         Vector<Employee> firstOfficers = new Vector<>();
         EmployeeDaoPg employeeDao = new EmployeeDaoPg();
-
-        for (var commanderId : result) {
-            firstOfficers.add(
-                employeeDao.getEmployeeById(commanderId.get(0))
-            );
+        try {
+            preparedStatement.setString(1, id);
+            var res=preparedStatement.executeQuery();
+            while (res.next()) {
+                firstOfficers.add(
+                    employeeDao.getEmployeeById(res.getString(1))
+                );
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            db.close();
         }
 
         return firstOfficers;
@@ -91,41 +115,44 @@ public class FlightDaoPg implements dao.interfaces.FlightDaoI {
 
     private Vector<Employee> getFlightAssistants(String id) {
         PgDB db = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
-        var result = db.runPstmtAndFetch(PreparedStatementQueries.getFlightAssistantsForFlightID, params);
-        db.close();
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getFlightAssistantsForFlightID);
 
         Vector<Employee> flightAssistants = new Vector<>();
         EmployeeDaoPg employeeDao = new EmployeeDaoPg();
-
-        for (var commanderId : result) {
-            flightAssistants.add(
-                    employeeDao.getEmployeeById(commanderId.get(0))
-            );
+        try {
+            preparedStatement.setString(1, id);
+            var res=preparedStatement.executeQuery();
+            while (res.next()) {
+                flightAssistants.add(
+                    employeeDao.getEmployeeById(res.getString(1))
+                );
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            db.close();
         }
-
+        
         return flightAssistants;
     }
 
     public int commitFlight(Flight flight) {
         PgDB db = new PgDB();
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(flight.departureTime);
-        params.add(String.valueOf(flight.passengersNumber));
-
-        params.add(String.valueOf(flight.route.id));
-        params.add(flight.aircraftPlate);
-
-        db.runPstmtAndFetch(PreparedStatementQueries.commitFlight, params);
-        db.commit();
-
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.commitFlight);
+        try {
+            preparedStatement.setString(1, flight.departureTime);
+            preparedStatement.setInt(2, flight.passengersNumber);
+            preparedStatement.setInt(3, flight.route.id);
+            preparedStatement.setString(4, flight.aircraftPlate);
+            preparedStatement.execute();
+            db.commit();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         var result = db.runAndFetch(PreparedStatementQueries.getLastFlightId);
         db.close();
-
         return Integer.parseInt(result.get(0).get(0));
     }
 }
