@@ -7,6 +7,6 @@ import org.checkerframework.checker.units.qual.A;
 public interface AircraftDaoI {
   public Vector<Aircraft> getAll();
   public void create(Aircraft airctaft);
-  public void createInstance(String manufacturer, String model, String specification, String plate);
+  public void createInstance(String plate, String modelId);
   public void deleteInstance(String plate);
 }

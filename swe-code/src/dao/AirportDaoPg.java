@@ -8,6 +8,7 @@ import model.Airport;
 import model.DimensionClass;
 import org.checkerframework.checker.units.qual.A;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -68,18 +69,20 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     @Override
     public void create(String icao, DimensionClass dimensionClass, String name, String nation, String city) {
         PgDB db = new PgDB();
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirport);
+            preparedStatement.setString(1, icao);
+            preparedStatement.setString(2, dimensionClass.toString());
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, nation);
+            preparedStatement.setString(5, city);
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(icao);
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        params.add(dimensionClass.toString());
-        params.add(name);
-
-        params.add(nation);
-        params.add(city);
-
-        db.runPstmtAndFetch(PreparedStatementQueries.insertAirport, params);
-        db.commit();
         db.close();
     }
 
@@ -87,25 +90,34 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     public void delete(String icao) {
         PgDB db = new PgDB();
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(icao);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAirport);
+            preparedStatement.setString(1, icao);
 
-        db.runPstmtAndFetch(PreparedStatementQueries.deleteAirport, params);
-        db.commit();
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         db.close();
     }
 
     @Override
     public void update(String icao, DimensionClass dimensionClass) {
-        PgDB pgDB = new PgDB();
+        PgDB db = new PgDB();
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(dimensionClass.toString());
-        params.add(icao);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.updateAirport);
+            preparedStatement.setString(1, dimensionClass.toString());
+            preparedStatement.setString(2, icao);
 
-        pgDB.runPstmtAndFetch(PreparedStatementQueries.updateAirport, params);
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        pgDB.commit();
-        pgDB.close();
+        db.close();
     }
 }

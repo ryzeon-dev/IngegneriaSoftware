@@ -1,4 +1,5 @@
 package dao;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -23,55 +24,59 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
 
     public void create(Aircraft airctaft) {
         PgDB db = new PgDB();
+        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirCraft);
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(airctaft.manufacturer);
+        try {
+            preparedStatement.setString(1, airctaft.manufacturer);
+            preparedStatement.setString(2, airctaft.model);
 
-        params.add(airctaft.model);
-        params.add(airctaft.specification);
+            preparedStatement.setString(3, airctaft.specification);
+            preparedStatement.setInt(4, airctaft.range);
 
-        params.add(String.valueOf(airctaft.range));
-        params.add(String.valueOf(airctaft.assistantsNumber));
+            preparedStatement.setInt(5, airctaft.assistantsNumber);
+            preparedStatement.setString(6, airctaft.dimensionClass.toString());
+            preparedStatement.setInt(7, airctaft.seats);
 
-        params.add(airctaft.dimensionClass.toString());
-        params.add(String.valueOf(airctaft.seats));
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        db.runPstmtAndFetch(PreparedStatementQueries.insertAirCraft, params);
-        db.commit();
         db.close();
     }
 
-    public void createInstance(String manufacturer, String model, String specification, String plate) {
+    public void createInstance(String plate, String modelId) {
         PgDB db = new PgDB();
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(manufacturer);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAircraftInstance);
+            preparedStatement.setString(1, plate);
 
-        params.add(model);
-        params.add(specification);
+            preparedStatement.setInt(2, Integer.parseInt(modelId));
+            preparedStatement.executeQuery();
 
-        var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getAircraftId);
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-
-        Vector<Vector<String>> modelId = db.runPstmtAndFetch(, params);
-
-        params.clear();
-        params.add(plate);
-        params.add(modelId.get(0).get(0));
-
-        db.runPstmtAndFetch(PreparedStatementQueries.insertAircraftInstance, params);
-        db.commit();
         db.close();
     }
 
     public void deleteInstance(String plate) {
         PgDB db = new PgDB();
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(plate);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAircraftInstance);
+            preparedStatement.setString(1, plate);
 
-        db.runPstmtAndFetch(PreparedStatementQueries.deleteAircraftInstance, params);
-        db.commit();
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         db.close();
     }
 }

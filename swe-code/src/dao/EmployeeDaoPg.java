@@ -8,6 +8,8 @@ import model.Employee;
 import model.EmployeeRole;
 import org.checkerframework.checker.units.qual.A;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -26,16 +28,29 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
     public Employee getEmployeeById(String id) {
         Employee employee;
-
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
-
         PgDB db = new PgDB();
-        var result = db.runPstmtAndFetch(PreparedStatementQueries.getEmployeeInfo, params);
 
-        employee = buildFromRow(result.get(0));
+        ResultSet result;
+
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getEmployeeInfo);
+            preparedStatement.setInt(1, Integer.parseInt(id));
+
+            result = preparedStatement.executeQuery();
+
+            var row = result.next();
+            Vector<String> vectorRow = new Vector<>();
+
+            for (int i = 0; i < 4; i++) {
+                vectorRow.add(result.getRowId(i).toString());
+            }
+
+            employee = buildFromRow(vectorRow);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         db.close();
-
         return employee;
     }
 
@@ -73,31 +88,41 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
     @Override
     public void create(String name, String lastName, String role, String abilitation) {
-        PgDB pgDB = new PgDB();
-        ArrayList<String> params = new ArrayList<>();
+        PgDB db = new PgDB();
 
-        params.add(name);
-        params.add(lastName);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertPersonal);
 
-        params.add(role);
-        params.add(abilitation);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
 
-        pgDB.runPstmtAndFetch(PreparedStatementQueries.insertPersonal, params);
+            preparedStatement.setString(3, role);
+            preparedStatement.setString(4, abilitation);
 
-        pgDB.commit();
-        pgDB.close();
+            preparedStatement.executeQuery();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        db.close();
     }
 
     @Override
     public void delete(String id) {
-        PgDB pgDB = new PgDB();
+        PgDB db = new PgDB();
 
-        ArrayList<String> params = new ArrayList<>();
-        params.add(id);
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deletePersonal);
+            preparedStatement.setInt(1, Integer.parseInt(id));
 
-        pgDB.runPstmtAndFetch(PreparedStatementQueries.deletePersonal, params);
+            preparedStatement.executeQuery();
+            db.commit();
 
-        pgDB.commit();
-        pgDB.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        db.close();
     }
 }
