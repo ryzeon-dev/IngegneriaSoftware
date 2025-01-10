@@ -1,6 +1,8 @@
 package db;
 
 public class PreparedStatementQueries {
+    public static final String getAircraftModels= "SELECT id,manufacturer,model,specification,range,assistants_number, class,seats from aircraft";
+    
     public static final String getCompanyAircrafts = "select ai.plate, a.manufacturer, a.model, a.specification, " +
         "a.range, a.assistants_number, a.class, a.seats " +
         "from aircraft_instance ai join aircraft a on " +
@@ -62,5 +64,5 @@ public class PreparedStatementQueries {
 
     public static final String getAircraftId = "SELECT id FROM airctaft WHERE manufacturer=? and model=? and specification=?";
 
-    public static final String deleteAircraftInstance = "DELETE FROM airctaft_instance WHERE plate=?";
+    public static final String deleteAircraftInstance = "DELETE FROM aircraft_instance WHERE plate=?";
 }

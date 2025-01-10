@@ -7,8 +7,21 @@ import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Aircraft;
+import model.AircraftModel;
 
 public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
+
+    public Vector<AircraftModel>  getAllModels(){
+        PgDB db = new PgDB();
+        Vector<AircraftModel> aircraftModels= new Vector<>();
+        var result= db.runAndFetch(PreparedStatementQueries.getAircraftModels);
+        for (var row : result) {
+            aircraftModels.add(helpers.buildAircarftModelFromRow(row));
+        }
+        db.close();
+        return aircraftModels;
+    }
+
     public Vector<Aircraft> getAll() {
         PgDB db = new PgDB();
         var result = db.runAndFetch(PreparedStatementQueries.getCompanyAircrafts);
@@ -54,7 +67,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
             preparedStatement.setString(1, plate);
 
             preparedStatement.setInt(2, Integer.parseInt(modelId));
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -70,7 +83,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAircraftInstance);
             preparedStatement.setString(1, plate);
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);

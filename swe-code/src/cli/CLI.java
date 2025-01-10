@@ -1,6 +1,7 @@
 package cli;
 
 import model.Aircraft;
+import model.AircraftModel;
 import model.Credentials;
 import model.DimensionClass;
 import model.Employee;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Vector;
 
 public class CLI {//extends Thread {
     private ManagementSystem managementSystem;
@@ -460,7 +462,7 @@ public class CLI {//extends Thread {
         while (true) {
             System.out.println("Select action:");
             System.out.println("1 -> insert Aircraft");
-            System.out.println("2 -> insert Aircraft-istance");
+            System.out.println("2 -> insert Aircraft-instance");
             System.out.println("3 -> Exit");
             System.out.print("Choice: ");
             System.out.print("Navigate to: ");
@@ -475,7 +477,7 @@ public class CLI {//extends Thread {
                         break;
 
                     case 2:
-                        this.insertAircraftIstance();
+                        this.insertAircraftInstance();
                         break;
                     case 3:
                         return;
@@ -494,7 +496,7 @@ public class CLI {//extends Thread {
         String manufaturer =stdin.nextLine();
         System.out.println("Model: ");
         String model =stdin.nextLine();
-        System.out.println("Specifiation: ");
+        System.out.println("Specification: ");
         String specifiation =stdin.nextLine();
         System.out.println("Range:");
         int range=stdin.nextInt();
@@ -510,8 +512,18 @@ public class CLI {//extends Thread {
         this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
     }
 
-    private void insertAircraftIstance(){
-
+    private void insertAircraftInstance(){
+        Scanner stdin = new Scanner(System.in);
+        Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+        for (int i = 0; i < models.size(); i++) {
+            System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
+        }
+        System.err.println("chose the model: ");
+        int chosed_model=stdin.nextInt();
+        stdin.nextLine();
+        System.err.println("plate: ");
+        String plate=stdin.nextLine();
+        this.managementSystem.aircraftManager.insertAircraftInstance(plate, chosed_model);
     }
 
  
