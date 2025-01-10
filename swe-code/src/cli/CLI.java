@@ -1,9 +1,10 @@
 package cli;
 
+import model.Aircraft;
 import model.Credentials;
+import model.DimensionClass;
 import model.Employee;
 import model.Flight;
-import org.checkerframework.checker.units.qual.A;
 import system.CredentialsManager;
 import system.ManagementSystem;
 
@@ -434,7 +435,7 @@ public class CLI {//extends Thread {
                         break;
 
                     case 2:
-                        this.accessAircraftDetails();
+                        this.insertAircraft();
                         break;
 
                     case 3:
@@ -450,13 +451,74 @@ public class CLI {//extends Thread {
                 System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
                 continue;
             }
-
         }
     }
 
+    private void insertAircraft(){
+        Scanner stdin = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Select action:");
+            System.out.println("1 -> insert Aircraft");
+            System.out.println("2 -> insert Aircraft-istance");
+            System.out.println("3 -> Exit");
+            System.out.print("Choice: ");
+            System.out.print("Navigate to: ");
+
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.insertAircraftModel();
+                        break;
+
+                    case 2:
+                        this.insertAircraftIstance();
+                        break;
+                    case 3:
+                        return;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                continue;
+            }
+        }
+    }
+
+    private void insertAircraftModel(){
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Manufaturer: ");
+        String manufaturer =stdin.nextLine();
+        System.out.println("Model: ");
+        String model =stdin.nextLine();
+        System.out.println("Specifiation: ");
+        String specifiation =stdin.nextLine();
+        System.out.println("Range:");
+        int range=stdin.nextInt();
+        System.out.println("Assistants number:");
+        int assistantsNumber=stdin.nextInt();
+        stdin.nextLine();// Magic. Do not touch.
+        System.out.println("Dimension class:");
+        String dimCText= stdin.nextLine();
+        DimensionClass dimC=DimensionClass.fromString(dimCText);
+        System.out.println("Seats:");
+        int seats=stdin.nextInt();
+        Aircraft aircraft=new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
+        this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
+    }
+
+    private void insertAircraftIstance(){
+
+    }
+
+ 
+
     public void listAircrafts() {
-        for (var airctaft : this.managementSystem.getAircraftDetails()) {
-            System.out.println(airctaft.fullData());
+        for (var aircraft : this.managementSystem.getAircraftDetails()) {
+            System.out.println(aircraft.fullData());
             System.out.println();
         }
         waitUntilEnter();
@@ -479,8 +541,8 @@ public class CLI {//extends Thread {
 
             System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
             aircraftCrud();
-            return;
         }
+        stdin.close();
     }
 
     private void quit() {

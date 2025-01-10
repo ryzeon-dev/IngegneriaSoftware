@@ -11,15 +11,16 @@ import java.util.Vector;
 public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
     public FlightManager flightManager;
-
+    public AircraftManager aircraftManager;
     public FlightSchedule flightSchedule;
     public Vector<Flight> scheduledFlights;
 
     private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
     private Vector<FlightRoute> flightRoutes;
 
-    public ManagementSystem(FlightManager manager,FlightSchedule fSchedule) {
+    public ManagementSystem(FlightManager manager,AircraftManager aircraftManager ,FlightSchedule fSchedule) {
         this.flightManager = manager;
+        this.aircraftManager = aircraftManager;
         this.flightSchedule = fSchedule;
 
         this.flightRoutes = flightRouteDao.getAll();

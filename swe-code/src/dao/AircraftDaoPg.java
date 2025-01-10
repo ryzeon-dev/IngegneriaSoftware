@@ -22,22 +22,22 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
         return aircrafts;
     }
 
-    public void create(Aircraft airctaft) {
+    public void create(Aircraft aircraft) {
         PgDB db = new PgDB();
         var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirCraft);
 
         try {
-            preparedStatement.setString(1, airctaft.manufacturer);
-            preparedStatement.setString(2, airctaft.model);
+            preparedStatement.setString(1, aircraft.manufacturer);
+            preparedStatement.setString(2, aircraft.model);
 
-            preparedStatement.setString(3, airctaft.specification);
-            preparedStatement.setInt(4, airctaft.range);
+            preparedStatement.setString(3, aircraft.specification);
+            preparedStatement.setInt(4, aircraft.range);
 
-            preparedStatement.setInt(5, airctaft.assistantsNumber);
-            preparedStatement.setString(6, airctaft.dimensionClass.toString());
-            preparedStatement.setInt(7, airctaft.seats);
+            preparedStatement.setInt(5, aircraft.assistantsNumber);
+            preparedStatement.setString(6, aircraft.dimensionClass.toString());
+            preparedStatement.setInt(7, aircraft.seats);
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
