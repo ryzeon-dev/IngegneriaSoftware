@@ -1,6 +1,5 @@
 package system;
 
-import dao.AircraftDaoPg;
 import dao.FlightRouteDaoPg;
 import model.Aircraft;
 import model.Flight;

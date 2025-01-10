@@ -26,4 +26,8 @@ public class AircraftManager {
         //TODO handle creation errors
         return aircraftDao.getAllModels();
     }
+
+    public void deleteAircraftModel(AircraftModel model){
+        aircraftDao.deleteAircraftModel(Integer.toString(model.modelId));
+    }
 }

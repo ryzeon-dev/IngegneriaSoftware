@@ -1,6 +1,8 @@
 package db;
 
 public class PreparedStatementQueries {
+    public static final String deleteAircraftModel= "DELETE FROM aircraft WHERE id=?";
+    
     public static final String getAircraftModels= "SELECT id,manufacturer,model,specification,range,assistants_number, class,seats from aircraft";
     
     public static final String getCompanyAircrafts = "select ai.plate, a.manufacturer, a.model, a.specification, " +

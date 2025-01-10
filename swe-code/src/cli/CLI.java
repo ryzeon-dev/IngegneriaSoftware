@@ -538,6 +538,51 @@ public class CLI {//extends Thread {
 
     public void deleteAircraft() {
         Scanner stdin = new Scanner(System.in);
+        while (true) {
+            System.out.println("Select action:");
+            System.out.println("1 -> delete Aircraft");
+            System.out.println("2 -> delete Aircraft-instance");
+            System.out.println("3 -> Exit");
+            System.out.print("Choice: ");
+            System.out.print("Navigate to: ");
+
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.deleteAircraftModel();
+                        break;
+
+                    case 2:
+                        this.deleteAircraftInstance();
+                        break;
+                    case 3:
+                        return;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                continue;
+            }
+        }
+
+    }
+
+    public void deleteAircraftModel(){
+        Scanner stdin = new Scanner(System.in);
+        Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+        for (int i = 0; i < models.size(); i++) {
+            System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
+        }
+        System.err.println("chose the model: ");
+        int chosed_model=stdin.nextInt();
+        this.managementSystem.aircraftManager.deleteAircraftModel(models.get(chosed_model));
+    }
+
+    public void deleteAircraftInstance(){
+        Scanner stdin = new Scanner(System.in);
         ArrayList<String> plates = new ArrayList<>();
 
         for (var aircraft : this.managementSystem.getAircraftDetails()) {
@@ -561,4 +606,5 @@ public class CLI {//extends Thread {
         this.managementSystem.quit();
         System.exit(0);
     }
+
 }

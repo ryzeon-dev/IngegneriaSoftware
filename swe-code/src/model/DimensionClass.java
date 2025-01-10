@@ -37,7 +37,7 @@ public enum DimensionClass {
 
     public static DimensionClass fromString(String dimClass){
         DimensionClass dimensionClass;
-        switch (dimClass) {
+        switch (dimClass.trim()) {
             case "3C":
                 dimensionClass = DimensionClass.C3;
                 break;

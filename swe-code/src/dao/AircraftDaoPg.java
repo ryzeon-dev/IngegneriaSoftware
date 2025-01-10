@@ -91,4 +91,19 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
 
         db.close();
     }
+
+    @Override
+    public void deleteAircraftModel(String modelId) {
+        PgDB db = new PgDB();
+        try {
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAircraftModel);
+            preparedStatement.setInt(1, Integer.parseInt(modelId));
+            preparedStatement.execute();
+            db.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        db.close();
+    }
 }
