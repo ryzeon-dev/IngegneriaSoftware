@@ -72,8 +72,7 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
             preparedStatement.execute();
             pgDB.commit();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException();
         }finally{
             pgDB.close();
         }
@@ -87,9 +86,10 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
             preparedStatement.setString(1, id);
             preparedStatement.execute();
             pgDB.commit();
+
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException();
+
         }finally{
             pgDB.close();
         }

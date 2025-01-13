@@ -2,6 +2,8 @@ package system;
 
 import java.util.Vector;
 
+import dao.FlightRouteDaoPg;
+import dao.interfaces.FlightRouteDaoI;
 import dao.interfaces.AircraftDaoI;
 import dao.interfaces.AirportDaoI;
 import dao.interfaces.EmployeeDaoI;
@@ -22,11 +24,13 @@ public class FlightManager {
     private AirportDaoI airportDao;
     private Vector<Airport> airports = new Vector<>();
 
+    private FlightRouteDaoI flightRouteDao;
 
-    public FlightManager(AircraftDaoI aircraftDao, EmployeeDaoI employeeDao, AirportDaoI airportDao) {
+    public FlightManager(AircraftDaoI aircraftDao, EmployeeDaoI employeeDao, AirportDaoI airportDao, FlightRouteDaoI flightRouteDao) {
         this.aircraftDao = aircraftDao;
         this.employeeDao = employeeDao;
         this.airportDao = airportDao;
+        this.flightRouteDao = flightRouteDao;
 
         aircrafts = this.aircraftDao.getAll();
         makeEmployeesVectors();
@@ -135,5 +139,27 @@ public class FlightManager {
         } catch (RuntimeException e) {
             return false;
         }
+    }
+
+    public boolean createRoute(int distance, int duration, String departure, String stepover, String arrival) {
+        try{
+            this.flightRouteDao.create(distance, duration, departure, arrival);
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean deleteRoute(int id) {
+        try {
+            this.flightRouteDao.delete(String.valueOf(id));
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+
+        return true;
     }
 }

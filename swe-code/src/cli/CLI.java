@@ -400,7 +400,7 @@ public class CLI {//extends Thread {
                         break;
 
                     case 4:
-                        this.accessFlightSchedule();
+                        this.routeCrud();
                         break;
 
                     case 5:
@@ -622,18 +622,17 @@ public class CLI {//extends Thread {
         System.out.println("4 -> Exit");
         System.out.print("Navigate to: ");
 
-
         try {
             int choice = stdin.nextInt();
             System.out.println();
 
             switch (choice) {
                 case 1:
-                    this.addNewAirport();
+                    this.createAirport();
                     return;
 
                 case 2:
-                    // this.updateAirport();
+                    this.updateAirport();
                     return;
 
                 case 3:
@@ -649,7 +648,7 @@ public class CLI {//extends Thread {
         }
     }
 
-    public void addNewAirport() {
+    public void createAirport() {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Adding new Airport");
 
@@ -710,6 +709,82 @@ public class CLI {//extends Thread {
 
         } else {
             System.out.println("Removal failed");
+        }
+    }
+
+    public void routeCrud() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("\nOptions:");
+        System.out.println("1 -> Create route");
+        System.out.println("2 -> Delete route");
+        System.out.println("3 -> Exit");
+        System.out.print("Navigate to: ");
+
+        while (true) {
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.createRoute();
+                        return;
+
+                    case 2:
+                        this.deleteRoute();
+                        return;
+
+                    case 3:
+                        return;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
+            }
+        }
+    }
+
+    public void createRoute() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("Distance: ");
+        int distance = stdin.nextInt();
+
+        System.out.print("Duration: ");
+        int duration = stdin.nextInt();
+
+        System.out.print("Depature: ");
+        String departure = stdin.nextLine().trim();
+
+        System.out.print("Stepover: ");
+        String stepover = stdin.nextLine().trim();
+
+        System.out.println("Arrival: ");
+        String arrival = stdin.nextLine().trim();
+
+        boolean success = this.managementSystem.flightManager.createRoute(distance, duration, departure, stepover, arrival);
+
+        if (success) {
+            System.out.println("Route creation successful");
+
+        } else {
+            System.out.println("Route creation failed");
+        }
+    }
+
+    public void deleteRoute() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("Route id: ");
+        int id = stdin.nextInt();
+
+        boolean success = this.managementSystem.flightManager.deleteRoute(id);
+
+        if (success) {
+            System.out.println("Route deletion successful");
+
+        } else {
+            System.out.println("Route deletion failed");
         }
     }
 

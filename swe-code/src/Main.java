@@ -15,15 +15,21 @@ public class Main {
         //DAO Instantiation.
         AircraftDaoPg aircraftDao= new AircraftDaoPg();
         EmployeeDaoPg employeeDao = new EmployeeDaoPg();
+
         AirportDaoPg airportDaoPg = new AirportDaoPg();
         FlightRouteDaoPg flightRoutePg= new FlightRouteDaoPg();
+
         ParkingDaoPg parkingDaoPg= new ParkingDaoPg();
-        FlightManager flightManager = new FlightManager(aircraftDao, employeeDao, airportDaoPg);
+        FlightManager flightManager = new FlightManager(aircraftDao, employeeDao, airportDaoPg, flightRoutePg);
+
         AircraftManager aircraftManager = new AircraftManager(aircraftDao);
+
         //System.out.println(manager);
-        SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg,parkingDaoPg ,flightManager);
+        SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg, parkingDaoPg, flightManager);
+
         FlightSchedule flightSchedule=new FlightSchedule(schedulingStrategy);
         ManagementSystem managementSystem = new ManagementSystem(flightManager,aircraftManager,flightSchedule);
+
         CLI cli = new CLI(managementSystem);
         cli.run();
     }

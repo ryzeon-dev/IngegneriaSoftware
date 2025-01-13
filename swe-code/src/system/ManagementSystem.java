@@ -19,6 +19,7 @@ public class ManagementSystem extends Thread {
 
     public ManagementSystem(FlightManager manager,AircraftManager aircraftManager ,FlightSchedule fSchedule) {
         this.flightManager = manager;
+
         this.aircraftManager = aircraftManager;
         this.flightSchedule = fSchedule;
 
@@ -83,5 +84,4 @@ public class ManagementSystem extends Thread {
     public void deleteAircraft(String plate) {
         this.flightManager.removeAircraft(plate);
     }
-
 }
