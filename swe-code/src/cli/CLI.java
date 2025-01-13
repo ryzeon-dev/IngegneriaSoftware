@@ -392,7 +392,7 @@ public class CLI {//extends Thread {
                         break;
 
                     case 2:
-                        this.accessAircraftDetails();
+                        this.airportCrud();
                         break;
 
                     case 3:
@@ -492,22 +492,31 @@ public class CLI {//extends Thread {
 
     private void insertAircraftModel(){
         Scanner stdin = new Scanner(System.in);
+
         System.out.println("Manufaturer: ");
         String manufaturer =stdin.nextLine();
+
         System.out.println("Model: ");
         String model =stdin.nextLine();
+
         System.out.println("Specification: ");
         String specifiation =stdin.nextLine();
+
         System.out.println("Range:");
         int range=stdin.nextInt();
+
         System.out.println("Assistants number:");
         int assistantsNumber=stdin.nextInt();
+
         stdin.nextLine();// Magic. Do not touch.
         System.out.println("Dimension class:");
+
         String dimCText= stdin.nextLine();
         DimensionClass dimC=DimensionClass.fromString(dimCText);
+
         System.out.println("Seats:");
         int seats=stdin.nextInt();
+
         Aircraft aircraft=new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
         this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
     }
@@ -515,18 +524,20 @@ public class CLI {//extends Thread {
     private void insertAircraftInstance(){
         Scanner stdin = new Scanner(System.in);
         Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+
         for (int i = 0; i < models.size(); i++) {
             System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
         }
+
         System.err.println("chose the model: ");
         int chosed_model=stdin.nextInt();
+
         stdin.nextLine();
         System.err.println("plate: ");
+
         String plate=stdin.nextLine();
         this.managementSystem.aircraftManager.insertAircraftInstance(plate, chosed_model);
     }
-
- 
 
     public void listAircrafts() {
         for (var aircraft : this.managementSystem.getAircraftDetails()) {
@@ -600,6 +611,106 @@ public class CLI {//extends Thread {
             aircraftCrud();
         }
         stdin.close();
+    }
+
+    public void airportCrud() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("\nOptions");
+        System.out.println("1 -> Insert new airport");
+        System.out.println("2 -> Update airport");
+        System.out.println("3 -> Remove airport");
+        System.out.println("4 -> Exit");
+        System.out.print("Navigate to: ");
+
+
+        try {
+            int choice = stdin.nextInt();
+            System.out.println();
+
+            switch (choice) {
+                case 1:
+                    this.addNewAirport();
+                    return;
+
+                case 2:
+                    // this.updateAirport();
+                    return;
+
+                case 3:
+                    this.removeAirport();
+                    return;
+
+                case 4:
+                    return;
+            }
+
+        } catch (InputMismatchException ex) {
+            System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+        }
+    }
+
+    public void addNewAirport() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Adding new Airport");
+
+        System.out.print("ICAO: ");
+        String icao = stdin.nextLine().trim();
+
+        System.out.print("\nDimension Class: ");
+        String dimensionClass = stdin.nextLine().trim();
+
+        System.out.print("\nName: ");
+        String name = stdin.nextLine().trim();
+
+        System.out.print("\nNation: ");
+        String nation = stdin.nextLine().trim();
+
+        System.out.print("\nCity: ");
+        String city = stdin.nextLine().trim();
+
+        boolean success = this.managementSystem.flightManager.addAirport(icao, dimensionClass, name, nation, city);
+
+        if (success) {
+            System.out.println("Insertion successful");
+
+        } else {
+            System.out.println("Insertion failed");
+        }
+    }
+
+    public void updateAirport() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("\nICAO: ");
+        String icao = stdin.nextLine().trim();
+
+        System.out.print("\nNew dimension class");
+        String dimensionClass = stdin.nextLine().trim();
+
+        boolean success = this.managementSystem.flightManager.updateAirport(icao, dimensionClass);
+
+        if (success) {
+            System.out.println("Removal successful");
+
+        } else {
+            System.out.println("Removal failed");
+        }
+    }
+
+    public void removeAirport() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.print("\nICAO: ");
+
+        String icao = stdin.nextLine().trim();
+
+        boolean success = this.managementSystem.flightManager.removeAirport(icao);
+
+        if (success) {
+            System.out.println("Removal successful");
+
+        } else {
+            System.out.println("Removal failed");
+        }
     }
 
     private void quit() {

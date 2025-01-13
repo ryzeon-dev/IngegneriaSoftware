@@ -7,7 +7,7 @@ import model.DimensionClass;
 public interface AirportDaoI {
     public Vector<Airport> getAll();
     public Airport getById(String icao);
-    public void create(String icao, DimensionClass dimensionClass, String name, String nation, String city);
+    public void create(String icao, String dimensionClass, String name, String nation, String city);
     public void delete(String icao);
-    public void update(String icao, DimensionClass dimensionClass);
+    public void update(String icao, String dimensionClass);
 }

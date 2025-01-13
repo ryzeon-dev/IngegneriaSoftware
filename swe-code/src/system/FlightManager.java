@@ -106,4 +106,34 @@ public class FlightManager {
     public void removeAircraft(String plate) {
         aircraftDao.deleteInstance(plate);
     }
+
+    public boolean addAirport(String ICAO, String dimensionClass, String name, String nation, String city) {
+        try {
+            airportDao.create(ICAO, dimensionClass, name, nation, city);
+            return true;
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    public boolean updateAirport(String ICAO, String dimensionClass) {
+        try {
+            airportDao.update(ICAO, dimensionClass);
+            return true;
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    public boolean removeAirport(String ICAO) {
+        try {
+            airportDao.delete(ICAO);
+            return true;
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
 }

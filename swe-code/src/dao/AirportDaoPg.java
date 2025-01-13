@@ -67,12 +67,12 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     }
 
     @Override
-    public void create(String icao, DimensionClass dimensionClass, String name, String nation, String city) {
+    public void create(String icao, String dimensionClass, String name, String nation, String city) {
         PgDB db = new PgDB();
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirport);
             preparedStatement.setString(1, icao);
-            preparedStatement.setString(2, dimensionClass.toString());
+            preparedStatement.setString(2, dimensionClass);
             preparedStatement.setString(3, name);
             preparedStatement.setString(4, nation);
             preparedStatement.setString(5, city);
@@ -104,12 +104,12 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     }
 
     @Override
-    public void update(String icao, DimensionClass dimensionClass) {
+    public void update(String icao, String dimensionClass) {
         PgDB db = new PgDB();
 
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.updateAirport);
-            preparedStatement.setString(1, dimensionClass.toString());
+            preparedStatement.setString(1, dimensionClass);
             preparedStatement.setString(2, icao);
 
             preparedStatement.executeQuery();
