@@ -54,8 +54,6 @@ Vincenzo Marturano
 * [[#Use case e template 1]]
 * [[#Use case e template 2]]
 * [[#Use case 3]]
-* [[#Use case 4]]
-* [[#Use case 5]]
 
 [[#Progettazione]]
 
@@ -199,13 +197,15 @@ Legenda:
 
 ### Use case e template 1
 
+![[UseCase1.png]]
 ### Use case e templates 2
+
+![[UseCase2.png]]
+
 
 ### Use case 3
 
-### Use case 4
-
-### Use case 5
+![[UseCase3.png|450]]
 
 # Progettazione 
 
@@ -223,17 +223,19 @@ Contiene diversi metodi, andremo ad esaminarli uno ad uno comprendendone a pieno
 ####  Metodo Costruttore 
 Prende in input un oggetto di tipo `ManagementSystem`, che sarà poi consultato per la lettura dei dati, e istanzia un oggetto del tipo `CredentialsManager`, il quale sarà invece impiegato per autenticare gli utenti e quindi fornire i corretti privilegi di accesso nelle varie sezioni del sistema.
 #### `void run()`
-Predispone un menù iniziale che permette di accedere a diverse categorie di informazioni in base al numero da 1 a 6 che viene inserito:
+Predispone un menù iniziale che permette di accedere a diverse categorie di informazioni in base al numero da 1 a 7 che viene inserito:
 
 1. Dati degli impiegati 
 2. Dati degli aeromobili 
 3. Dati delle rotte disponibili 
 4. Dati dei voli disponibili 
 5. Area del personale 
-6. Esci
+6. Aggiungi/Rimuovi aerei/impiegati/rotte
+7. Esci
 
-Il caso in cui non sia inserito uno di questi caratteri prevede il lancio dell'eccezione di tipo `InputMismatchException`, che sarà gestita chiedendo di digitare nuovamente un comando ricordando che deve essere un numero da 1 a 6.
+Il caso in cui non sia inserito uno di questi caratteri prevede il lancio dell'eccezione di tipo `InputMismatchException`, che sarà gestita chiedendo di digitare nuovamente un comando ricordando che deve essere un numero da 1 a 7.
 
+//FIXME, cambia foto
 ![[CLIMainPage.png|400]]
 
 #### `void  waitUntilEnter()`
@@ -314,7 +316,13 @@ Consente a ciascun utente, tramite autenticazione con username e password, di ac
 	    Consente di tornare al menù principale
 	
 (Le visualizzazioni usate in questa sezione sono le medesime che sono già state mostrate nella documentazione delle altre)
-#### (6) `void quit()`
+
+#### (6) `void systemCrud()`
+
+Questa sezione della CLI risulta essere fondamentale per garantire la longevità del nostro sistema; riguarda infatti l'implementazione dei CRUD (acronimo di "Create, Read, Update, Delete", le quali altro non sono che le quattro operazioni basilari per la gestione persistente dei dati) per aerei,  personale e rotte. Grazie a questa sezione il database potrà essere modificato in ogni momento adattandosi alle modifiche che subirà la compagnia nel corso del tempo
+//TODO Finire
+
+#### (7) `void quit()`
 Consente di uscire dal programma
  
 ---
