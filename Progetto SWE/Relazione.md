@@ -79,6 +79,7 @@ Vincenzo Marturano
 
 
 [[#Business logic]]
+- [[#Aircraft Manager]]
 * [[#CredentialsManager]]
 * [[#FlightManager]]
 * [[#FlightSchedule]]
@@ -319,8 +320,43 @@ Consente a ciascun utente, tramite autenticazione con username e password, di ac
 
 #### (6) `void systemCrud()`
 
-Questa sezione della CLI risulta essere fondamentale per garantire la longevità del nostro sistema; riguarda infatti l'implementazione dei CRUD (acronimo di "Create, Read, Update, Delete", le quali altro non sono che le quattro operazioni basilari per la gestione persistente dei dati) per aerei,  personale e rotte. Grazie a questa sezione il database potrà essere modificato in ogni momento adattandosi alle modifiche che subirà la compagnia nel corso del tempo
-//TODO Finire
+Questa sezione della CLI risulta essere fondamentale per garantire la longevità del nostro sistema; riguarda infatti l'implementazione dei CRUD (acronimo di "Create, Read, Update, Delete", le quali altro non sono che le quattro operazioni basilari per la gestione persistente dei dati) per aerei,  personale e rotte. Grazie a questa sezione il database potrà essere modificato in ogni momento adattandosi alle modifiche che subirà la compagnia nel corso del tempo.
+
+L'accesso a questa sezione è consentito esclusivamente agli admin. Una volta scelta questa sezione viene richiesto l'accesso: nel caso in cui vengono inserite credenziali di utenti con mancanza di permessi viene mostrato il messaggio *Only system administrator(s) can access this area* riportando l'interfaccia alla pagina iniziale; in caso contrario viene garantito l'accesso e si apre un ulteriore menù:
+
+//FIXME, foto del menù dei CRUD
+
+
+
+Il menù sovrastante funziona sempre con il medesimo sistema dei numeri, questa volta da 1 a 5:
+
+-  1. Inserisci/Rimuovi aerei
+-  2. Inserisci/Rimuovi aeroporto
+-  3. Inserisci/Rimuovi personale
+-  4. Inserisci/Rimuovi rotte 
+-  5. Esci
+
+##### `1. Insert/Remove aircraft`
+
+Digitato il numero 1 viene lanciato il metodo `viud aircraftCrud()` il quale presenta ancora un ulteriore menù, questa volta con valori da 1 a 4 che permette di scegliere l'operazione che si intende effettuare (1 - *List*, mostra un elenco, 2 - *Insert*, inserisci, 3 - *Remove*, elimina, 4 - *Exit* )
+
+**1 - List**
+
+**2 - Insert**
+Questa sezione si divide a sua volta in due, è possibile infatti sia procedere con l'inserimento di un nuovo modello di aereo (premendo 1, *Insert Aircraft*), oppure inserire proprio un nuovo velivolo (premendi 2, *Insert Aircraft-instance*); con 3 si esce invece da questo menù.
+
+- Insert Aircraft
+
+- Insert Aircraft-instance
+
+**3 - Delete**
+*Stessa cosa dell'Insert*
+
+##### `2. Insert/Remove airport`
+##### `3. Insert/Remove employee`
+##### `4. Insert/Remove flight route
+##### `5. Exit`
+
 
 #### (7) `void quit()`
 Consente di uscire dal programma
@@ -499,6 +535,9 @@ Innanzitutto si istanza un oggetto di tipo `FlightDaoPg` e poi si va a richiamar
 #### Override metodo `toString()`
 
 ## Business logic (system)
+
+### `Aircraft Manager`
+
 
 ### `CredentialsManager`
 ### `FlightManager`
