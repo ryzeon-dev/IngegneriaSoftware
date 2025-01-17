@@ -461,7 +461,31 @@ Modella la dimensione di un aeroporto, rappresentata da un numero da 1 a 4 che i
 Questo metodo esegue il confronto tra due oggetti di dimensionClass e stabilisce se quella corrente (tipicamente dell'aeromobile) sia compatibile con other (tipicamente quella dell'aeroporto). Se sia il numero che la lettera di this sono inferiori a quelli di other restituisce true, altrimenti false.
 
 ### `Credentials`
-//TODO
+Modella le credenziali usate dagli utenti per accedere alle varie sezioni dell'applicazioni
+#### Metodo Costruttore
+Inizializza un oggetto di tipo `Credentials` con i valori cge gli vengono forniti in input. Gli attributi sono:
+
+- `id`, di tipo Integer \
+Un identificatore univoco
+- `username`, di tipo String \
+Nome utente, con il quale l'utente viene riconosciuto dall'applicazione
+- `passwd`, di tipo String \
+Password dell'utente
+
+#### `boolean checkHash(String passwd)`
+Questo metodo viene usato per controllare la correttezza della password inserita. Le password, prima di essere memorizzate, vengono processate mediante una funzione di hash, la quale produce una sequenza di bit (detta **digest** ), strettamente correlata con i dati in ingresso. Nel nostro caso si è usato l'algoritmo SHA (Secure Hash Algorithm) 512, in cui l'output è di ben 512 bit.
+
+Per prima cosa si è richiamato, sulla stringa fornita in input, il metodo `getInstance` della classe `MessageDigest` con l'algoritmo SHA-512.
+Il passo successivo è la conversione della stringa in UTF-8 (Unicode Transformation Format a 8 bit) mediante il metodo `getBytes()` , il quale restituisce un array di byte, poi processato dal metodo `digest()`.
+
+Il costruttore di `BigInteger` assolve poi il compito di convertire quanto calcolato sopra dalla rappresentazione in segno (in questo caso sempre 1, il numero è positivo) e numero alla rappresentazione numerica canonica.
+
+Infine si effettua la conversione da BigInteger a una stringa esadecimale. Se la stringa ricevuta in input, processata come descritto sopra, coincide con la password memorizzata allora viene restituito `true`, altrimenti la password non viene riconosciuta e viene restituito `false`
+
+*Snippet del codice descritto passo passo sopra*
+![[Credentials_checkHash.png]]
+
+#### Metodo `toString()` classico
 
 ### `EmployeeRole`
 Altro non è che un'enumerazione di tutti i ruoli (tra quelli di interesse nel nostro sistema) dei dipendenti dell'azienda. Questi sono "Commander", "FirstOfficer" e "FlightAssistant".
@@ -471,7 +495,7 @@ Ritorna una stringa corrispondente al ruolo
 ### `Employee`
 Modella il personale dell'azienda memorizzandone, oltre ai dettagli classici, anche quelli inerenti alle mansioni lavorative. Viene implementato anche un attributo per tenerne traccia della posizione in tempo reale.
 #### Metodo Costruttore
-Inizializza un oggetto di tipo Employee  con i valori che gli vengono forniti in input. Gli attributi sono:
+Inizializza un oggetto di tipo `Employee`  con i valori che gli vengono forniti in input. Gli attributi sono:
 
 - `id`, di tipo Integer \
 	Un identificatore univoco 
