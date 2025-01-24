@@ -5,6 +5,7 @@ import model.AircraftModel;
 import model.Credentials;
 import model.DimensionClass;
 import model.Employee;
+import model.EmployeeRole;
 import model.Flight;
 import system.CredentialsManager;
 import system.ManagementSystem;
@@ -457,16 +458,59 @@ public class CLI {//extends Thread {
     }
     
     private void listEmployees(){
+
         for (var employee : this.managementSystem.flightManager.getAllEmployees()) {
             System.out.println(employee.getFullData());
         }
+
         waitUntilEnter();
     }
 
     private void insertEmployee(){
+        Scanner stdin = new Scanner(System.in);
+        
+        System.out.print("name: ");
+        String name= stdin.nextLine();
+        System.out.print("last name: ");
+        String lastname= stdin.nextLine();
+        EmployeeRole role= choseRole();
+        System.out.print("abilitation: ");
+        String abilitation= stdin.nextLine();
+        Employee employee= new Employee(name, lastname, role, abilitation);
+        this.managementSystem.employeeManager.insertEmployee(employee);
 
     }
 
+    private EmployeeRole choseRole(){
+        Scanner stdin = new Scanner(System.in);
+
+        EmployeeRole employeeRole=null;
+
+        while (employeeRole == null ) {
+            System.out.println("#Choose the role#");
+            System.out.println("1 -> Commander");
+            System.out.println("2 -> First Officer");
+            System.out.println("3 -> Flight Assistance");
+            int input =stdin.nextInt();
+            switch (input) {
+                case 1:
+                    employeeRole = EmployeeRole.Commander;
+                    break;
+                case 2:
+                    employeeRole= EmployeeRole.FirstOfficer;
+                    break;
+                case 3:
+                    employeeRole= EmployeeRole.FlightAssistant;
+                    break;
+                default:
+                    employeeRole=null;
+                    break;
+            }
+        }
+
+        return employeeRole;
+        
+    }
     private void deleteEmployee(){
 
     }

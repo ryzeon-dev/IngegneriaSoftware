@@ -11,16 +11,18 @@ public class ManagementSystem extends Thread {
     private SimulatedClock clock = new SimulatedClock();
     public FlightManager flightManager;
     public AircraftManager aircraftManager;
+    public EmployeeManager employeeManager;
     public FlightSchedule flightSchedule;
     public Vector<Flight> scheduledFlights;
 
     private FlightRouteDaoPg flightRouteDao = new FlightRouteDaoPg();
     private Vector<FlightRoute> flightRoutes;
 
-    public ManagementSystem(FlightManager manager,AircraftManager aircraftManager ,FlightSchedule fSchedule) {
+    public ManagementSystem(FlightManager manager,AircraftManager aircraftManager,EmployeeManager employeeManager ,FlightSchedule fSchedule) {
         this.flightManager = manager;
 
         this.aircraftManager = aircraftManager;
+        this.employeeManager= employeeManager;
         this.flightSchedule = fSchedule;
 
         this.flightRoutes = flightRouteDao.getAll();

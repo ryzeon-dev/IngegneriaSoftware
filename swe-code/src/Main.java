@@ -7,6 +7,7 @@ import dao.ParkingDaoPg;
 import system.ManagementSystem;
 import system.scheduling.schedulingStrategy.SimpleSchedule;
 import system.AircraftManager;
+import system.EmployeeManager;
 import system.FlightManager;
 import system.FlightSchedule;
 
@@ -23,12 +24,12 @@ public class Main {
         FlightManager flightManager = new FlightManager(aircraftDao, employeeDao, airportDaoPg, flightRoutePg);
 
         AircraftManager aircraftManager = new AircraftManager(aircraftDao);
-
+        EmployeeManager employeeManager= new EmployeeManager(employeeDao);
         //System.out.println(manager);
         SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg, parkingDaoPg, flightManager);
 
         FlightSchedule flightSchedule=new FlightSchedule(schedulingStrategy);
-        ManagementSystem managementSystem = new ManagementSystem(flightManager,aircraftManager,flightSchedule);
+        ManagementSystem managementSystem = new ManagementSystem(flightManager,aircraftManager,employeeManager,flightSchedule);
 
         CLI cli = new CLI(managementSystem);
         cli.run();

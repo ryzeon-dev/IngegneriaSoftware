@@ -10,6 +10,7 @@ import org.checkerframework.checker.units.qual.A;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -95,9 +96,13 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             preparedStatement.setString(2, lastName);
 
             preparedStatement.setString(3, role);
-            preparedStatement.setString(4, abilitation);
+            if(abilitation.isBlank()){
+                preparedStatement.setString(4, null);
+            }else{
+                preparedStatement.setString(4, abilitation);
+            }
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);

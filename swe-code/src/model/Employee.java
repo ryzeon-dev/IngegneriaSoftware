@@ -1,6 +1,6 @@
 package model;
 public class Employee {
-    public final int id;
+    public int id;
     public final String name;
 
     public final String lastName;
@@ -18,6 +18,14 @@ public class Employee {
         this.role = role;
         this.abilitation = abilitation;
     }
+    public Employee(String name, String lastName, EmployeeRole role, String abilitation) {
+        this.name = name;
+        this.lastName = lastName;
+
+        this.role = role;
+        this.abilitation = abilitation;
+    }
+
 
     public void setPosition(String icao) {
         this.position = icao;

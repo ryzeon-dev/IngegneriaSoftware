@@ -23,7 +23,6 @@ public class AircraftManager {
     }
 
     public Vector<AircraftModel> getAllModels(){
-        //TODO handle creation errors
         return aircraftDao.getAllModels();
     }
 
@@ -34,4 +33,6 @@ public class AircraftManager {
     public void deleteAircraft(String plate) {
         aircraftDao.deleteInstance(plate);
     }
+
+    
 }
