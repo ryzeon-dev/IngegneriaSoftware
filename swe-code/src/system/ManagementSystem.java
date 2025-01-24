@@ -81,7 +81,4 @@ public class ManagementSystem extends Thread {
         this.scheduledFlights = flightSchedule.makeSchedule();
     }
 
-    public void deleteAircraft(String plate) {
-        this.flightManager.removeAircraft(plate);
-    }
 }

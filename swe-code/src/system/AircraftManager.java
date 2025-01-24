@@ -30,4 +30,8 @@ public class AircraftManager {
     public void deleteAircraftModel(AircraftModel model){
         aircraftDao.deleteAircraftModel(Integer.toString(model.modelId));
     }
+
+    public void deleteAircraft(String plate) {
+        aircraftDao.deleteInstance(plate);
+    }
 }

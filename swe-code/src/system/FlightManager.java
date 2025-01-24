@@ -107,9 +107,7 @@ public class FlightManager {
         return this.employees.size();
     }
 
-    public void removeAircraft(String plate) {
-        aircraftDao.deleteInstance(plate);
-    }
+
 
     public boolean addAirport(String ICAO, String dimensionClass, String name, String nation, String city) {
         try {

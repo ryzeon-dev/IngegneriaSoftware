@@ -396,7 +396,7 @@ public class CLI {//extends Thread {
                         break;
 
                     case 3:
-                        this.accessRoutesDetails();
+                        this.employeeCrud();
                         break;
 
                     case 4:
@@ -413,6 +413,62 @@ public class CLI {//extends Thread {
             }
 
         }
+    }
+
+    public void employeeCrud() {
+        Scanner stdin = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Select action:");
+            System.out.println("1 -> List");
+            System.out.println("2 -> Insert");
+            System.out.println("3 -> Remove");
+            System.out.println("4 -> Exit");
+            System.out.print("Choice: ");
+            System.out.print("Navigate to: ");
+
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.listEmployees();
+                        break;
+
+                    case 2:
+                        this.insertEmployee();
+                        break;
+
+                    case 3:
+                        this.deleteEmployee();
+                        break;
+
+                    case 4:
+                        return;
+
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                continue;
+            }
+        }
+    }
+    
+    private void listEmployees(){
+        for (var employee : this.managementSystem.flightManager.getAllEmployees()) {
+            System.out.println(employee.getFullData());
+        }
+        waitUntilEnter();
+    }
+
+    private void insertEmployee(){
+
+    }
+
+    private void deleteEmployee(){
+
     }
 
     public void aircraftCrud() {
@@ -605,8 +661,7 @@ public class CLI {//extends Thread {
         String plate = stdin.nextLine();
 
         if (plates.contains(plate)) {
-            this.managementSystem.deleteAircraft(plate);
-
+            this.managementSystem.aircraftManager.deleteAircraft(plate);
             System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
             aircraftCrud();
         }

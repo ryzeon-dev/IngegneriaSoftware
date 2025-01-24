@@ -28,13 +28,14 @@ public class Employee {
     }
 
     public String getFullData() {
-        return "Name: " + this.name + "\n" +
-                "Last name: " + this.lastName + "\n" +
-                "ID: " + this.id + "\n" +
-                "Role: " + this.role + "\n" +
+
+        return "{Name: " + this.name + ", " +
+                "Last name: " + this.lastName + ", " +
+                "ID: " + this.id + ", " +
+                "Role: " + this.role  +
                 (
-                    abilitation == null ? "" : "Abilitation: " + this.abilitation + "\n"
-                );
+                    abilitation == null ? "" : ", Abilitation: " + this.abilitation
+                )+"}";
     }
 
 
