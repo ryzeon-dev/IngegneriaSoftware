@@ -8,5 +8,5 @@ public interface EmployeeDaoI {
 
     public Employee getEmployeeById(String id);
     public void create(String name, String lastName, String role, String abilitation);
-    public void delete(String id);
+    public void delete(int id);
 }

@@ -13,4 +13,8 @@ public class EmployeeManager {
     public void insertEmployee(Employee employee){
         employeeDao.create(employee.name, employee.lastName, employee.role.toString(), employee.abilitation);
     }
+
+    public void deleteEmployee(int id){
+        employeeDao.delete(id);
+    }
 }

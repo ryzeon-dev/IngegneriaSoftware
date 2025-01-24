@@ -24,8 +24,9 @@ public enum EmployeeRole {
         } else if (this.equals(EmployeeRole.FlightAssistant)) {
             return "hostess/steward";
 
-        } else {
-            return "";
+        }else{
+            throw new RuntimeException();
         }
+        
     }
 }

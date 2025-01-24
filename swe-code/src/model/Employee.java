@@ -37,9 +37,9 @@ public class Employee {
 
     public String getFullData() {
 
-        return "{Name: " + this.name + ", " +
+        return "{ID: " + this.id + ", " +
+                "Name: " + this.name + ", " +
                 "Last name: " + this.lastName + ", " +
-                "ID: " + this.id + ", " +
                 "Role: " + this.role  +
                 (
                     abilitation == null ? "" : ", Abilitation: " + this.abilitation

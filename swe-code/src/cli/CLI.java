@@ -511,7 +511,19 @@ public class CLI {//extends Thread {
         return employeeRole;
         
     }
+
     private void deleteEmployee(){
+        Scanner stdin = new Scanner(System.in);
+
+        for (var employee : this.managementSystem.flightManager.getAllEmployees()) {
+            System.out.println(employee.getFullData());
+        }
+
+        System.out.println();
+        System.err.print("id: ");
+        int id=stdin.nextInt();
+        
+        this.managementSystem.employeeManager.deleteEmployee(id);
 
     }
 

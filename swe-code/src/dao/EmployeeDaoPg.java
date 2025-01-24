@@ -112,14 +112,13 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(int id) {
         PgDB db = new PgDB();
 
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deletePersonal);
-            preparedStatement.setInt(1, Integer.parseInt(id));
-
-            preparedStatement.executeQuery();
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
             db.commit();
 
         } catch (SQLException e) {
