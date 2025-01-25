@@ -38,7 +38,6 @@ public class FlightManager {
     }
 
     private void makeEmployeesVectors() {
-
         this.employees = employeeDao.getAll();
 
         for (Employee employee : employees) {
@@ -70,22 +69,27 @@ public class FlightManager {
     }
 
     public Vector<Employee> getCommanders() {
+        this.makeEmployeesVectors();
         return this.commanders;
     }
 
     public Vector<Employee> getFirstOfficiers() {
+        this.makeEmployeesVectors();
         return this.firstOfficers;
     }
 
     public Vector<Employee> getFlightAssistants() {
+        this.makeEmployeesVectors();
         return this.flightAssistants;
     }
 
     public Vector<Employee> getAllEmployees() {
+        this.makeEmployeesVectors();
         return this.employees;
     }
 
     public Employee getEmployeeById(int id) {
+        this.makeEmployeesVectors();
         for (var employee : this.employees) {
             if (employee.id == id) {
                 return employee;
@@ -96,18 +100,19 @@ public class FlightManager {
     }
 
     public Vector<Airport> getAirports(){
+        this.airports = this.airportDao.getAll();
         return this.airports;
     }
 
     public Vector<Aircraft> getAircrafts(){
+        this.aircrafts = this.aircraftDao.getAll();
         return this.aircrafts;
     }
 
     public int employeesNumber() {
+        this.makeEmployeesVectors();
         return this.employees.size();
     }
-
-
 
     public boolean addAirport(String ICAO, String dimensionClass, String name, String nation, String city) {
         try {

@@ -1,13 +1,12 @@
 package db;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class PgDB {
     private Connection connection;
     public PgDB() {
         try {
-            String url = DBConfig.getUrl(); // sostituire con `DBConfig.getUrl()`
+            String url = DBConfig.getUrl();
             String username = DBConfig.getUsername();
             String passwd = DBConfig.getPasswd();
 
@@ -47,18 +46,18 @@ public class PgDB {
         }
         return result;
     }
-    // Il codice per il fetch del contenuto delle righe itera fino a quando non viene generato un errore
-    // il che indica la fine della riga (limite dell'indice di colonna raggiunto)
-    // non ho trovato un metodo che mi dica il numero di colonne da poter usare, quindi bisogna usare
-    // questo escamotage orrendo
+
     private Vector<String> getRow(ResultSet dbOutput) {
         Vector<String> row = new Vector<>();
+
         try {
             var metadata=dbOutput.getMetaData();
             int colCount=metadata.getColumnCount();
+
             for (int i = 1; i <= colCount; i++) {
                 row.add(dbOutput.getString(i));
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,39 +73,6 @@ public class PgDB {
             return null;
         }
     }
-
-    /*
-    public Vector<Vector<String>> runPstmtAndFetch(String query, ArrayList<String> params){
-        Vector<Vector<String>> result = new Vector<>();
-
-        try {
-            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            int index = 1;
-
-            for (var param : params) {
-                preparedStatement.setS
-                index += 1;
-            }
-
-            System.out.println(pstmt.toString());
-
-            try (ResultSet dbOutput = pstmt.executeQuery()){
-
-            } catch (Exception e) {
-                System.err.println("fatal error: prepared statement parameter insertion failed: " + e.getMessage());
-
-            } finally {
-                this.commit();
-            }
-
-        } catch (SQLException e) {
-            System.err.println("fatal error: prepared statement creation generated error: " + e.getMessage());
-            System.exit(1);
-        }
-
-        return result;
-    }
-    */
 
     public boolean run(String query) {
         try {

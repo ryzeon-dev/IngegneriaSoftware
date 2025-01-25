@@ -31,6 +31,8 @@ public class CLI {//extends Thread {
         this.credentialsManager = new CredentialsManager();
     }
 
+    /* STD CLI */
+
     public void run() {
         while (this.running) {
             try {
@@ -349,6 +351,8 @@ public class CLI {//extends Thread {
         }
     }
 
+    /* CRUD */
+
     public void systemCrud() {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Access to this area requires login");
@@ -409,12 +413,14 @@ public class CLI {//extends Thread {
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 5 corresponding to the navigation choice");
                 continue;
             }
 
         }
     }
+
+    /* EMPLOYEE CRUD */
 
     public void employeeCrud() {
         Scanner stdin = new Scanner(System.in);
@@ -451,7 +457,7 @@ public class CLI {//extends Thread {
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
                 continue;
             }
         }
@@ -471,19 +477,21 @@ public class CLI {//extends Thread {
         
         System.out.print("name: ");
         String name= stdin.nextLine();
+
         System.out.print("last name: ");
         String lastname= stdin.nextLine();
+
         EmployeeRole role= choseRole();
         System.out.print("abilitation: ");
+
         String abilitation= stdin.nextLine();
+
         Employee employee= new Employee(name, lastname, role, abilitation);
         this.managementSystem.employeeManager.insertEmployee(employee);
-
     }
 
     private EmployeeRole choseRole(){
         Scanner stdin = new Scanner(System.in);
-
         EmployeeRole employeeRole=null;
 
         while (employeeRole == null ) {
@@ -491,6 +499,7 @@ public class CLI {//extends Thread {
             System.out.println("1 -> Commander");
             System.out.println("2 -> First Officer");
             System.out.println("3 -> Flight Assistance");
+
             int input =stdin.nextInt();
             switch (input) {
                 case 1:
@@ -527,6 +536,8 @@ public class CLI {//extends Thread {
 
     }
 
+    /* AIRCRAFT CRUD */
+
     public void aircraftCrud() {
         Scanner stdin = new Scanner(System.in);
 
@@ -562,7 +573,7 @@ public class CLI {//extends Thread {
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
                 continue;
             }
         }
@@ -596,7 +607,7 @@ public class CLI {//extends Thread {
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
                 continue;
             }
         }
@@ -686,7 +697,7 @@ public class CLI {//extends Thread {
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
                 continue;
             }
         }
@@ -724,6 +735,8 @@ public class CLI {//extends Thread {
         stdin.close();
     }
 
+    /* AIRPORT CRUD */
+
     public void airportCrud() {
         Scanner stdin = new Scanner(System.in);
         System.out.println("\nOptions");
@@ -755,7 +768,7 @@ public class CLI {//extends Thread {
             }
 
         } catch (InputMismatchException ex) {
-            System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+            System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
         }
     }
 
@@ -822,6 +835,8 @@ public class CLI {//extends Thread {
             System.out.println("Removal failed");
         }
     }
+
+    /* ROUTE CRUD */
 
     public void routeCrud() {
         Scanner stdin = new Scanner(System.in);
@@ -903,5 +918,4 @@ public class CLI {//extends Thread {
         this.managementSystem.quit();
         System.exit(0);
     }
-
 }
