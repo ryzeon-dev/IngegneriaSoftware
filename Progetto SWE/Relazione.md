@@ -63,9 +63,11 @@ Vincenzo Marturano
 [[#Class diagrams]]
 
 [[#CLI]]
+[[#DBConfig]]
+[[#PgDB]]
 [[#FlightRouteDaoPg]]
 [[#EmployeeDaoPg]]
-[[#PgDB]]
+
 
 [[#Domain Model]]
 * [[#Aircraft]]
@@ -365,8 +367,30 @@ Consente di uscire dal programma
 
 ## db
 
+## DBConfig
+
 ### PgDB
-//TODO Classe che si usa per interfacciarsi con il database, chiamata anche dal DAO per fare le query
+
+Classe usata dall'applicazione per interfacciarsi con il database, chiamata anche dal DAO per eseguire le query
+#### Metodo Costruttore
+Questo metodo assolve il compito di istanziare un oggetto di questa classe, rendendo possibile il "legame" tra l'applicazione e il database.
+
+Prima di tutto vengono dichiarate 3 stringhe fondamentali:
+- `url`, acronimo di Uniform Resource Locator, è una sequenza di caratteri che identifica univocamente l'indirizzo di una risorsa in Internet. A questo attributo viene assegnato, tramite il metodo `getUrl()`, l'url del database.
+- `username`, nome utente per l'accesso al database
+- `passwd`, password per l'accesso al database
+
+Una volta che dispone di queste stringhe, il metodo tenta di stabilire la connessione vera e propria. Si carica il primo driver disponibile e in grado di connettersi alla risorsa dalla lista JDBC (Java DataBase Connectivity), questo usando la classe `DriverManager`, e si stabilisce la connessione usando il metodo `getConnection()`.
+Un fallimento in questo processo è assolutamente terminale, non è possibile infatti compiere operazioni di alcun tipo senza avere a disposizione il database, nel caso in cui questo avvenga si notifica all'utente la natura dell'errore e si chiude il programma.
+
+#### `Vector<Vector<String>> runAndFetch(String query)`
+
+E' il metodo principale e la responsabilità primaria che viene affidata a questa classe.
+Riceve in input la query, sotto forma di stringa, che si vuole eseguire sul Database connesso.
+
+Si crea poi, mediante il metodo `createStatement` un oggetto `SQLServerStatement`, per l'invio di istruzioni SQL al database. Una volta fatto questo viene chiamato il metodo `executeQuery(query)` il quale esegue effettivamente la query; i risultati vengono salvati nella tabella virtuale result.
+
+//FIXME, continue
 
 ## DAO
 
