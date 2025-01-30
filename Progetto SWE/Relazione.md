@@ -383,15 +383,37 @@ Prima di tutto vengono dichiarate 3 stringhe fondamentali:
 Una volta che dispone di queste stringhe, il metodo tenta di stabilire la connessione vera e propria. Si carica il primo driver disponibile e in grado di connettersi alla risorsa dalla lista JDBC (Java DataBase Connectivity), questo usando la classe `DriverManager`, e si stabilisce la connessione usando il metodo `getConnection()`.
 Un fallimento in questo processo è assolutamente terminale, non è possibile infatti compiere operazioni di alcun tipo senza avere a disposizione il database, nel caso in cui questo avvenga si notifica all'utente la natura dell'errore e si chiude il programma.
 
+![[PgDB_Constructor.png]]
 #### `Vector<Vector<String>> runAndFetch(String query)`
 
 E' il metodo principale e la responsabilità primaria che viene affidata a questa classe.
 Riceve in input la query, sotto forma di stringa, che si vuole eseguire sul Database connesso.
 
-Si crea poi, mediante il metodo `createStatement` un oggetto `SQLServerStatement`, per l'invio di istruzioni SQL al database. Una volta fatto questo viene chiamato il metodo `executeQuery(query)` il quale esegue effettivamente la query; i risultati vengono salvati nella tabella virtuale result.
+Si crea poi, mediante il metodo `createStatement` un oggetto `SQLServerStatement`, per l'invio di istruzioni SQL al database. Una volta fatto questo viene chiamato il metodo `executeQuery(query)` il quale esegue effettivamente la query; i risultati (righe che sono state generate dalla query) vengono salvati nella tabella virtuale result. 
 
-//FIXME, continue
+Un errore, esso sia nella procedura di generazione della query che in quella di estrazione di risultati dalla base di dati, provoca in ogni caso la chiusura dell'applicazione, con ovviamente annessa notifica di cosa ha generato il crash.
 
+![[PgDB_runAndFetch.png]]
+#### `Vector<String> getRow(ResultSet dbOutput)`
+
+Permette l'estrazione di righe da un `ResultSet`, un tipo di oggetto generato in seguito all'esecuzione di una query su un Database. Quindi si esegue la query, i risultati vengono inseriti in questa struttura dati, e poi se serve grazie a questo metodo se ne possono estrarre alcune righe.
+
+Prima di tutto si esegue il metodo `getMetadata()`, una procedura particolare che permette di estrarre tutte le proprietà delle varie colonne (numero, tipo e caratteristiche varie) e poi esegue un ciclo dove estrae i dati campo per campo.
+
+#### `PreparedStatement makePreparedStatement(String query)`
+
+Metodo usato per la creazione di una istruzione SQL precompilata e memorizzata in modo da poterla usare senza vincoli senza dover ricorrere ogni volta alla sua compilazione.
+Il metodo usato per fare ciò è `prepareStatement(String query).
+In caso di errore viene stampato il messaggio ""
+
+*Di seguito alcuni dei numerosi PreparedStatement usati nel programma*
+![[preparedStatement.png]]
+
+#### `void commit()`
+Effettua il commit sul database delle modifiche applicate 
+
+#### void close()
+Chiude la connessione tra l'applicazione e il database e quindi, in cascata, chiude il programma notificando all'utente l'errore "fatale" dato dalla mancanza di tale collegamento.
 ## DAO
 
 
@@ -403,7 +425,7 @@ Questo sub-package contiene le interfacce astratte che verranno poi implementate
 Di seguito andiamo a riportare il codice per una sola di queste, dato che è uguale per tutte le classi riportarlo per ciascuna di esse sarebbe verboso e ridondante.</p>
 _L'identificatore `<Type>` rappresenta una qualsiasi delle implementazioni dell'interfaccia_
 
-![[IntelliJ Snippet (1).png]]
+![[IntelliJ Snippet (1).png|380]]
 
 ### Classi `*DaoPg`
 
