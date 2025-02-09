@@ -333,7 +333,9 @@ public class CLI {//extends Thread {
             System.out.println();
 
             if (choice.equals("1")) {
-                System.out.println(employee.getFullData());
+                if (employee != null) {
+                    System.out.println(employee.getFullData());
+                }
                 this.waitUntilEnter();
 
             } else if (choice.equals("2")) {
@@ -482,9 +484,12 @@ public class CLI {//extends Thread {
         String lastname= stdin.nextLine();
 
         EmployeeRole role= choseRole();
-        System.out.print("abilitation: ");
-
-        String abilitation= stdin.nextLine();
+        
+        String abilitation= "";
+        if (role == EmployeeRole.Commander | role == EmployeeRole.FirstOfficer){
+            System.out.print("abilitation: ");
+            abilitation=stdin.nextLine();
+        }
 
         Employee employee= new Employee(name, lastname, role, abilitation);
         this.managementSystem.employeeManager.insertEmployee(employee);

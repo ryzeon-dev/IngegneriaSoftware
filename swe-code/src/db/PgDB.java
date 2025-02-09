@@ -69,7 +69,7 @@ public class PgDB {
             return this.connection.prepareStatement(query);
 
         } catch (SQLException e) {
-            System.out.println("fatal error: cannot create prepared statment for query \"" + query + "\" because of: " + e.toString());
+            System.out.println("fatal error: cannot create prepared statement for query \"" + query + "\" because of: " + e.toString());
             return null;
         }
     }
