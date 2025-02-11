@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.stream.StreamSupport;
 
 public class CLI {//extends Thread {
     private ManagementSystem managementSystem;
@@ -495,7 +496,7 @@ public class CLI {//extends Thread {
         this.managementSystem.employeeManager.insertEmployee(employee);
     }
 
-    private EmployeeRole choseRole(){
+    private EmployeeRole choseRole() {
         Scanner stdin = new Scanner(System.in);
         EmployeeRole employeeRole=null;
 
@@ -535,10 +536,9 @@ public class CLI {//extends Thread {
 
         System.out.println();
         System.err.print("id: ");
-        int id=stdin.nextInt();
-        
-        this.managementSystem.employeeManager.deleteEmployee(id);
 
+        int id=stdin.nextInt();
+        this.managementSystem.employeeManager.deleteEmployee(id);
     }
 
     /* AIRCRAFT CRUD */
@@ -712,11 +712,14 @@ public class CLI {//extends Thread {
     public void deleteAircraftModel(){
         Scanner stdin = new Scanner(System.in);
         Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+
         for (int i = 0; i < models.size(); i++) {
             System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
         }
+
         System.err.println("chose the model: ");
         int chosed_model=stdin.nextInt();
+
         this.managementSystem.aircraftManager.deleteAircraftModel(models.get(chosed_model));
     }
 
@@ -733,11 +736,16 @@ public class CLI {//extends Thread {
         String plate = stdin.nextLine();
 
         if (plates.contains(plate)) {
-            this.managementSystem.aircraftManager.deleteAircraft(plate);
-            System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
-            aircraftCrud();
+            try {
+                this.managementSystem.aircraftManager.deleteAircraft(plate);
+
+            } catch (RuntimeException e) {
+                System.out.println("Error: Impossible to delete airctaft instance " + plate);
+
+            } finally {
+                System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
+            }
         }
-        stdin.close();
     }
 
     /* AIRPORT CRUD */
