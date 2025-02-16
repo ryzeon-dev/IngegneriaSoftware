@@ -47,6 +47,7 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
             employee = buildFromRow(vectorRow);
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
@@ -104,7 +105,9 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
             preparedStatement.execute();
             db.commit();
+
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
@@ -122,6 +125,7 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             db.commit();
 
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 

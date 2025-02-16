@@ -69,17 +69,22 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     @Override
     public void create(String icao, String dimensionClass, String name, String nation, String city) {
         PgDB db = new PgDB();
+
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirport);
             preparedStatement.setString(1, icao);
+
             preparedStatement.setString(2, dimensionClass);
             preparedStatement.setString(3, name);
+
             preparedStatement.setString(4, nation);
             preparedStatement.setString(5, city);
 
             preparedStatement.executeQuery();
             db.commit();
+
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
@@ -96,7 +101,9 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
 
             preparedStatement.executeQuery();
             db.commit();
+
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
@@ -115,6 +122,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
             preparedStatement.executeQuery();
             db.commit();
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 

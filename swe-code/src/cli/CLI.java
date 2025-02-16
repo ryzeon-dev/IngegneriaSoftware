@@ -493,7 +493,12 @@ public class CLI {//extends Thread {
         }
 
         Employee employee= new Employee(name, lastname, role, abilitation);
-        this.managementSystem.employeeManager.insertEmployee(employee);
+        try {
+            this.managementSystem.employeeManager.insertEmployee(employee);
+
+        } catch (RuntimeException e) {
+            System.out.println("Error: cannot insert new employee");
+        }
     }
 
     private EmployeeRole choseRole() {
@@ -538,7 +543,12 @@ public class CLI {//extends Thread {
         System.err.print("id: ");
 
         int id=stdin.nextInt();
-        this.managementSystem.employeeManager.deleteEmployee(id);
+        try {
+            this.managementSystem.employeeManager.deleteEmployee(id);
+
+        } catch (RuntimeException e) {
+            System.out.println("Error: cannot remove employee (it is probably busy by flight schedule)");
+        }
     }
 
     /* AIRCRAFT CRUD */
@@ -607,6 +617,7 @@ public class CLI {//extends Thread {
                     case 2:
                         this.insertAircraftInstance();
                         break;
+
                     case 3:
                         return;
                 }
@@ -646,7 +657,12 @@ public class CLI {//extends Thread {
         int seats=stdin.nextInt();
 
         Aircraft aircraft=new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
-        this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
+        try {
+            this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
+
+        } catch (RuntimeException e) {
+            System.out.println("Error: cannot create aircraft model");
+        }
     }
 
     private void insertAircraftInstance(){
@@ -664,7 +680,12 @@ public class CLI {//extends Thread {
         System.err.println("plate: ");
 
         String plate=stdin.nextLine();
-        this.managementSystem.aircraftManager.insertAircraftInstance(plate, chosed_model);
+        try {
+            this.managementSystem.aircraftManager.insertAircraftInstance(plate, chosed_model);
+
+        } catch (RuntimeException e) {
+            System.out.println("Error: cannot insert new aircraft instance");
+        }
     }
 
     public void listAircrafts() {
@@ -720,7 +741,12 @@ public class CLI {//extends Thread {
         System.err.println("chose the model: ");
         int chosed_model=stdin.nextInt();
 
-        this.managementSystem.aircraftManager.deleteAircraftModel(models.get(chosed_model));
+        try {
+            this.managementSystem.aircraftManager.deleteAircraftModel(models.get(chosed_model));
+
+        } catch (RuntimeException e) {
+            System.out.println("Error: cannot delete aircraft model (it is possible that one or more aircrafts of its type are still present)");
+        }
     }
 
     public void deleteAircraftInstance(){
@@ -740,7 +766,7 @@ public class CLI {//extends Thread {
                 this.managementSystem.aircraftManager.deleteAircraft(plate);
 
             } catch (RuntimeException e) {
-                System.out.println("Error: Impossible to delete airctaft instance " + plate);
+                System.out.println("Error: Impossible to delete airctaft instance " + plate + " (it is probably busy by flight schedule)");
 
             } finally {
                 System.out.println("Aircraft " + plate + " removed. Returning to menu\n");

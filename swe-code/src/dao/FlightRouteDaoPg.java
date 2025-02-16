@@ -31,19 +31,26 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
 
     public FlightRoute getRouteById(int id) {
         ResultSet result=null;
+
         PgDB db = new PgDB();
         FlightRoute route=null;
+
         try{
             var preparedStatement= db.makePreparedStatement(PreparedStatementQueries.getRouteForID);
+
             preparedStatement.setInt(1, id);
             result = preparedStatement.executeQuery();
+
             result.next();
             route=buildFromRow(result);
-        }catch(SQLException e){
+
+        } catch(SQLException e) {
             e.printStackTrace();
-        }finally{
+
+        } finally {
             db.close();
         }
+
         return route;
     }
 
@@ -64,16 +71,22 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
     public void create(int distance, int duration, String departure, String arrival) {
         PgDB pgDB = new PgDB();
         var preparedStatement= pgDB.makePreparedStatement(PreparedStatementQueries.insertRoute);
+
         try {
             preparedStatement.setInt(1,distance);
             preparedStatement.setInt(2,duration);
+
             preparedStatement.setString(3, departure);
             preparedStatement.setString(4, arrival);
+
             preparedStatement.execute();
             pgDB.commit();
+
         } catch (SQLException e) {
+            pgDB.close();
             throw new RuntimeException();
-        }finally{
+
+        } finally {
             pgDB.close();
         }
     }
@@ -82,15 +95,17 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
     public void delete(String id) {
         PgDB pgDB = new PgDB();
         var preparedStatement= pgDB.makePreparedStatement(PreparedStatementQueries.getRouteForID);
+
         try {
             preparedStatement.setString(1, id);
             preparedStatement.execute();
             pgDB.commit();
 
         } catch (SQLException e) {
+            pgDB.close();
             throw new RuntimeException();
 
-        }finally{
+        } finally {
             pgDB.close();
         }
     }

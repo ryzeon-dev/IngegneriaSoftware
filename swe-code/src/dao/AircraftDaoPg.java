@@ -14,10 +14,12 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
     public Vector<AircraftModel>  getAllModels(){
         PgDB db = new PgDB();
         Vector<AircraftModel> aircraftModels= new Vector<>();
+
         var result= db.runAndFetch(PreparedStatementQueries.getAircraftModels);
         for (var row : result) {
             aircraftModels.add(helpers.buildAircarftModelFromRow(row));
         }
+
         db.close();
         return aircraftModels;
     }
@@ -53,6 +55,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
             preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
@@ -69,11 +72,15 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
             preparedStatement.setInt(2, Integer.parseInt(modelId));
             preparedStatement.execute();
             db.commit();
+
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
+
+        } finally {
+            db.close();
         }
 
-        db.close();
     }
 
     public void deleteInstance(String plate) {
@@ -85,22 +92,29 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
 
             preparedStatement.execute();
             db.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        db.close();
+        } catch (SQLException e) {
+            db.close();
+            throw new RuntimeException(e);
+
+        } finally {
+            db.close();
+        }
     }
 
     @Override
     public void deleteAircraftModel(String modelId) {
         PgDB db = new PgDB();
+
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAircraftModel);
             preparedStatement.setInt(1, Integer.parseInt(modelId));
+
             preparedStatement.execute();
             db.commit();
+
         } catch (SQLException e) {
+            db.close();
             throw new RuntimeException(e);
         }
 
