@@ -2,7 +2,6 @@ package system;
 
 import java.util.Vector;
 
-import dao.FlightRouteDaoPg;
 import dao.interfaces.FlightRouteDaoI;
 import dao.interfaces.AircraftDaoI;
 import dao.interfaces.AirportDaoI;
@@ -32,7 +31,7 @@ public class FlightManager {
         this.airportDao = airportDao;
         this.flightRouteDao = flightRouteDao;
 
-        aircrafts = this.aircraftDao.getAll();
+        aircrafts = this.aircraftDao.getAllInstances();
         makeEmployeesVectors();
         airports = this.airportDao.getAll();
     }
@@ -105,7 +104,7 @@ public class FlightManager {
     }
 
     public Vector<Aircraft> getAircrafts(){
-        this.aircrafts = this.aircraftDao.getAll();
+        this.aircrafts = this.aircraftDao.getAllInstances();
         return this.aircrafts;
     }
 

@@ -19,7 +19,7 @@ public class AircraftManager {
 
     public void insertAircraftModel(Aircraft aircraft){
         //TODO handle creation errors
-        aircraftDao.create(aircraft);
+        aircraftDao.createModel(aircraft);
     }
 
     public Vector<AircraftModel> getAllModels(){
@@ -27,7 +27,7 @@ public class AircraftManager {
     }
 
     public void deleteAircraftModel(AircraftModel model){
-        aircraftDao.deleteAircraftModel(Integer.toString(model.modelId));
+        aircraftDao.deleteModel(Integer.toString(model.modelId));
     }
 
     public void deleteAircraft(String plate) {
