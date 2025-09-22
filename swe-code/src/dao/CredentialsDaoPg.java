@@ -9,6 +9,7 @@ import model.Credentials;
 import java.util.Vector;
 
 public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
+    @Override
     public Vector<Credentials> getAll() {
         PgDB db = new PgDB();
 

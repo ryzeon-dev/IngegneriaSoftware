@@ -5,6 +5,6 @@ import model.FlightRoute;
 
 public interface FlightRouteDaoI {
     public Vector<FlightRoute> getAll();
-    public void create(int distance, int duration, String departure, String arrival);
+    public void create(int distance, int duration, String departure, String stepover, String arrival);
     public void delete(String id);
 }

@@ -1,35 +1,14 @@
 import cli.CLI;
-import dao.AircraftDaoPg;
-import dao.AirportDaoPg;
-import dao.EmployeeDaoPg;
-import dao.FlightRouteDaoPg;
-import dao.ParkingDaoPg;
 import system.ManagementSystem;
 import system.scheduling.schedulingStrategy.SimpleSchedule;
-import system.AircraftManager;
-import system.EmployeeManager;
-import system.FlightManager;
 import system.FlightSchedule;
 
 public class Main {
     public static void main(String[] args) {
-        //DAO Instantiation.
-        AircraftDaoPg aircraftDao= new AircraftDaoPg();
-        EmployeeDaoPg employeeDao = new EmployeeDaoPg();
+        SimpleSchedule schedulingStrategy = new SimpleSchedule();
 
-        AirportDaoPg airportDaoPg = new AirportDaoPg();
-        FlightRouteDaoPg flightRoutePg= new FlightRouteDaoPg();
-
-        ParkingDaoPg parkingDaoPg= new ParkingDaoPg();
-        FlightManager flightManager = new FlightManager(aircraftDao, employeeDao, airportDaoPg, flightRoutePg);
-
-        AircraftManager aircraftManager = new AircraftManager(aircraftDao);
-        EmployeeManager employeeManager= new EmployeeManager(employeeDao);
-        //System.out.println(manager);
-        SimpleSchedule schedulingStrategy=new SimpleSchedule(flightRoutePg, parkingDaoPg, flightManager);
-
-        FlightSchedule flightSchedule=new FlightSchedule(schedulingStrategy);
-        ManagementSystem managementSystem = new ManagementSystem(flightManager,aircraftManager,employeeManager,flightSchedule);
+        FlightSchedule flightSchedule = new FlightSchedule(schedulingStrategy);
+        ManagementSystem managementSystem = new ManagementSystem(flightSchedule);
 
         CLI cli = new CLI(managementSystem);
         cli.run();

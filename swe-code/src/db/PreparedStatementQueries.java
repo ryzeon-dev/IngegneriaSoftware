@@ -60,11 +60,19 @@ public class PreparedStatementQueries {
 
     public static final String deletePersonal = "DELETE FROM personal where id=?";
 
-    public static final String insertRoute = "INSERT INTO route (distance, duration, departure, arrival) values (?, ?, ?, ?)";
+    public static final String insertRoute = "INSERT INTO route (distance, duration, departure, stepover, arrival) values (?, ?, ?, ?, ?)";
 
     public static final String deleteRoute = "DELETE FROM route WHERE id=?";
 
     public static final String getAircraftId = "SELECT id FROM airctaft WHERE manufacturer=? and model=? and specification=?";
 
     public static final String deleteAircraftInstance = "DELETE FROM aircraft_instance WHERE plate=?";
+
+    public static final String getAirportById = "SELECT * FROM airport WHERE id=?";
+
+    public static final String getAllCommanders = "SELECT * FROM personal WHERE role='commander'";
+
+    public static final String getAllFirstOfficers = "SELECT * FROM personal WHERE role='firstofficer'";
+
+    public static final String getAllFlightAssistants = "SELECT * FROM personal WHERE role='hostess/steward'";
 }

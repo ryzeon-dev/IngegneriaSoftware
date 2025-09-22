@@ -1,5 +1,10 @@
 package cli;
 
+import dao.*;
+import dao.interfaces.AircraftDaoI;
+import dao.interfaces.AirportDaoI;
+import dao.interfaces.EmployeeDaoI;
+import dao.interfaces.FlightRouteDaoI;
 import model.Aircraft;
 import model.AircraftModel;
 import model.Credentials;
@@ -12,6 +17,7 @@ import system.ManagementSystem;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -19,6 +25,11 @@ import java.util.Vector;
 import java.util.stream.StreamSupport;
 
 public class CLI {//extends Thread {
+    EmployeeDaoI employeeDao = new EmployeeDaoPg();
+    AircraftDaoI aircraftDao = new AircraftDaoPg();
+    FlightRouteDaoI flightRouteDao = new FlightRouteDaoPg();
+    AirportDaoI airportDaoPg = new AirportDaoPg();
+
     private ManagementSystem managementSystem;
     private boolean running = true;
     private CredentialsManager credentialsManager;
@@ -31,7 +42,6 @@ public class CLI {//extends Thread {
 
         this.credentialsManager = new CredentialsManager();
     }
-
     /* STD CLI */
 
     public void run() {
@@ -149,7 +159,7 @@ public class CLI {//extends Thread {
                 System.out.println();
                 switch (choice) {
                     case 1: {
-                        for (var employee : managementSystem.flightManager.getAllEmployees()) {
+                        for (var employee : employeeDao.getAll()) {
                             System.out.println(employee);
                         }
                         waitUntilEnter();
@@ -157,7 +167,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 2: {
-                        for (var commander : managementSystem.flightManager.getCommanders()) {
+                        for (var commander : employeeDao.getAllCommanders()) {
                             System.out.println(commander + "\n");
                         }
                         waitUntilEnter();
@@ -165,7 +175,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 3: {
-                        for (var firstOfficer : managementSystem.flightManager.getFirstOfficiers()) {
+                        for (var firstOfficer : employeeDao.getAllFirstOfficers()) {
                             System.out.println(firstOfficer + "\n");
                         }
                         waitUntilEnter();
@@ -173,7 +183,7 @@ public class CLI {//extends Thread {
                     }
 
                     case 4: {
-                        for (var flightAssistant : managementSystem.flightManager.getFlightAssistants()) {
+                        for (var flightAssistant : employeeDao.getAllFlightAssistants()) {
                             System.out.println(flightAssistant + "\n");
                         }
                         waitUntilEnter();
@@ -194,12 +204,13 @@ public class CLI {//extends Thread {
                             }
                         }
 
-                        if (requestedId >= 0 && requestedId < managementSystem.flightManager.employeesNumber()) {
-                            System.out.println(managementSystem.flightManager.getEmployeeById(requestedId).getFullData());
+                        var employee = employeeDao.getEmployeeById(String.valueOf(requestedId));
+                        if (employee != null) {
+                            System.out.println(employee.getFullData());
                             waitUntilEnter();
 
                         } else {
-                            System.out.println("ID index out of range");
+                            System.out.println("ID not found");
                         }
                         break;
                     }
@@ -228,7 +239,7 @@ public class CLI {//extends Thread {
                 return;
             }
             int id = credentials.id;
-            System.out.println(managementSystem.flightManager.getEmployeeById(id).getFullData());
+            System.out.println(employeeDao.getEmployeeById(String.valueOf(id)).getFullData());
 
             waitUntilEnter();
         }
@@ -252,7 +263,7 @@ public class CLI {//extends Thread {
         }
         System.out.println();
 
-        for (var airctaft : this.managementSystem.getAircraftDetails()) {
+        for (var airctaft : aircraftDao.getAllInstances()) {
             System.out.println(airctaft.fullData());
             System.out.println();
         }
@@ -260,7 +271,7 @@ public class CLI {//extends Thread {
     }
 
     private void accessRoutesDetails() {
-        System.out.println(this.managementSystem.getRouteDetails());
+        System.out.println(flightRouteDao.getAll());
         System.out.println();
         waitUntilEnter();
     }
@@ -322,7 +333,7 @@ public class CLI {//extends Thread {
             return;
         }
 
-        Employee employee = this.managementSystem.flightManager.getEmployeeById(credentials.id);
+        Employee employee = employeeDao.getEmployeeById(String.valueOf(credentials.id));
 
         while (true) {
             System.out.println("\nPersonal area menu:");
@@ -468,7 +479,7 @@ public class CLI {//extends Thread {
     
     private void listEmployees(){
 
-        for (var employee : this.managementSystem.flightManager.getAllEmployees()) {
+        for (var employee : employeeDao.getAll()) {
             System.out.println(employee.getFullData());
         }
 
@@ -484,7 +495,7 @@ public class CLI {//extends Thread {
         System.out.print("last name: ");
         String lastname= stdin.nextLine();
 
-        EmployeeRole role= choseRole();
+        EmployeeRole role = choseRole();
         
         String abilitation= "";
         if (role == EmployeeRole.Commander | role == EmployeeRole.FirstOfficer){
@@ -492,9 +503,8 @@ public class CLI {//extends Thread {
             abilitation=stdin.nextLine();
         }
 
-        Employee employee= new Employee(name, lastname, role, abilitation);
         try {
-            this.managementSystem.employeeManager.insertEmployee(employee);
+            employeeDao.create(name, lastname, role.toString(), abilitation);
 
         } catch (RuntimeException e) {
             System.out.println("Error: cannot insert new employee");
@@ -535,7 +545,7 @@ public class CLI {//extends Thread {
     private void deleteEmployee(){
         Scanner stdin = new Scanner(System.in);
 
-        for (var employee : this.managementSystem.flightManager.getAllEmployees()) {
+        for (var employee : employeeDao.getAll()) {
             System.out.println(employee.getFullData());
         }
 
@@ -544,7 +554,7 @@ public class CLI {//extends Thread {
 
         int id=stdin.nextInt();
         try {
-            this.managementSystem.employeeManager.deleteEmployee(id);
+            employeeDao.delete(id);
 
         } catch (RuntimeException e) {
             System.out.println("Error: cannot remove employee (it is probably busy by flight schedule)");
@@ -658,7 +668,7 @@ public class CLI {//extends Thread {
 
         Aircraft aircraft=new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
         try {
-            this.managementSystem.aircraftManager.insertAircraftModel(aircraft);
+            aircraftDao.createModel(aircraft);
 
         } catch (RuntimeException e) {
             System.out.println("Error: cannot create aircraft model");
@@ -667,21 +677,21 @@ public class CLI {//extends Thread {
 
     private void insertAircraftInstance(){
         Scanner stdin = new Scanner(System.in);
-        Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+        Vector<AircraftModel> models = aircraftDao.getAllModels();
 
         for (int i = 0; i < models.size(); i++) {
             System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
         }
 
         System.err.println("chose the model: ");
-        int chosed_model=stdin.nextInt();
+        int chosenModel=stdin.nextInt();
 
         stdin.nextLine();
         System.err.println("plate: ");
 
         String plate=stdin.nextLine();
         try {
-            this.managementSystem.aircraftManager.insertAircraftInstance(plate, chosed_model);
+            aircraftDao.createInstance(plate, String.valueOf(chosenModel));
 
         } catch (RuntimeException e) {
             System.out.println("Error: cannot insert new aircraft instance");
@@ -689,7 +699,7 @@ public class CLI {//extends Thread {
     }
 
     public void listAircrafts() {
-        for (var aircraft : this.managementSystem.getAircraftDetails()) {
+        for (var aircraft : aircraftDao.getAllInstances()) {
             System.out.println(aircraft.fullData());
             System.out.println();
         }
@@ -732,17 +742,17 @@ public class CLI {//extends Thread {
 
     public void deleteAircraftModel(){
         Scanner stdin = new Scanner(System.in);
-        Vector<AircraftModel> models=this.managementSystem.aircraftManager.getAllModels();
+        Vector<AircraftModel> models = aircraftDao.getAllModels();
 
         for (int i = 0; i < models.size(); i++) {
             System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
         }
 
         System.err.println("chose the model: ");
-        int chosed_model=stdin.nextInt();
+        int chosenModel=stdin.nextInt();
 
         try {
-            this.managementSystem.aircraftManager.deleteAircraftModel(models.get(chosed_model));
+            aircraftDao.deleteModel(String.valueOf(chosenModel));
 
         } catch (RuntimeException e) {
             System.out.println("Error: cannot delete aircraft model (it is possible that one or more aircrafts of its type are still present)");
@@ -753,7 +763,7 @@ public class CLI {//extends Thread {
         Scanner stdin = new Scanner(System.in);
         ArrayList<String> plates = new ArrayList<>();
 
-        for (var aircraft : this.managementSystem.getAircraftDetails()) {
+        for (var aircraft : aircraftDao.getAllInstances()) {
             System.out.println(aircraft.toString());
             plates.add(aircraft.plate);
         }
@@ -763,7 +773,7 @@ public class CLI {//extends Thread {
 
         if (plates.contains(plate)) {
             try {
-                this.managementSystem.aircraftManager.deleteAircraft(plate);
+                aircraftDao.deleteInstance(plate);
 
             } catch (RuntimeException e) {
                 System.out.println("Error: Impossible to delete airctaft instance " + plate + " (it is probably busy by flight schedule)");
@@ -830,12 +840,10 @@ public class CLI {//extends Thread {
         System.out.print("\nCity: ");
         String city = stdin.nextLine().trim();
 
-        boolean success = this.managementSystem.flightManager.addAirport(icao, dimensionClass, name, nation, city);
-
-        if (success) {
+        try {
+            airportDaoPg.create(icao, dimensionClass, name, nation, city);
             System.out.println("Insertion successful");
-
-        } else {
+        } catch (RuntimeException e) {
             System.out.println("Insertion failed");
         }
     }
@@ -849,13 +857,12 @@ public class CLI {//extends Thread {
         System.out.print("\nNew dimension class");
         String dimensionClass = stdin.nextLine().trim();
 
-        boolean success = this.managementSystem.flightManager.updateAirport(icao, dimensionClass);
 
-        if (success) {
-            System.out.println("Removal successful");
-
-        } else {
-            System.out.println("Removal failed");
+        try {
+            airportDaoPg.update(icao, dimensionClass);
+            System.out.println("Update successful");
+        } catch (RuntimeException e) {
+            System.out.println("Update failed");
         }
     }
 
@@ -865,12 +872,11 @@ public class CLI {//extends Thread {
 
         String icao = stdin.nextLine().trim();
 
-        boolean success = this.managementSystem.flightManager.removeAirport(icao);
-
-        if (success) {
+        try {
+            airportDaoPg.delete(icao);
             System.out.println("Removal successful");
 
-        } else {
+        } catch (RuntimeException e) {
             System.out.println("Removal failed");
         }
     }
@@ -927,12 +933,11 @@ public class CLI {//extends Thread {
         System.out.println("Arrival: ");
         String arrival = stdin.nextLine().trim();
 
-        boolean success = this.managementSystem.flightManager.createRoute(distance, duration, departure, stepover, arrival);
-
-        if (success) {
+        try {
+            flightRouteDao.create(distance, duration, departure, stepover, arrival);
             System.out.println("Route creation successful");
 
-        } else {
+        } catch (RuntimeException e) {
             System.out.println("Route creation failed");
         }
     }
@@ -943,13 +948,13 @@ public class CLI {//extends Thread {
         System.out.print("Route id: ");
         int id = stdin.nextInt();
 
-        boolean success = this.managementSystem.flightManager.deleteRoute(id);
-
-        if (success) {
+        try {
+            flightRouteDao.delete(String.valueOf(id));
             System.out.println("Route deletion successful");
 
-        } else {
+        } catch (RuntimeException e) {
             System.out.println("Route deletion failed");
+
         }
     }
 

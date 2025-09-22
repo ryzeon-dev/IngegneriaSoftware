@@ -18,6 +18,7 @@ public class Employee {
         this.role = role;
         this.abilitation = abilitation;
     }
+
     public Employee(String name, String lastName, EmployeeRole role, String abilitation) {
         this.name = name;
         this.lastName = lastName;

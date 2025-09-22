@@ -10,8 +10,8 @@ import model.Aircraft;
 import model.AircraftModel;
 
 public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
-
-    public Vector<AircraftModel>  getAllModels(){
+    @Override
+    public Vector<AircraftModel> getAllModels(){
         PgDB db = new PgDB();
         Vector<AircraftModel> aircraftModels= new Vector<>();
 
@@ -24,6 +24,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
         return aircraftModels;
     }
 
+    @Override
     public Vector<Aircraft> getAllInstances() {
         PgDB db = new PgDB();
         var result = db.runAndFetch(PreparedStatementQueries.getCompanyAircrafts);
@@ -37,6 +38,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
         return aircrafts;
     }
 
+    @Override
     public void createModel(Aircraft aircraft) {
         PgDB db = new PgDB();
         var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirCraft);
@@ -62,6 +64,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
         db.close();
     }
 
+    @Override
     public void createInstance(String plate, String modelId) {
         PgDB db = new PgDB();
 
@@ -83,6 +86,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
 
     }
 
+    @Override
     public void deleteInstance(String plate) {
         PgDB db = new PgDB();
 

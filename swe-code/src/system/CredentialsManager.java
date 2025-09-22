@@ -1,12 +1,13 @@
 package system;
 
 import dao.CredentialsDaoPg;
+import dao.interfaces.CredentialsDaoI;
 import model.Credentials;
 
 import java.util.Vector;
 
 public class CredentialsManager {
-    private CredentialsDaoPg credentialsDao = new CredentialsDaoPg();
+    private CredentialsDaoI credentialsDao = new CredentialsDaoPg();
     private Vector<Credentials> credentials;
 
     public CredentialsManager() {

@@ -12,9 +12,11 @@ import db.PreparedStatementQueries;
 import model.FlightRoute;
 
 public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
+    // FIXME può essere il caso di uniformare il funzionamento del metodo getAll con tutti gli altri getAll dei vari DaoI
     public Vector<FlightRoute> getAll() {
         PgDB db = new PgDB();
         Vector<FlightRoute> routes = new Vector<>();
+
         try {
             var result = db.makePreparedStatement(PreparedStatementQueries.getRoutes).executeQuery();
             while (result.next()) {
@@ -54,7 +56,7 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
         return route;
     }
 
-    public static FlightRoute buildFromRow(ResultSet res) throws SQLException {
+    private static FlightRoute buildFromRow(ResultSet res) throws SQLException {
         int id = res.getInt(1);
         int distance = res.getInt(2);
 
@@ -68,7 +70,7 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
     }
 
     @Override
-    public void create(int distance, int duration, String departure, String arrival) {
+    public void create(int distance, int duration, String departure, String stepover, String arrival) {
         PgDB pgDB = new PgDB();
         var preparedStatement= pgDB.makePreparedStatement(PreparedStatementQueries.insertRoute);
 
@@ -77,6 +79,8 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
             preparedStatement.setInt(2,duration);
 
             preparedStatement.setString(3, departure);
+
+            preparedStatement.setString(4, stepover);
             preparedStatement.setString(4, arrival);
 
             preparedStatement.execute();

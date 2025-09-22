@@ -15,18 +15,37 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
-    public Vector<Employee> getAll() {
+    private Vector<Employee> getAllFromQuery(String query) {
         PgDB db = new PgDB();
-        var result = db.runAndFetch(PreparedStatementQueries.getCompanyEmployees);
         Vector<Employee> employees = new Vector<>();
 
-        for (var row : result) {
-            employees.add(this.buildFromRow(row));
-        }
+        var result = db.runAndFetch(query);
+        result.forEach(row -> employees.add(this.buildFromRow(row)));
 
         return employees;
     }
 
+    @Override
+    public Vector<Employee> getAll() {
+        return getAllFromQuery(PreparedStatementQueries.getCompanyEmployees);
+    }
+
+    @Override
+    public Vector<Employee> getAllCommanders() {
+        return this.getAllFromQuery(PreparedStatementQueries.getAllCommanders);
+    }
+
+    @Override
+    public Vector<Employee> getAllFirstOfficers() {
+        return this.getAllFromQuery(PreparedStatementQueries.getAllFirstOfficers);
+    }
+
+    @Override
+    public Vector<Employee> getAllFlightAssistants() {
+        return this.getAllFromQuery(PreparedStatementQueries.getAllFlightAssistants);
+    }
+
+    @Override
     public Employee getEmployeeById(String id) {
         Employee employee;
         PgDB db = new PgDB();
@@ -38,6 +57,10 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             preparedStatement.setInt(1, Integer.parseInt(id));
 
             result = preparedStatement.executeQuery();
+            if (result.getFetchSize() == 0) {
+                db.close();
+                return null;
+            }
 
             Vector<String> vectorRow = new Vector<>();
 
@@ -48,14 +71,14 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             employee = buildFromRow(vectorRow);
         } catch (SQLException e) {
             db.close();
-            throw new RuntimeException(e);
+            return null;
         }
 
         db.close();
         return employee;
     }
 
-    public Employee buildFromRow(Vector<String> row) {
+    private Employee buildFromRow(Vector<String> row) {
         int id = Integer.parseInt(row.get(0));
         String name = row.get(1);
 

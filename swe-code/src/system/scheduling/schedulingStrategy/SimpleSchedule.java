@@ -7,17 +7,16 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
-import dao.interfaces.FlightRouteDaoI;
-import dao.interfaces.ParkingDaoI;
+
+import dao.*;
+import dao.interfaces.*;
 import model.Aircraft;
 import model.Airport;
 import model.Employee;
 import model.Flight;
 import model.FlightRoute;
-import system.FlightManager;
 import system.scheduling.AirportGraph;
 import system.scheduling.AirportWeighted;
-
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -30,8 +29,9 @@ public class SimpleSchedule  implements SchedulingStrategy {
     private static final double RangeTollerance = 0.15;
     private final int turnArountAmountMin=30;
 
-    private FlightRouteDaoI flightRouteDao;
-    private ParkingDaoI parkingDao;
+    private FlightRouteDaoI flightRouteDao = new FlightRouteDaoPg();
+    private ParkingDaoI parkingDao = new ParkingDaoPg();
+    private AirportDaoI airportDao = new AirportDaoPg();
 
     private final int iterations=2;
 
@@ -45,25 +45,22 @@ public class SimpleSchedule  implements SchedulingStrategy {
     private DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
     //Employee
+    private EmployeeDaoI employeeDao = new EmployeeDaoPg();
     private Queue<Employee> commanders = new LinkedList<>();
     private Queue<Employee> firstOfficers = new LinkedList<>();
     private Queue<Employee> flightAssistants = new LinkedList<>();
     private Map<Airport,LinkedList<Employee>> commandersLocation=new HashMap<>();
     private Map<Airport,LinkedList<Employee>> firstOfficersLocation=new HashMap<>();
     private Map<Airport,LinkedList<Employee>> flightAssistantsLocation=new HashMap<>();
-    private FlightManager manager;
 
-    public SimpleSchedule(FlightRouteDaoI flightRouteDao,ParkingDaoI parkingDao,FlightManager manager){
-        this.flightRouteDao=flightRouteDao;
-        this.parkingDao=parkingDao;
-        this.manager=manager;
+    public SimpleSchedule(){
         makeEmployeesQueues();
     }
 
     private void makeEmployeesQueues() {
-        manager.getCommanders().forEach(commander -> this.commanders.add(commander));
-        manager.getFirstOfficiers().forEach(firstOfficer -> this.firstOfficers.add(firstOfficer));
-        manager.getFlightAssistants().forEach(flightAssistant -> this.flightAssistants.add(flightAssistant));
+        employeeDao.getAllCommanders().forEach(commander -> this.commanders.add(commander));
+        employeeDao.getAllFirstOfficers().forEach(firstOfficer -> this.firstOfficers.add(firstOfficer));
+        employeeDao.getAllFlightAssistants().forEach(flightAssistant -> this.flightAssistants.add(flightAssistant));
     }
     
     @Override
@@ -281,7 +278,7 @@ public class SimpleSchedule  implements SchedulingStrategy {
         AirportGraph graph= new AirportGraph();
         Vector<FlightRoute> routes= flightRouteDao.getAll();
 
-        Vector<Airport> airports=manager.getAirports();
+        Vector<Airport> airports = airportDao.getAll();
         Map<String,Airport> airportDict=new HashMap<>();
 
         for (var airport : airports) {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class AirportDaoPg implements dao.interfaces.AirportDaoI {
+    @Override
     public Vector<Airport> getAll() {
         PgDB db = new PgDB();
         var result = db.runAndFetch(PreparedStatementQueries.getAirports);
@@ -26,17 +27,30 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     }
 
     @Override
-    public Airport getById(String icao) {
-        // TODO Improve Quick and dirty implementation.
-        // this should be using prepared statement
-        for (Airport airport : this.getAll()) {
-            if (airport.icao.equals(icao)) {
-                return airport;
-            }
+    public Airport getById(String targetIcao) {
+        PgDB db = new PgDB();
+
+        try {
+            var statement = db.makePreparedStatement(PreparedStatementQueries.getAirportById);
+            statement.setString(1, targetIcao);
+
+
+            var result = statement.executeQuery();
+            String icao = result.getString("icao");
+
+            DimensionClass dimensionClass = DimensionClass.fromString(result.getString("class"));
+            String name = result.getString("name");
+
+            String nation = result.getString("nation");
+            String city = result.getString("city");
+
+            return new Airport(icao, dimensionClass, name, nation, city);
+        } catch (SQLException e) {
+            return null;
         }
-        return null;
     }
-    public Airport buildFromRow(Vector<String> row) {
+
+    private Airport buildFromRow(Vector<String> row) {
         String icao = row.get(0);
 
         String strDimensionClass = row.get(1);
