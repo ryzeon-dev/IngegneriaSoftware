@@ -6,4 +6,5 @@ import java.util.Vector;
 
 public interface CredentialsDaoI {
     public Vector<Credentials> getAll();
+    public Credentials getCredentialsForUname(String uname);
 }

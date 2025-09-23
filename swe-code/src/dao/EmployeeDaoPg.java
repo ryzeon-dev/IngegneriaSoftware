@@ -115,9 +115,10 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             preparedStatement.setString(2, lastName);
 
             preparedStatement.setString(3, role);
-            if(abilitation.isBlank()){
+            if (abilitation.isBlank()) {
                 preparedStatement.setString(4, null);
-            }else{
+
+            } else {
                 preparedStatement.setString(4, abilitation);
             }
 

@@ -18,6 +18,10 @@ public class PreparedStatementQueries {
 
     public static final String getCredentials = "select * from credentials";
 
+    public static final String getCredentialsForUname = "select * from credentials where username=?";
+
+    public static final String getPasswdHashForUname = "select passwd from credentials where username=?";
+
     /* AIRCRAFTS */
 
     public static final String deleteAircraftModel= "DELETE FROM aircraft WHERE id=?";

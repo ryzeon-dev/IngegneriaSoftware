@@ -1,10 +1,7 @@
 package cli;
 
 import dao.*;
-import dao.interfaces.AircraftDaoI;
-import dao.interfaces.AirportDaoI;
-import dao.interfaces.EmployeeDaoI;
-import dao.interfaces.FlightRouteDaoI;
+import dao.interfaces.*;
 import model.Aircraft;
 import model.AircraftModel;
 import model.Credentials;
@@ -12,35 +9,30 @@ import model.DimensionClass;
 import model.Employee;
 import model.EmployeeRole;
 import model.Flight;
-import system.CredentialsManager;
 import system.ManagementSystem;
 
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Vector;
-import java.util.stream.StreamSupport;
-
 public class CLI {//extends Thread {
     EmployeeDaoI employeeDao = new EmployeeDaoPg();
     AircraftDaoI aircraftDao = new AircraftDaoPg();
     FlightRouteDaoI flightRouteDao = new FlightRouteDaoPg();
     AirportDaoI airportDaoPg = new AirportDaoPg();
+    CredentialsDaoI credentialsDao = new CredentialsDaoPg();
 
     private ManagementSystem managementSystem;
     private boolean running = true;
-    private CredentialsManager credentialsManager;
+//    private CredentialsManager credentialsManager;
 
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
         System.out.println("---Beginning scheduling");
         managementSystem.runScheduling();
         System.out.println("---End scheduling");
-
-        this.credentialsManager = new CredentialsManager();
     }
     /* STD CLI */
 
@@ -124,7 +116,7 @@ public class CLI {//extends Thread {
         String passwd = stdin.nextLine();
 
         if (username.equals("admin")) {
-            Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
+            Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
             adminCredentials.checkHash("root-access");
 
             if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
@@ -226,7 +218,7 @@ public class CLI {//extends Thread {
             }
         } else {
             System.out.println();
-            Credentials credentials = credentialsManager.getCredentialsFromUsername(username);
+            Credentials credentials = credentialsDao.getCredentialsForUname(username);
 
             if (credentials == null) {
                 System.out.println("Username does not exist");
@@ -256,7 +248,7 @@ public class CLI {//extends Thread {
         System.out.print("Password: ");
         String passwd = stdin.nextLine();
 
-        Credentials adminCredentials = credentialsManager.getCredentialsFromUsername("admin");
+        Credentials adminCredentials = credentialsDao.getCredentialsForUname("admin");
         if (!username.equals(adminCredentials.username) || !adminCredentials.checkHash(passwd)) {
             System.out.println("Denied access: non-valid credentials");
             return;
@@ -286,7 +278,7 @@ public class CLI {//extends Thread {
         System.out.print("Password: ");
         String passwd = stdin.nextLine();
 
-        Credentials credentials = this.credentialsManager.getCredentialsFromUsername(username);
+        Credentials credentials = credentialsDao.getCredentialsForUname(username);
         if (credentials == null) {
             System.out.println("Username not found");
             return;
@@ -321,7 +313,7 @@ public class CLI {//extends Thread {
         System.out.print("Password: ");
         String passwd = stdin.nextLine();
 
-        Credentials credentials = this.credentialsManager.getCredentialsFromUsername(username);
+        Credentials credentials = credentialsDao.getCredentialsForUname(username);
         if (credentials == null) {
             System.out.println("Username not found");
             return;
@@ -378,7 +370,7 @@ public class CLI {//extends Thread {
         String passwd = stdin.nextLine();
 
         if (username.equals("admin")) {
-            Credentials adminCredentials = this.credentialsManager.getCredentialsFromUsername(username);
+            Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
 
             if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
                 System.out.println("Login failed");

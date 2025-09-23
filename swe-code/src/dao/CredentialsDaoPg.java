@@ -1,11 +1,11 @@
 package dao;
 
-import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Credentials;
 
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
@@ -22,6 +22,32 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
 
         db.close();
         return credentials;
+    }
+
+    @Override
+    public Credentials getCredentialsForUname(String uname) {
+        PgDB db = new PgDB();
+        try {
+            var statement = db.makePreparedStatement(PreparedStatementQueries.getCredentialsForUname);
+            statement.setString(1, uname);
+
+            var result = statement.executeQuery();
+            if (result.getFetchSize() < 1) {
+                db.close();
+                return null;
+            }
+
+            String username = result.getString("username");
+            String passwd = result.getString("passwd");
+            int employeeId = result.getInt("employee_id");
+            db.close();
+
+            return new Credentials(username, passwd, employeeId);
+
+        } catch (SQLException e) {
+            db.close();
+            return null;
+        }
     }
 
     private Credentials buildFromRow(Vector<String> dbRow) {
