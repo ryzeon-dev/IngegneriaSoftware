@@ -1,17 +1,12 @@
 package dao;
 
-import dao.interfaces.EmployeeDaoI;
-import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Employee;
 import model.EmployeeRole;
-import org.checkerframework.checker.units.qual.A;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
@@ -53,7 +48,7 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
         ResultSet result;
 
         try {
-            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getEmployeeInfo);
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getEmployeeById);
             preparedStatement.setInt(1, Integer.parseInt(id));
 
             result = preparedStatement.executeQuery();
