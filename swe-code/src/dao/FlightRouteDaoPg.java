@@ -1,12 +1,8 @@
 package dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import org.postgresql.core.SqlCommand;
-
-import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.FlightRoute;

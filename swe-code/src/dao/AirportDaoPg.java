@@ -1,15 +1,12 @@
 package dao;
 
 
-import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Airport;
 import model.DimensionClass;
-import org.checkerframework.checker.units.qual.A;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class AirportDaoPg implements dao.interfaces.AirportDaoI {

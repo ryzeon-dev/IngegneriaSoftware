@@ -1,9 +1,7 @@
 package dao;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import db.ConstantQueries;
 import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Aircraft;
