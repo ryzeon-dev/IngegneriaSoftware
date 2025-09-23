@@ -7,7 +7,7 @@ import db.PreparedStatementQueries;
 import model.Aircraft;
 import model.AircraftModel;
 
-public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI{
+public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
     @Override
     public Vector<AircraftModel> getAllModels(){
         PgDB db = new PgDB();

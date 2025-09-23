@@ -6,18 +6,19 @@ import model.Aircraft;
 import model.AircraftModel;
 import model.Credentials;
 import model.DimensionClass;
-import model.Employee;
 import model.EmployeeRole;
-import model.Flight;
 import system.ManagementSystem;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Vector;
-public class CLI {//extends Thread {
+
+enum PermissionLevel {
+    ADMIN, EMPLOYEE, GUEST
+};
+
+public class CLI {
     EmployeeDaoI employeeDao = new EmployeeDaoPg();
     AircraftDaoI aircraftDao = new AircraftDaoPg();
     FlightRouteDaoI flightRouteDao = new FlightRouteDaoPg();
@@ -26,7 +27,9 @@ public class CLI {//extends Thread {
 
     private ManagementSystem managementSystem;
     private boolean running = true;
-//    private CredentialsManager credentialsManager;
+
+    private PermissionLevel permissionLevel;
+    private int id;
 
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
@@ -36,23 +39,74 @@ public class CLI {//extends Thread {
     }
     /* STD CLI */
 
-    public void run() {
-        while (this.running) {
-            try {
-                Runtime.getRuntime().exec("/bin/bash -c clear");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    private void banner() {
+        System.out.println("##### ITA Airways management system #####");
+        System.out.println("Current time: " + this.managementSystem.getTime());
+    }
+
+    public void login() {
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Please enter your credentials to access the system");
+        System.out.println("To login as a guest, use `guest` as username and password");
+
+        while (true) {
+            System.out.print("Username: ");
+            String username = stdin.nextLine();
+
+            System.out.print("Password: ");
+            String passwd = stdin.nextLine();
+
+            if (username.equals("guest") && passwd.equals("guest")) {
+                this.permissionLevel = PermissionLevel.GUEST;
+                break;
             }
 
-            System.out.println("##### ITA Airways management system #####");
-            System.out.println("Current time: " + this.managementSystem.getTime());
+            if (username == "admin") {
+                Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
+                if (adminCredentials.checkHash(passwd)) {
+                    this.permissionLevel = PermissionLevel.ADMIN;
+                    break;
+                }
+                System.out.println("Wrong password, retry");
+
+            } else {
+                Credentials credentials = credentialsDao.getCredentialsForUname(username);
+                if (credentials == null) {
+                    System.out.println("Error: username not found, retry");
+                    continue;
+                }
+
+                if (credentials.checkHash(passwd)) {
+                    this.permissionLevel = PermissionLevel.EMPLOYEE;
+                    this.id = credentials.id;
+                    break;
+                }
+                System.out.println("Wrong password, retry");
+            }
+        }
+
+        this.menuSwitch();
+    }
+
+    private void menuSwitch() {
+        switch (this.permissionLevel) {
+            case PermissionLevel.ADMIN -> adminMenu();
+            case PermissionLevel.EMPLOYEE -> employeeMenu();
+            case PermissionLevel.GUEST -> this.guestMenu();
+        }
+    }
+
+    private void adminMenu() {
+        boolean backToLogin = false;
+
+        while (true) {
             System.out.println("Main menu:");
-            System.out.println("1 -> Access employees data"); // admin -> tutto, impiegato -> solo il suo
-            System.out.println("2 -> Access aircrafts details"); // solo admin
-            System.out.println("3 -> Access routes details"); // tutti a tutto
-            System.out.println("4 -> Access flight schedule"); // admin -> tutto, pilota -> solo i suoi
-            System.out.println("5 -> Access personal area"); // admin -> tutto, impigati -> solo il suo
-            System.out.println("6 -> Add/remove aircraft/employees/routes"); // solo admin
+            System.out.println("1 -> Access employees data");
+            System.out.println("2 -> Access aircrafts details");
+            System.out.println("3 -> Access routes details");
+            System.out.println("4 -> Access flight schedule");
+            System.out.println("5 -> Access airport details");
+            System.out.println("6 -> Back To Login");
             System.out.println("7 -> Quit");
 
             System.out.print("\nNavigate to: ");
@@ -80,11 +134,11 @@ public class CLI {//extends Thread {
                         break;
 
                     case 5:
-                        this.accessPersonalArea();
+                        this.accessAirportDetails();
                         break;
 
                     case 6:
-                        this.systemCrud();
+                        backToLogin = true;
                         break;
 
                     case 7:
@@ -92,11 +146,80 @@ public class CLI {//extends Thread {
                         break;
                 }
 
+                if (backToLogin) {
+                    break;
+                }
+
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 6 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 7 corresponding to the navigation choice");
                 continue;
             }
         }
+
+        if (backToLogin) {
+            this.login();
+        }
+    }
+
+    private void employeeMenu() {
+        boolean backToLogin = false;
+
+        while (true) {
+            System.out.println("Main menu:");
+            System.out.println("1 -> Access routes details");
+            System.out.println("2 -> Access flight schedule");
+            System.out.println("3 -> Back to login");
+            System.out.println("4 -> Quit");
+
+            Scanner stdin = new Scanner(System.in);
+            try {
+                int choice = stdin.nextInt();
+                System.out.println();
+
+                switch (choice) {
+                    case 1:
+                        this.accessRoutesDetails();
+                        break;
+
+                    case 2:
+                        this.accessFlightSchedule();
+                        break;
+
+                    case 3:
+                        backToLogin = true;
+                        break;
+
+                    case 4:
+                        this.quit();
+                        break;
+                }
+
+                if (backToLogin) {
+                    break;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
+                continue;
+            }
+        }
+
+        if (backToLogin) {
+            this.login();
+        }
+    }
+
+    private void guestMenu() {
+        System.out.println("Being logged in as `guest`, it is only possible to view flight route details");
+        System.out.println();
+
+        this.accessRoutesDetails();
+        this.login();
+    }
+
+    public void run() {
+        banner();
+        login();
     }
 
     private void waitUntilEnter() {
@@ -107,24 +230,7 @@ public class CLI {//extends Thread {
 
     private void accessEmployeesData() {
         Scanner stdin = new Scanner(System.in);
-        System.out.println("Access to this area requires login");
-
-        System.out.print("Username: ");
-        String username = stdin.nextLine();
-
-        System.out.print("Password: ");
-        String passwd = stdin.nextLine();
-
-        if (username.equals("admin")) {
-            Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
-            adminCredentials.checkHash("root-access");
-
-            if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
-                System.out.println("Login failed");
-                accessEmployeesData();
-                return;
-            }
-
+        if (this.permissionLevel == PermissionLevel.ADMIN) {
             while (true) {
                 System.out.println("\nEmployees data menu");
                 System.out.println("1 -> View all employees");
@@ -134,7 +240,8 @@ public class CLI {//extends Thread {
                 System.out.println("4 -> View all flight assistants");
 
                 System.out.println("5 -> View a specific employee");
-                System.out.println("6 -> back");
+                System.out.println("6 -> Edit specific employee");
+                System.out.println("7 -> back");
 
                 int choice;
                 while (true) {
@@ -208,6 +315,10 @@ public class CLI {//extends Thread {
                     }
 
                     case 6: {
+                        this.employeeCrud();
+                    }
+
+                    case 7: {
                         return;
                     }
 
@@ -217,212 +328,153 @@ public class CLI {//extends Thread {
                 }
             }
         } else {
-            System.out.println();
-            Credentials credentials = credentialsDao.getCredentialsForUname(username);
-
-            if (credentials == null) {
-                System.out.println("Username does not exist");
-                return;
-            }
-
-            if (!credentials.checkHash(passwd)) {
-                System.out.println("Wrong password");
-                accessEmployeesData();
-                return;
-            }
-            int id = credentials.id;
-            System.out.println(employeeDao.getEmployeeById(String.valueOf(id)).getFullData());
-
+            System.out.println(employeeDao.getEmployeeById(String.valueOf(this.id)).getFullData());
             waitUntilEnter();
         }
     }
 
     private void accessAircraftDetails() {
         Scanner stdin = new Scanner(System.in);
-
-        System.out.println("Access to this area requires admin privileges. Please login");
-
-        System.out.print("Username: ");
-        String username = stdin.nextLine();
-
-        System.out.print("Password: ");
-        String passwd = stdin.nextLine();
-
-        Credentials adminCredentials = credentialsDao.getCredentialsForUname("admin");
-        if (!username.equals(adminCredentials.username) || !adminCredentials.checkHash(passwd)) {
-            System.out.println("Denied access: non-valid credentials");
-            return;
-        }
+        System.out.println("Aircraft menu:");
+        System.out.println("1 -> View aircrafts");
+        System.out.println("2 -> Edit aircrafts");
+        System.out.println("3 -> Back");
         System.out.println();
 
-        for (var airctaft : aircraftDao.getAllInstances()) {
-            System.out.println(airctaft.fullData());
-            System.out.println();
+        while (true) {
+            boolean exit = false;
+
+            try {
+                System.out.print("Coice: ");
+                int choice = stdin.nextInt();
+
+                switch (choice) {
+                    case 1: {
+                        for (var airctaft : aircraftDao.getAllInstances()) {
+                            System.out.println(airctaft.fullData());
+                            System.out.println();
+                        }
+                        waitUntilEnter();
+                        break;
+                    }
+
+                    case 2: {
+                        this.aircraftCrud();
+                        break;
+                    }
+
+                    case 3:
+                        exit = true;
+                        break;
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
+            }
+
+            if (exit) {
+                break;
+            }
         }
-        waitUntilEnter();
     }
 
     private void accessRoutesDetails() {
-        System.out.println(flightRouteDao.getAll());
-        System.out.println();
-        waitUntilEnter();
-    }
-
-    private void accessFlightSchedule() {
-        Scanner stdin = new Scanner(System.in);
-        System.out.println("Access to this area requires login");
-
-        System.out.print("Username: ");
-        String username = stdin.nextLine();
-
-        System.out.print("Password: ");
-        String passwd = stdin.nextLine();
-
-        Credentials credentials = credentialsDao.getCredentialsForUname(username);
-        if (credentials == null) {
-            System.out.println("Username not found");
-            return;
-        }
-
-        if (!credentials.checkHash(passwd)) {
-            System.out.println("Incorrect password, retry");
-            accessFlightSchedule();
-            return;
-        }
-
-        if (username.equals("admin")) {
-            System.out.println("root access");
-            for (var flight : this.managementSystem.scheduledFlights) {
-                //if (flight.departureTime >= this.managementSystem.getTime())
-                System.out.println(flight.toString());
-            }
-        } else {
-
-        }
-
-        waitUntilEnter();
-    }
-
-    private void accessPersonalArea() {
-        Scanner stdin = new Scanner(System.in);
-        System.out.println("Access to this area requires login");
-
-        System.out.print("Username: ");
-        String username = stdin.nextLine();
-
-        System.out.print("Password: ");
-        String passwd = stdin.nextLine();
-
-        Credentials credentials = credentialsDao.getCredentialsForUname(username);
-        if (credentials == null) {
-            System.out.println("Username not found");
-            return;
-        }
-
-        if (!credentials.checkHash(passwd)) {
-            System.out.println("Incorrect password, retry");
-            accessPersonalArea();
-            return;
-        }
-
-        Employee employee = employeeDao.getEmployeeById(String.valueOf(credentials.id));
-
-        while (true) {
-            System.out.println("\nPersonal area menu:");
-            System.out.println("1 -> Personal data view");
-            System.out.println("2 -> Personal scheduling view");
-            System.out.println("3 -> Quit");
-            System.out.print("Navigate to: ");
-            String choice = stdin.nextLine().trim();
+        if (this.permissionLevel != PermissionLevel.ADMIN) {
+            System.out.println(flightRouteDao.getAll());
             System.out.println();
-
-            if (choice.equals("1")) {
-                if (employee != null) {
-                    System.out.println(employee.getFullData());
-                }
-                this.waitUntilEnter();
-
-            } else if (choice.equals("2")) {
-                for (Flight flight : this.managementSystem.scheduledFlights) {
-                    if (flight.commanders.contains(employee) || flight.firstOfficers.contains(employee) || flight.flightAssistants.contains(employee)) {
-                        System.out.println(flight.toString());
-                        System.out.println();
-                    }
-                }
-                this.waitUntilEnter();
-
-            } else {
-                return;
-            }
-        }
-    }
-
-    /* CRUD */
-
-    public void systemCrud() {
-        Scanner stdin = new Scanner(System.in);
-        System.out.println("Access to this area requires login");
-
-        System.out.print("Username: ");
-        String username = stdin.nextLine();
-
-        System.out.print("Password: ");
-        String passwd = stdin.nextLine();
-
-        if (username.equals("admin")) {
-            Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
-
-            if (!adminCredentials.username.equals(username) || !adminCredentials.checkHash(passwd)) {
-                System.out.println("Login failed");
-                accessEmployeesData();
-                return;
-            }
-
-        } else {
-            System.out.println("Only system administrator(s) can access this area");
-            run();
+            waitUntilEnter();
             return;
         }
 
         while (true) {
-            System.out.println("\nOptions:");
-            System.out.println("1 -> Insert/Remove aircraft");
-            System.out.println("2 -> Insert/Remove airport");
-            System.out.println("3 -> Insert/Remove employee");
-            System.out.println("4 -> Insert/Remove flight route");
-            System.out.println("5 -> Exit");
-            System.out.print("Navigate to: ");
+            Scanner stdin = new Scanner(System.in);
+            System.out.println("Flight route menu:");
+            System.out.println("1 -> View routes");
+            System.out.println("2 -> Edit routes");
+            System.out.println("3 -> Back");
+            System.out.println();
 
             try {
                 int choice = stdin.nextInt();
-                System.out.println();
 
                 switch (choice) {
-                    case 1:
-                        this.aircraftCrud();
+                    case 1: {
+                        System.out.println(flightRouteDao.getAll());
+                        System.out.println();
+                        waitUntilEnter();
                         break;
+                    }
 
-                    case 2:
-                        this.airportCrud();
-                        break;
-
-                    case 3:
-                        this.employeeCrud();
-                        break;
-
-                    case 4:
+                    case 2: {
                         this.routeCrud();
                         break;
+                    }
 
-                    case 5:
+                    case 3: {
+                        return;
+                    }
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
+            }
+        }
+    }
+
+    private void accessFlightSchedule() {
+        if (this.permissionLevel == PermissionLevel.ADMIN) {
+            System.out.println("root access");
+
+            for (var flight : this.managementSystem.scheduledFlights) {
+                System.out.println(flight.toString());
+            }
+
+        } else {
+            for (var flight : this.managementSystem.scheduledFlights) {
+                if (flight.employeeIds.contains(this.id)) {
+                    System.out.println(flight.toString());
+                }
+            }
+        }
+
+        waitUntilEnter();
+    }
+
+    private void accessAirportDetails() {
+        while (true) {
+            Scanner stdin = new Scanner(System.in);
+            System.out.println("Aircraft menu:");
+            System.out.println("1 -> View airports");
+            System.out.println("2 -> Edit airports");
+            System.out.println("3 -> Back");
+            System.out.println();
+
+            try {
+                int choice = stdin.nextInt();
+
+                switch (choice) {
+                    case 1: {
+                        for (var airport : airportDaoPg.getAll()) {
+                            System.out.println(airport.toString());
+                        }
+
+                        System.out.println();
+                        waitUntilEnter();
+                        break;
+                    }
+
+                    case 2: {
+                        this.airportCrud();
+                        break;
+                    }
+
+                    case 3:
                         return;
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 5 corresponding to the navigation choice");
-                continue;
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
             }
-
         }
     }
 
@@ -433,10 +485,10 @@ public class CLI {//extends Thread {
 
         while (true) {
             System.out.println("Select action:");
-            System.out.println("1 -> List");
-            System.out.println("2 -> Insert");
-            System.out.println("3 -> Remove");
-            System.out.println("4 -> Exit");
+            System.out.println("1 -> Insert");
+            System.out.println("2 -> Remove");
+            System.out.println("3 -> Exit");
+
             System.out.print("Choice: ");
             System.out.print("Navigate to: ");
 
@@ -446,36 +498,23 @@ public class CLI {//extends Thread {
 
                 switch (choice) {
                     case 1:
-                        this.listEmployees();
-                        break;
-
-                    case 2:
                         this.insertEmployee();
                         break;
 
-                    case 3:
+                    case 2:
                         this.deleteEmployee();
                         break;
 
-                    case 4:
+                    case 3:
                         return;
 
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
                 continue;
             }
         }
-    }
-    
-    private void listEmployees(){
-
-        for (var employee : employeeDao.getAll()) {
-            System.out.println(employee.getFullData());
-        }
-
-        waitUntilEnter();
     }
 
     private void insertEmployee(){
@@ -560,11 +599,10 @@ public class CLI {//extends Thread {
 
         while (true) {
             System.out.println("Select action:");
-            System.out.println("1 -> List");
-            System.out.println("2 -> Insert");
-            System.out.println("3 -> Remove");
-            System.out.println("4 -> Exit");
-            System.out.print("Choice: ");
+            System.out.println("1 -> Insert");
+            System.out.println("2 -> Remove");
+            System.out.println("3 -> Exit");
+
             System.out.print("Navigate to: ");
 
             try {
@@ -573,24 +611,20 @@ public class CLI {//extends Thread {
 
                 switch (choice) {
                     case 1:
-                        this.listAircrafts();
-                        break;
-
-                    case 2:
                         this.insertAircraft();
                         break;
 
-                    case 3:
+                    case 2:
                         this.deleteAircraft();
                         break;
 
-                    case 4:
+                    case 3:
                         return;
 
                 }
 
             } catch (InputMismatchException ex) {
-                System.out.println("Enter a number from 1 to 4 corresponding to the navigation choice");
+                System.out.println("Enter a number from 1 to 3 corresponding to the navigation choice");
                 continue;
             }
         }
@@ -688,14 +722,6 @@ public class CLI {//extends Thread {
         } catch (RuntimeException e) {
             System.out.println("Error: cannot insert new aircraft instance");
         }
-    }
-
-    public void listAircrafts() {
-        for (var aircraft : aircraftDao.getAllInstances()) {
-            System.out.println(aircraft.fullData());
-            System.out.println();
-        }
-        waitUntilEnter();
     }
 
     public void deleteAircraft() {

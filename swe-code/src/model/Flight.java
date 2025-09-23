@@ -12,9 +12,12 @@ public class Flight {
     public final FlightRoute route;
 
     public final String aircraftPlate;
+
     public final Vector<Employee> commanders;
     public final Vector<Employee> firstOfficers;
     public final Vector<Employee> flightAssistants;
+
+    public Vector<Integer> employeeIds = new Vector<>();
     
     public Flight(int id, String departureTime, int passengersNumber, FlightRoute route,
                   String aircraftPlate, Vector<Employee> commanders, Vector<Employee> firstOfficers,
@@ -30,6 +33,18 @@ public class Flight {
 
         this.firstOfficers = firstOfficers;
         this.flightAssistants = flightAssistants;
+
+        for (var commander : this.commanders) {
+            this.employeeIds.add(commander.id);
+        }
+
+        for (var firstOfficer : this.firstOfficers) {
+            this.employeeIds.add(firstOfficer.id);
+        }
+
+        for (var flightAssistant : this.flightAssistants) {
+            this.employeeIds.add(flightAssistant.id);
+        }
     }
 
     public String toString() {
