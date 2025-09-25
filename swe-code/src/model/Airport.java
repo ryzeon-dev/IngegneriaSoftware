@@ -31,6 +31,6 @@ public class Airport {
     }
 
     public String toString() {
-        return "model.Airport {" + this.icao + " " + this.dimensionClass + " " + this.city + "}";
+        return "Airport {icao: " + this.icao + " ; class: " + this.dimensionClass + " ; city: " + this.city + "}";
     }
 }

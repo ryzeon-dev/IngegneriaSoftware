@@ -33,6 +33,6 @@ public class  FlightRoute {
     }
 
     public String toString() {
-        return "Route {" + this.departure + "->" + this.arrival + "}";
+        return "Route { from: " + this.departure + " ; to: " + this.arrival + " ; " + this.distance + " km ; " + this.duration + " minutes }";
     }
 }

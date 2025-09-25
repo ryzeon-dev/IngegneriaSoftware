@@ -51,17 +51,17 @@ public class CLI {
 
         while (true) {
             System.out.print("Username: ");
-            String username = stdin.nextLine();
+            String username = stdin.nextLine().strip();
 
             System.out.print("Password: ");
-            String passwd = stdin.nextLine();
+            String passwd = stdin.nextLine().strip();
 
             if (username.equals("guest") && passwd.equals("guest")) {
                 this.permissionLevel = PermissionLevel.GUEST;
                 break;
             }
 
-            if (username == "admin") {
+            if (username.equals("admin")) {
                 Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
                 if (adminCredentials.checkHash(passwd)) {
                     this.permissionLevel = PermissionLevel.ADMIN;
@@ -90,14 +90,15 @@ public class CLI {
 
     private void menuSwitch() {
         switch (this.permissionLevel) {
-            case PermissionLevel.ADMIN -> adminMenu();
-            case PermissionLevel.EMPLOYEE -> employeeMenu();
-            case PermissionLevel.GUEST -> this.guestMenu();
+            case ADMIN -> adminMenu();
+            case EMPLOYEE -> employeeMenu();
+            case GUEST -> this.guestMenu();
         }
     }
 
     private void adminMenu() {
         boolean backToLogin = false;
+        Scanner stdin = new Scanner(System.in);
 
         while (true) {
             System.out.println("Main menu:");
@@ -111,7 +112,7 @@ public class CLI {
 
             System.out.print("\nNavigate to: ");
 
-            Scanner stdin = new Scanner(System.in);
+
             try {
                 int choice = stdin.nextInt();
                 System.out.println();
@@ -163,6 +164,7 @@ public class CLI {
 
     private void employeeMenu() {
         boolean backToLogin = false;
+        Scanner stdin = new Scanner(System.in);
 
         while (true) {
             System.out.println("Main menu:");
@@ -171,7 +173,6 @@ public class CLI {
             System.out.println("3 -> Back to login");
             System.out.println("4 -> Quit");
 
-            Scanner stdin = new Scanner(System.in);
             try {
                 int choice = stdin.nextInt();
                 System.out.println();
@@ -335,16 +336,16 @@ public class CLI {
 
     private void accessAircraftDetails() {
         Scanner stdin = new Scanner(System.in);
-        System.out.println("Aircraft menu:");
-        System.out.println("1 -> View aircrafts");
-        System.out.println("2 -> Edit aircrafts");
-        System.out.println("3 -> Back");
-        System.out.println();
 
         while (true) {
             boolean exit = false;
 
             try {
+                System.out.println("Aircraft menu:");
+                System.out.println("1 -> View aircrafts");
+                System.out.println("2 -> Edit aircrafts");
+                System.out.println("3 -> Back");
+                System.out.println();
                 System.out.print("Coice: ");
                 int choice = stdin.nextInt();
 
@@ -380,14 +381,17 @@ public class CLI {
 
     private void accessRoutesDetails() {
         if (this.permissionLevel != PermissionLevel.ADMIN) {
-            System.out.println(flightRouteDao.getAll());
+            for (var route : flightRouteDao.getAll()) {
+                System.out.println(route);
+            }
+
             System.out.println();
             waitUntilEnter();
             return;
         }
 
+        Scanner stdin = new Scanner(System.in);
         while (true) {
-            Scanner stdin = new Scanner(System.in);
             System.out.println("Flight route menu:");
             System.out.println("1 -> View routes");
             System.out.println("2 -> Edit routes");
@@ -395,11 +399,14 @@ public class CLI {
             System.out.println();
 
             try {
+                System.out.print("Navigate to: ");
                 int choice = stdin.nextInt();
 
                 switch (choice) {
                     case 1: {
-                        System.out.println(flightRouteDao.getAll());
+                        for (var route : flightRouteDao.getAll()) {
+                            System.out.println(route);
+                        }
                         System.out.println();
                         waitUntilEnter();
                         break;
@@ -423,8 +430,6 @@ public class CLI {
 
     private void accessFlightSchedule() {
         if (this.permissionLevel == PermissionLevel.ADMIN) {
-            System.out.println("root access");
-
             for (var flight : this.managementSystem.scheduledFlights) {
                 System.out.println(flight.toString());
             }
@@ -441,8 +446,8 @@ public class CLI {
     }
 
     private void accessAirportDetails() {
+        Scanner stdin = new Scanner(System.in);
         while (true) {
-            Scanner stdin = new Scanner(System.in);
             System.out.println("Aircraft menu:");
             System.out.println("1 -> View airports");
             System.out.println("2 -> Edit airports");
@@ -450,6 +455,7 @@ public class CLI {
             System.out.println();
 
             try {
+                System.out.print("Navigate to: ");
                 int choice = stdin.nextInt();
 
                 switch (choice) {
@@ -489,7 +495,6 @@ public class CLI {
             System.out.println("2 -> Remove");
             System.out.println("3 -> Exit");
 
-            System.out.print("Choice: ");
             System.out.print("Navigate to: ");
 
             try {
@@ -517,7 +522,7 @@ public class CLI {
         }
     }
 
-    private void insertEmployee(){
+    private void insertEmployee() {
         Scanner stdin = new Scanner(System.in);
         
         System.out.print("name: ");
@@ -638,7 +643,6 @@ public class CLI {
             System.out.println("1 -> insert Aircraft");
             System.out.println("2 -> insert Aircraft-instance");
             System.out.println("3 -> Exit");
-            System.out.print("Choice: ");
             System.out.print("Navigate to: ");
 
             try {
@@ -668,31 +672,31 @@ public class CLI {
     private void insertAircraftModel(){
         Scanner stdin = new Scanner(System.in);
 
-        System.out.println("Manufaturer: ");
+        System.out.print("Manufaturer: ");
         String manufaturer =stdin.nextLine();
 
-        System.out.println("Model: ");
-        String model =stdin.nextLine();
+        System.out.print("Model: ");
+        String model = stdin.nextLine();
 
-        System.out.println("Specification: ");
-        String specifiation =stdin.nextLine();
+        System.out.print("Specification: ");
+        String specifiation = stdin.nextLine();
 
-        System.out.println("Range:");
+        System.out.print("Range:");
         int range=stdin.nextInt();
 
-        System.out.println("Assistants number:");
-        int assistantsNumber=stdin.nextInt();
+        System.out.print("Assistants number:");
+        int assistantsNumber = stdin.nextInt();
 
-        stdin.nextLine();// Magic. Do not touch.
-        System.out.println("Dimension class:");
+        stdin.nextLine(); // Magic. Do not touch.
+        System.out.print("Dimension class:");
 
         String dimCText= stdin.nextLine();
-        DimensionClass dimC=DimensionClass.fromString(dimCText);
+        DimensionClass dimC = DimensionClass.fromString(dimCText);
 
         System.out.println("Seats:");
-        int seats=stdin.nextInt();
+        int seats = stdin.nextInt();
 
-        Aircraft aircraft=new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
+        Aircraft aircraft = new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
         try {
             aircraftDao.createModel(aircraft);
 
@@ -731,7 +735,6 @@ public class CLI {
             System.out.println("1 -> delete Aircraft");
             System.out.println("2 -> delete Aircraft-instance");
             System.out.println("3 -> Exit");
-            System.out.print("Choice: ");
             System.out.print("Navigate to: ");
 
             try {

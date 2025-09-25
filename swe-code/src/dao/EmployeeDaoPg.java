@@ -52,15 +52,15 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
             preparedStatement.setInt(1, Integer.parseInt(id));
 
             result = preparedStatement.executeQuery();
-            if (result.getFetchSize() == 0) {
+            if (!result.next()) {
                 db.close();
                 return null;
             }
 
             Vector<String> vectorRow = new Vector<>();
 
-            for (int i = 0; i < 4; i++) {
-                vectorRow.add(result.getRowId(i).toString());
+            for (int i = 1; i <= 5; i++) {
+                vectorRow.add(result.getString(i).toString());
             }
 
             employee = buildFromRow(vectorRow);

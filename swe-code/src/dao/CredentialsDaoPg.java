@@ -31,8 +31,10 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
             var statement = db.makePreparedStatement(PreparedStatementQueries.getCredentialsForUname);
             statement.setString(1, uname);
 
+            System.out.println(statement.toString());
+
             var result = statement.executeQuery();
-            if (result.getFetchSize() < 1) {
+            if (!result.next()) {
                 db.close();
                 return null;
             }
@@ -45,6 +47,7 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
             return new Credentials(username, passwd, employeeId);
 
         } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
             db.close();
             return null;
         }
