@@ -11,4 +11,5 @@ public interface AircraftDaoI {
   public void createInstance(String plate, String modelId);
   public void deleteInstance(String plate);
   public void deleteModel(String modelId);
+  public Vector<String> getAllModelNames();
 }

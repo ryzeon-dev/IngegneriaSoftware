@@ -23,6 +23,21 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
     }
 
     @Override
+    public Vector<String> getAllModelNames() {
+        Vector<String> models = new Vector<>();
+        PgDB db = new PgDB();
+
+        var rows = db.runAndFetch(PreparedStatementQueries.getAircraftModelNames);
+        db.close();
+
+        for (var row : rows) {
+            models.add(row.firstElement());
+        }
+
+        return models;
+    }
+
+    @Override
     public Vector<Aircraft> getAllInstances() {
         PgDB db = new PgDB();
         var result = db.runAndFetch(PreparedStatementQueries.getCompanyAircrafts);

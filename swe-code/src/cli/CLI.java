@@ -535,8 +535,20 @@ public class CLI {
         
         String abilitation= "";
         if (role == EmployeeRole.Commander | role == EmployeeRole.FirstOfficer){
-            System.out.print("abilitation: ");
-            abilitation=stdin.nextLine();
+            Vector<String> models = aircraftDao.getAllModelNames();
+            System.out.println("Available abilitations: " + models.toString());
+
+            while (true) {
+                System.out.print("abilitation: ");
+                abilitation = stdin.nextLine();
+
+                if (models.contains(abilitation)) {
+                    break;
+
+                } else {
+                    System.out.println("Invalid abilitation");
+                }
+            }
         }
 
         try {

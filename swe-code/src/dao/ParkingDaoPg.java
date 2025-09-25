@@ -1,9 +1,7 @@
 package dao;
 
-import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import db.PgDB;
@@ -19,7 +17,7 @@ public class ParkingDaoPg implements dao.interfaces.ParkingDaoI {
         Vector<Aircraft> aircrafts = new Vector<>();
 
         try {
-            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.GetParkedAircrafts);
+            var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getParkedAircrafts);
 
             preparedStatement.setString(1, icao);
             ResultSet result = preparedStatement.executeQuery();
