@@ -1,25 +1,31 @@
 package model;
 
-public enum DimensionClass {
-    C4, C3, E4;
+public class DimensionClass {
+    public final String type;
 
-    public String toString() {
-        if (this.equals(DimensionClass.C3)) {
-            return "3C";
-
-        } else if (this.equals(DimensionClass.C4)) {
-            return "4C";
-
-        } else if (this.equals(DimensionClass.E4)) {
-            return "4E";
-
-        } else {
-            return "";
-        }
+    DimensionClass(String type) {
+        this.type = type;
     }
 
-    //Aircraft is lhs Airport is rhs
-    //Check if an Aircraft(lhs) can land on Airport(rhs) 
+    public static boolean validate(String class_) {
+        int number = class_.charAt(0) - 48;
+        char character = class_.charAt(1);
+
+        if (number > 5 || number < 0) {
+            return false;
+        }
+
+        if (character < 'A' || character > 'F') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public String toString() {
+        return this.type;
+    }
+
     public boolean isCompatible(DimensionClass other) {
         String selfRepr = this.toString();
         int selfNumber = selfRepr.charAt(0);
@@ -36,24 +42,11 @@ public enum DimensionClass {
     }
 
     public static DimensionClass fromString(String dimClass){
-        DimensionClass dimensionClass;
-        switch (dimClass.trim()) {
-            case "3C":
-                dimensionClass = DimensionClass.C3;
-                break;
+        if (DimensionClass.validate(dimClass)) {
+            return new DimensionClass(dimClass);
 
-            case "4C":
-                dimensionClass = DimensionClass.C4;
-                break;
-
-            case "4E":
-                dimensionClass = DimensionClass.E4;
-                break;
-
-            default:
-                dimensionClass = DimensionClass.E4;
-                break;
+        } else {
+            return null;
         }
-            return dimensionClass;
     }
 }

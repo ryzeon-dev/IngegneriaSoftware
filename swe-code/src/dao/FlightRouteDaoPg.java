@@ -8,7 +8,7 @@ import db.PreparedStatementQueries;
 import model.FlightRoute;
 
 public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
-    // FIXME può essere il caso di uniformare il funzionamento del metodo getAll con tutti gli altri getAll dei vari DaoI
+    @Override
     public Vector<FlightRoute> getAll() {
         PgDB db = new PgDB();
         Vector<FlightRoute> routes = new Vector<>();
@@ -19,7 +19,6 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
                 routes.add(buildFromRow(result));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -27,6 +26,7 @@ public class FlightRouteDaoPg implements dao.interfaces.FlightRouteDaoI {
         return routes;
     }
 
+    @Override
     public FlightRoute getRouteById(int id) {
         ResultSet result=null;
 

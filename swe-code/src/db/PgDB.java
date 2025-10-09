@@ -74,28 +74,6 @@ public class PgDB {
         }
     }
 
-    public boolean run(String query) {
-        try {
-            Statement statement = this.connection.createStatement();
-
-            try {
-                return statement.execute(query);
-
-
-            } catch (SQLException ex) {
-                System.err.println("fatal error: query \"" + query + "\" generated error: " +  ex.getMessage());
-                System.exit(1);
-            }
-
-
-        } catch (SQLException ex) {
-            System.err.println("fatal error: statement creation generated error: " + ex.getMessage());
-            System.exit(1);
-
-        }
-        return false;
-    }
-
     public void commit() {
         try {
             this.connection.commit();

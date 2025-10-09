@@ -1,7 +1,7 @@
 package model;
 
 public class AircraftModel {
-    public final int modelId;
+    public int modelId;
     public final String  manufacturer;
     public final String model;
     public final String specification;
@@ -12,6 +12,19 @@ public class AircraftModel {
 
     public AircraftModel(int modelId, String manufacturer, String model, String specification, int range, int assistantsNumber, DimensionClass dimensionClass, int seats){
         this.modelId=modelId;
+        this.manufacturer=manufacturer;
+
+        this.model=model;
+        this.specification=specification;
+
+        this.range=range;
+        this.assistantsNumber=assistantsNumber;
+
+        this.dimensionClass=dimensionClass;
+        this.seats=seats;
+    }
+
+    public AircraftModel(String manufacturer, String model, String specification, int range, int assistantsNumber, DimensionClass dimensionClass, int seats){
         this.manufacturer=manufacturer;
 
         this.model=model;

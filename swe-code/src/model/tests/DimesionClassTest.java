@@ -8,18 +8,25 @@ import org.junit.Test;
 
 
 public class DimesionClassTest {
-
     @Test
     public void IsCompatibleTestSuccess() {
-        assertTrue(DimensionClass.C3.isCompatible(DimensionClass.C3));
-        assertTrue(DimensionClass.C3.isCompatible(DimensionClass.C4));
-        assertTrue(DimensionClass.C4.isCompatible(DimensionClass.E4));
+        DimensionClass class3C = DimensionClass.fromString("3C");
+        DimensionClass class4C = DimensionClass.fromString("4C");
+        DimensionClass class4E = DimensionClass.fromString("4E");
+
+        assertTrue(class3C.isCompatible(class3C));
+        assertTrue(class3C.isCompatible(class4C));
+        assertTrue(class4C.isCompatible(class4E));
     }
+
     @Test
     public void IsCompatibleTestFail() {
-        assertFalse(DimensionClass.E4.isCompatible(DimensionClass.C3));
-        assertFalse(DimensionClass.C4.isCompatible(DimensionClass.C3));
-        assertFalse(DimensionClass.C4.isCompatible(DimensionClass.C3));
+        DimensionClass class3C = DimensionClass.fromString("3C");
+        DimensionClass class4C = DimensionClass.fromString("4C");
+        DimensionClass class4E = DimensionClass.fromString("4E");
+
+        assertFalse(class4E.isCompatible(class3C));
+        assertFalse(class4C.isCompatible(class3C));
     }
 
 }

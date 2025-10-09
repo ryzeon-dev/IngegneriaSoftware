@@ -6,8 +6,43 @@ import db.PgDB;
 import db.PreparedStatementQueries;
 import model.Aircraft;
 import model.AircraftModel;
+import model.DimensionClass;
 
 public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
+    private static Aircraft buildAircraftFromRow(Vector<String> dbRow){
+        String plate = dbRow.get(0);
+        String manufacturer = dbRow.get(1);
+
+        String model = dbRow.get(2);
+        String specification = dbRow.get(3);
+
+        int range = Integer.parseInt(dbRow.get(4));
+        int assistantsNumber = Integer.parseInt(dbRow.get(5));
+
+        String dClass = dbRow.get(6);
+        DimensionClass dimensionClass = DimensionClass.fromString(dClass);
+
+        int seats = Integer.parseInt(dbRow.get(7));
+        return new Aircraft(plate, manufacturer, model, specification, dimensionClass, assistantsNumber, range, seats);
+    }
+
+    private static AircraftModel buildAircarftModelFromRow(Vector<String> dbRow){
+        int modelId=Integer.parseInt(dbRow.get(0));
+        String manufacturer = dbRow.get(1);
+
+        String model = dbRow.get(2);
+        String specification = dbRow.get(3);
+
+        int range = Integer.parseInt(dbRow.get(4));
+        int assistantsNumber = Integer.parseInt(dbRow.get(5));
+
+        String dClass = dbRow.get(6);
+        DimensionClass dimensionClass = DimensionClass.fromString(dClass);
+
+        int seats = Integer.parseInt(dbRow.get(7));
+        return new AircraftModel(modelId, manufacturer, model, specification, range, assistantsNumber, dimensionClass, seats);
+    }
+
     @Override
     public Vector<AircraftModel> getAllModels(){
         PgDB db = new PgDB();
@@ -15,7 +50,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
 
         var result= db.runAndFetch(PreparedStatementQueries.getAircraftModels);
         for (var row : result) {
-            aircraftModels.add(helpers.buildAircarftModelFromRow(row));
+            aircraftModels.add(buildAircarftModelFromRow(row));
         }
 
         db.close();
@@ -44,7 +79,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
         Vector<Aircraft> aircrafts = new Vector<>();
 
         for (var row : result) {
-            aircrafts.add(helpers.buildAircraftFromRow(row));
+            aircrafts.add(buildAircraftFromRow(row));
         }
 
         db.close();
@@ -52,7 +87,7 @@ public class AircraftDaoPg  implements dao.interfaces.AircraftDaoI {
     }
 
     @Override
-    public void createModel(Aircraft aircraft) {
+    public void createModel(AircraftModel aircraft) {
         PgDB db = new PgDB();
         var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.insertAirCraft);
 

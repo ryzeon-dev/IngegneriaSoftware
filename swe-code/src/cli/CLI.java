@@ -304,7 +304,7 @@ public class CLI {
                             }
                         }
 
-                        var employee = employeeDao.getEmployeeById(String.valueOf(requestedId));
+                        var employee = employeeDao.getEmployeeById(requestedId);
                         if (employee != null) {
                             System.out.println(employee.getFullData());
                             waitUntilEnter();
@@ -329,7 +329,7 @@ public class CLI {
                 }
             }
         } else {
-            System.out.println(employeeDao.getEmployeeById(String.valueOf(this.id)).getFullData());
+            System.out.println(employeeDao.getEmployeeById(this.id).getFullData());
             waitUntilEnter();
         }
     }
@@ -346,7 +346,7 @@ public class CLI {
                 System.out.println("2 -> Edit aircrafts");
                 System.out.println("3 -> Back");
                 System.out.println();
-                System.out.print("Coice: ");
+                System.out.print("Choice: ");
                 int choice = stdin.nextInt();
 
                 switch (choice) {
@@ -684,14 +684,14 @@ public class CLI {
     private void insertAircraftModel(){
         Scanner stdin = new Scanner(System.in);
 
-        System.out.print("Manufaturer: ");
-        String manufaturer =stdin.nextLine();
+        System.out.print("Manufacturer: ");
+        String manufacturer =stdin.nextLine();
 
         System.out.print("Model: ");
         String model = stdin.nextLine();
 
         System.out.print("Specification: ");
-        String specifiation = stdin.nextLine();
+        String specification = stdin.nextLine();
 
         System.out.print("Range:");
         int range=stdin.nextInt();
@@ -708,7 +708,7 @@ public class CLI {
         System.out.println("Seats:");
         int seats = stdin.nextInt();
 
-        Aircraft aircraft = new Aircraft(manufaturer, model, specifiation, range, assistantsNumber, dimC, seats);
+        AircraftModel aircraft = new AircraftModel(manufacturer, model, specification, range, assistantsNumber, dimC, seats);
         try {
             aircraftDao.createModel(aircraft);
 
@@ -809,7 +809,7 @@ public class CLI {
                 aircraftDao.deleteInstance(plate);
 
             } catch (RuntimeException e) {
-                System.out.println("Error: Impossible to delete airctaft instance " + plate + " (it is probably busy by flight schedule)");
+                System.out.println("Error: Impossible to delete aircraft instance " + plate + " (it is probably busy by flight schedule)");
 
             } finally {
                 System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
@@ -957,7 +957,7 @@ public class CLI {
         System.out.print("Duration: ");
         int duration = stdin.nextInt();
 
-        System.out.print("Depature: ");
+        System.out.print("Departure: ");
         String departure = stdin.nextLine().trim();
 
         System.out.print("Stepover: ");

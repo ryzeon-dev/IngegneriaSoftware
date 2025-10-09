@@ -51,24 +51,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
         String icao = row.get(0);
 
         String strDimensionClass = row.get(1);
-        DimensionClass dimensionClass;
-        switch (strDimensionClass) {
-            case "3C":
-                dimensionClass = DimensionClass.C3;
-                break;
-
-            case "4C":
-                dimensionClass = DimensionClass.C4;
-                break;
-
-            case "4E":
-                dimensionClass = DimensionClass.E4;
-                break;
-
-            default:
-                dimensionClass = DimensionClass.E4;
-                break;
-        }
+        DimensionClass dimensionClass = DimensionClass.fromString(strDimensionClass);
 
         String name = row.get(2);
         String nation = row.get(3);

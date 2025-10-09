@@ -41,7 +41,7 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
     }
 
     @Override
-    public Employee getEmployeeById(String id) {
+    public Employee getEmployeeById(int id) {
         Employee employee;
         PgDB db = new PgDB();
 
@@ -49,7 +49,7 @@ public class EmployeeDaoPg implements dao.interfaces.EmployeeDaoI {
 
         try {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.getEmployeeById);
-            preparedStatement.setInt(1, Integer.parseInt(id));
+            preparedStatement.setInt(1, id);
 
             result = preparedStatement.executeQuery();
             if (!result.next()) {
