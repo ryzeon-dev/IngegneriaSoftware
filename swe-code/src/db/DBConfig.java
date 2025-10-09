@@ -25,10 +25,6 @@ public class DBConfig {
         return properties.getProperty("db.url");
     }
 
-    public static String getLocalnetUrl() {
-        return properties.getProperty("db.localneturl");
-    }
-
     public static String getUsername() {
         return properties.getProperty("db.username");
     }

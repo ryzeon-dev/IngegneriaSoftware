@@ -1,0 +1,1 @@
+sudo docker run -it --name swedb -p 5432:5432 swedb
