@@ -31,8 +31,6 @@ public class CredentialsDaoPg implements dao.interfaces.CredentialsDaoI {
             var statement = db.makePreparedStatement(PreparedStatementQueries.getCredentialsForUname);
             statement.setString(1, uname);
 
-            System.out.println(statement.toString());
-
             var result = statement.executeQuery();
             if (!result.next()) {
                 db.close();

@@ -24,15 +24,16 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
     }
 
     @Override
-    public Airport getById(String targetIcao) {
+    public Airport getByIcao(String targetIcao) {
         PgDB db = new PgDB();
 
         try {
-            var statement = db.makePreparedStatement(PreparedStatementQueries.getAirportById);
+            var statement = db.makePreparedStatement(PreparedStatementQueries.getAirportByIcao);
             statement.setString(1, targetIcao);
 
-
             var result = statement.executeQuery();
+            result.next();
+
             String icao = result.getString("icao");
 
             DimensionClass dimensionClass = DimensionClass.fromString(result.getString("class"));
@@ -43,6 +44,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
 
             return new Airport(icao, dimensionClass, name, nation, city);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }

@@ -77,7 +77,7 @@ public class PreparedStatementQueries {
 
     public static String getRouteForID = "select * from route where id=?";
 
-    public static final String getAirportById = "SELECT * FROM airport WHERE id=?";
+    public static final String getAirportByIcao = "SELECT * FROM airport WHERE icao=?";
 
     public static final String insertAirport = "INSERT INTO airport (icao, class, name, nation, city) values (?, ?, ?, ?, ?)";
 
