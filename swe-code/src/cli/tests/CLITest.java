@@ -24,8 +24,8 @@ public class CLITest {
 
     @Test
     public void AdminLoginTest_Fail() {
-        String uname = "admiun";
-        String passwd = "root-access";
+        String uname = "admin";
+        String passwd = "rootaccess";
 
         CLI cli = new CLI();
 
@@ -72,8 +72,20 @@ public class CLITest {
 
     @Test
     public void GuestLoginTest_Fail() {
-        String uname = "giuest";
-        String passwd = "guest";
+        String uname = "guest";
+        String passwd = "giuest";
+
+        CLI cli = new CLI();
+
+        LoginResult res = cli.credentialsCheck(uname, passwd);
+        assertTrue(res.permissionLevel == null);
+        assertTrue(res.id == -1);
+    }
+
+    @Test
+    public void NonExistingUsernameTest() {
+        String uname = "does not exist";
+        String passwd = "does not matter";
 
         CLI cli = new CLI();
 

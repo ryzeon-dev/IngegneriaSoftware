@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class DimensionClass {
     public final String type;
 
@@ -24,6 +26,18 @@ public class DimensionClass {
 
     public String toString() {
         return this.type;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        DimensionClass that = (DimensionClass) object;
+        return Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(type);
     }
 
     public boolean isCompatible(DimensionClass other) {

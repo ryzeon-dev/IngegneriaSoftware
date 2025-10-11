@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Aircraft {
     public final String  manufacturer;
     public final String model;
@@ -52,6 +54,19 @@ public class Aircraft {
 //    public boolean getBusy() {
 //        return this.busy;
 //      }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        Aircraft aircraft = (Aircraft) object;
+        return range == aircraft.range && assistantsNumber == aircraft.assistantsNumber && seats == aircraft.seats && busy == aircraft.busy && Objects.equals(manufacturer, aircraft.manufacturer) && Objects.equals(model, aircraft.model) && Objects.equals(specification, aircraft.specification) && Objects.equals(dimensionClass, aircraft.dimensionClass) && Objects.equals(plate, aircraft.plate) && Objects.equals(position, aircraft.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(manufacturer, model, specification, range, assistantsNumber, dimensionClass, seats, plate, busy, position);
+    }
 
     public boolean canGo(Airport airport) {
         return this.dimensionClass.isCompatible(airport.dimensionClass);

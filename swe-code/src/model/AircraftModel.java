@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class AircraftModel {
     public int modelId;
     public final String  manufacturer;
@@ -62,5 +64,18 @@ public class AircraftModel {
         builder.append("seats:");
         builder.append(" "+ seats);
         return "{"+builder.toString()+"}";
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+
+        AircraftModel that = (AircraftModel) object;
+        return range == that.range && assistantsNumber == that.assistantsNumber && seats == that.seats && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(model, that.model) && Objects.equals(specification, that.specification) && Objects.equals(dimensionClass, that.dimensionClass);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modelId, manufacturer, model, specification, range, assistantsNumber, dimensionClass, seats);
     }
 }
