@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:18-trixie
 
 ENV POSTGRES_DB=swedb
 ENV POSTGRES_USER=master
