@@ -12,7 +12,7 @@ import system.scheduling.AirportGraph;
 
 public class AirportGraphTest {
     @Test
-    public void graphTest(){
+    public void graphTest() {
         Airport a1= new Airport("a1", DimensionClass.fromString("3C"), "T1", "T1", "T1");
         Airport a2= new Airport("a2", DimensionClass.fromString("4E"), "T2", "T2", "T2");
 

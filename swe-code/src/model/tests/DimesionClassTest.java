@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class DimesionClassTest {
     @Test
-    public void IsCompatibleTestSuccess() {
+    public void IsCompatibleTest_Success() {
         DimensionClass class3C = DimensionClass.fromString("3C");
         DimensionClass class4C = DimensionClass.fromString("4C");
         DimensionClass class4E = DimensionClass.fromString("4E");
@@ -20,7 +20,7 @@ public class DimesionClassTest {
     }
 
     @Test
-    public void IsCompatibleTestFail() {
+    public void IsCompatibleTest_Fail() {
         DimensionClass class3C = DimensionClass.fromString("3C");
         DimensionClass class4C = DimensionClass.fromString("4C");
         DimensionClass class4E = DimensionClass.fromString("4E");

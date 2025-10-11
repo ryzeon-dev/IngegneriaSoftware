@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class CredentialsTest {
     @Test
-    public void SuccessfulAuthentication() {
+    public void AuthenticationTest_Success() {
          CredentialsDaoI credentialsDao = new CredentialsDaoPg();
          Credentials adminCredentials = credentialsDao.getCredentialsForUname("admin");
          Credentials lomgraCredentials = credentialsDao.getCredentialsForUname("lomgra");
@@ -21,7 +21,7 @@ public class CredentialsTest {
     }
 
     @Test
-    public void UnsuccessfulAuthentication() {
+    public void AuthenticationTest_Fail() {
         CredentialsDaoI credentialsDao = new CredentialsDaoPg();
         Credentials adminCredentials = credentialsDao.getCredentialsForUname("admin");
         Credentials lomgraCredentials = credentialsDao.getCredentialsForUname("lomgra");

@@ -14,10 +14,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Vector;
 
-enum PermissionLevel {
-    ADMIN, EMPLOYEE, GUEST
-};
-
 public class CLI {
     EmployeeDaoI employeeDao = new EmployeeDaoPg();
     AircraftDaoI aircraftDao = new AircraftDaoPg();
@@ -30,6 +26,11 @@ public class CLI {
 
     private PermissionLevel permissionLevel;
     private int id;
+
+    // Empty constructor for tests
+    public CLI() {
+        this.managementSystem = null;
+    }
 
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
@@ -44,6 +45,33 @@ public class CLI {
         System.out.println("Current time: " + this.managementSystem.getTime());
     }
 
+    public LoginResult credentialsCheck(String uname, String passwd) {
+        if (uname.equals("guest") && passwd.equals("guest")) {
+            return new LoginResult(PermissionLevel.GUEST, -1);
+
+        } else if (uname.equals("admin")) {
+            Credentials adminCredentials = credentialsDao.getCredentialsForUname(uname);
+
+            if (adminCredentials.checkHash(passwd)) {
+                return new LoginResult(PermissionLevel.ADMIN, 0);
+            } else {
+                return new LoginResult(null, -1);
+            }
+
+        } else {
+            Credentials credentials = credentialsDao.getCredentialsForUname(uname);
+            if (credentials == null) {
+                return new LoginResult(null, -1);
+            }
+
+            if (credentials.checkHash(passwd)) {
+                return new LoginResult(PermissionLevel.EMPLOYEE, credentials.id);
+            } else {
+                return new LoginResult(null, -1);
+            }
+        }
+    }
+
     public void login() {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Please enter your credentials to access the system");
@@ -56,32 +84,15 @@ public class CLI {
             System.out.print("Password: ");
             String passwd = stdin.nextLine().strip();
 
-            if (username.equals("guest") && passwd.equals("guest")) {
-                this.permissionLevel = PermissionLevel.GUEST;
-                break;
-            }
+            LoginResult res = credentialsCheck(username, passwd);
 
-            if (username.equals("admin")) {
-                Credentials adminCredentials = credentialsDao.getCredentialsForUname(username);
-                if (adminCredentials.checkHash(passwd)) {
-                    this.permissionLevel = PermissionLevel.ADMIN;
-                    break;
-                }
-                System.out.println("Wrong password, retry");
-
+            if (res.permissionLevel == null) {
+                System.out.println("Login failed: check your credentials and retry");
+                continue;
             } else {
-                Credentials credentials = credentialsDao.getCredentialsForUname(username);
-                if (credentials == null) {
-                    System.out.println("Error: username not found, retry");
-                    continue;
-                }
-
-                if (credentials.checkHash(passwd)) {
-                    this.permissionLevel = PermissionLevel.EMPLOYEE;
-                    this.id = credentials.id;
-                    break;
-                }
-                System.out.println("Wrong password, retry");
+                this.permissionLevel = res.permissionLevel;
+                this.id = res.id;
+                break;
             }
         }
 
@@ -522,40 +533,71 @@ public class CLI {
         }
     }
 
-    private void insertEmployee() {
-        Scanner stdin = new Scanner(System.in);
-        
-        System.out.print("name: ");
-        String name= stdin.nextLine();
+    public Integer validateEmployeeData(String name, String lastName, EmployeeRole role, String abilitation) {
+        if (name.isEmpty()) {
+            return 1;
+        }
 
-        System.out.print("last name: ");
-        String lastname= stdin.nextLine();
+        if (lastName.isEmpty()) {
+            return 2;
+        }
 
-        EmployeeRole role = choseRole();
-        
-        String abilitation= "";
-        if (role == EmployeeRole.Commander | role == EmployeeRole.FirstOfficer){
-            Vector<String> models = aircraftDao.getAllModelNames();
-            System.out.println("Available abilitations: " + models.toString());
-
-            while (true) {
-                System.out.print("abilitation: ");
-                abilitation = stdin.nextLine();
-
-                if (models.contains(abilitation)) {
-                    break;
-
-                } else {
-                    System.out.println("Invalid abilitation");
-                }
+        if (role == EmployeeRole.Commander || role == EmployeeRole.FirstOfficer) {
+            Vector<String> aircraftModels = aircraftDao.getAllModelNames();
+            if (!aircraftModels.contains(abilitation)) {
+                return 3;
             }
         }
 
-        try {
-            employeeDao.create(name, lastname, role.toString(), abilitation);
+        return 0;
+    }
 
-        } catch (RuntimeException e) {
-            System.out.println("Error: cannot insert new employee");
+    private void insertEmployee() {
+        Scanner stdin = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("name: ");
+            String name= stdin.nextLine();
+
+            System.out.print("last name: ");
+            String lastname= stdin.nextLine();
+
+            EmployeeRole role = choseRole();
+
+            String abilitation= "";
+            if (role == EmployeeRole.Commander || role == EmployeeRole.FirstOfficer){
+                Vector<String> models = aircraftDao.getAllModelNames();
+                System.out.println("Available abilitations: " + models.toString());
+
+                System.out.print("abilitation: ");
+                abilitation = stdin.nextLine();
+            }
+
+            int validationResult = this.validateEmployeeData(name, lastname, role, abilitation);
+
+            switch (validationResult) {
+                case 0: {
+                    try {
+                        employeeDao.create(name, lastname, role.toString(), abilitation);
+
+                    } catch (RuntimeException e) {
+                        System.out.println("Error: cannot insert new employee");
+                    }
+                    return;
+                }
+
+                case 1:
+                    System.out.println("Error: name must be not-empty");
+                    break;
+
+                case 2:
+                    System.out.println("Error: last name must be not-empty");
+                    break;
+
+                case 3:
+                    System.out.println("Error: invalid abilitation");
+                    break;
+            }
         }
     }
 
@@ -889,7 +931,6 @@ public class CLI {
 
         System.out.print("\nNew dimension class");
         String dimensionClass = stdin.nextLine().trim();
-
 
         try {
             airportDaoPg.update(icao, dimensionClass);

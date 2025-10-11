@@ -15,7 +15,7 @@ import java.util.Vector;
 
 public class AircraftTest {
     @Test
-    public void canGoTest() {
+    public void canGoTest_Success() {
         AircraftDaoI aircraftDao = new AircraftDaoPg();
         Vector<Aircraft> allAircrafts = aircraftDao.getAllInstances();
 
@@ -32,7 +32,7 @@ public class AircraftTest {
     }
 
     @Test
-    public void cannotGoTest() {
+    public void canGoTest_Fail() {
         AircraftDaoI aircraftDao = new AircraftDaoPg();
         Vector<Aircraft> allAircrafts = aircraftDao.getAllInstances();
 
