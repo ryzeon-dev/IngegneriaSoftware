@@ -45,12 +45,41 @@ public class AircraftDaoTests {
         AircraftModel F22 = new AircraftModel("Lockeed&Martin", "F22-Raptor", "NATF", 8000, 0, DimensionClass.fromString("1B"), 1);
         dao.createModel(F22);
 
-        Vector<Aircraft> allInstances = dao.getAllInstances();
+        Vector<AircraftModel> allInstances = dao.getAllModels();
         int index = allInstances.indexOf(F22);
 
         // Index is -1 if not found
         assertFalse(index == -1);
+        int modelId = allInstances.get(index).modelId;
+
+        String F22InstancePlate = "US-RPT";
+        boolean error = false;
+
+        try {
+            dao.createInstance(F22InstancePlate, String.valueOf(modelId));
+
+        } catch (Exception e) {
+            error = true;
+        }
+
+        assertFalse(error);
+
+        error = false;
+        try {
+            dao.deleteInstance(F22InstancePlate);
+        } catch (Exception e) {
+            error = true;
+        }
+
+        assertFalse(error);
+
+        error = false;
+        try {
+            dao.deleteModel(String.valueOf(modelId));
+        } catch (Exception e) {
+            error = true;
+        }
+
+        assertFalse(error);
     }
-
 }
-
