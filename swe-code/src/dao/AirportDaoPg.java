@@ -44,7 +44,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
 
             return new Airport(icao, dimensionClass, name, nation, city);
         } catch (SQLException e) {
-            e.printStackTrace();
+
             return null;
         }
     }
@@ -76,10 +76,11 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
             preparedStatement.setString(4, nation);
             preparedStatement.setString(5, city);
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
 
         } catch (SQLException e) {
+            e.printStackTrace();
             db.close();
             throw new RuntimeException(e);
         }
@@ -95,7 +96,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
             var preparedStatement = db.makePreparedStatement(PreparedStatementQueries.deleteAirport);
             preparedStatement.setString(1, icao);
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
 
         } catch (SQLException e) {
@@ -115,7 +116,7 @@ public class AirportDaoPg implements dao.interfaces.AirportDaoI {
             preparedStatement.setString(1, dimensionClass);
             preparedStatement.setString(2, icao);
 
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             db.commit();
         } catch (SQLException e) {
             db.close();
