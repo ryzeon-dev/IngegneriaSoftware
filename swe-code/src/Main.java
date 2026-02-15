@@ -11,6 +11,8 @@ public class Main {
         ManagementSystem managementSystem = new ManagementSystem(flightSchedule);
 
         CLI cli = new CLI(managementSystem);
-        cli.run();
+        if (cli.ok) {
+            cli.run();
+        }
     }
 }

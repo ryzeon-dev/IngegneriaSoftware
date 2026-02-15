@@ -23,6 +23,7 @@ public class CLI {
 
     private ManagementSystem managementSystem;
     private boolean running = true;
+    public boolean ok = false;
 
     private PermissionLevel permissionLevel;
     private int id;
@@ -35,7 +36,14 @@ public class CLI {
     public CLI(ManagementSystem managementSystem) {
         this.managementSystem = managementSystem;
         System.out.println("---Beginning scheduling");
-        managementSystem.runScheduling();
+        try {
+            managementSystem.runScheduling();
+            this.ok = true;
+        } catch (RuntimeException e) {
+            System.out.println("Fatal error: cannot execute scheduling");
+            this.ok = false;
+        }
+
         System.out.println("---End scheduling");
     }
     /* STD CLI */
@@ -89,6 +97,7 @@ public class CLI {
             if (res.permissionLevel == null) {
                 System.out.println("Login failed: check your credentials and retry");
                 continue;
+
             } else {
                 this.permissionLevel = res.permissionLevel;
                 this.id = res.id;
@@ -185,6 +194,7 @@ public class CLI {
             System.out.println("4 -> Quit");
 
             try {
+                System.out.print("Navigate to: ");
                 int choice = stdin.nextInt();
                 System.out.println();
 
@@ -253,12 +263,12 @@ public class CLI {
 
                 System.out.println("5 -> View a specific employee");
                 System.out.println("6 -> Edit specific employee");
-                System.out.println("7 -> back");
+                System.out.println("7 -> Back");
 
                 int choice;
                 while (true) {
                     try {
-                        System.out.print("View: ");
+                        System.out.print("Navigate to: ");
                         choice = stdin.nextInt();
                         break;
 
@@ -357,7 +367,7 @@ public class CLI {
                 System.out.println("2 -> Edit aircrafts");
                 System.out.println("3 -> Back");
                 System.out.println();
-                System.out.print("Choice: ");
+                System.out.print("Navigate to: ");
                 int choice = stdin.nextInt();
 
                 switch (choice) {
@@ -407,7 +417,6 @@ public class CLI {
             System.out.println("1 -> View routes");
             System.out.println("2 -> Edit routes");
             System.out.println("3 -> Back");
-            System.out.println();
 
             try {
                 System.out.print("Navigate to: ");
@@ -556,11 +565,11 @@ public class CLI {
         Scanner stdin = new Scanner(System.in);
 
         while (true) {
-            System.out.print("name: ");
-            String name= stdin.nextLine();
+            System.out.print("Enter name: ");
+            String name = stdin.nextLine();
 
-            System.out.print("last name: ");
-            String lastname= stdin.nextLine();
+            System.out.print("Enter last name: ");
+            String lastname = stdin.nextLine();
 
             EmployeeRole role = choseRole();
 
@@ -569,7 +578,7 @@ public class CLI {
                 Vector<String> models = aircraftDao.getAllModelNames();
                 System.out.println("Available abilitations: " + models.toString());
 
-                System.out.print("abilitation: ");
+                System.out.print("Enter ailitation: ");
                 abilitation = stdin.nextLine();
             }
 
@@ -582,7 +591,10 @@ public class CLI {
 
                     } catch (RuntimeException e) {
                         System.out.println("Error: cannot insert new employee");
+                        return;
                     }
+
+                    System.out.println("Insertion successful");
                     return;
                 }
 
@@ -603,15 +615,16 @@ public class CLI {
 
     private EmployeeRole choseRole() {
         Scanner stdin = new Scanner(System.in);
-        EmployeeRole employeeRole=null;
+        EmployeeRole employeeRole = null;
 
         while (employeeRole == null ) {
-            System.out.println("#Choose the role#");
+            System.out.println("\nSelect the new employee's role");
             System.out.println("1 -> Commander");
             System.out.println("2 -> First Officer");
-            System.out.println("3 -> Flight Assistance");
+            System.out.println("3 -> Flight Assistant");
+            System.out.print("Selected role: ");
 
-            int input =stdin.nextInt();
+            int input = stdin.nextInt();
             switch (input) {
                 case 1:
                     employeeRole = EmployeeRole.Commander;
@@ -622,12 +635,14 @@ public class CLI {
                 case 3:
                     employeeRole= EmployeeRole.FlightAssistant;
                     break;
+
                 default:
-                    employeeRole=null;
-                    break;
+                    employeeRole = null;
+                    System.out.println("Invalid selection!");
             }
         }
 
+        System.out.println("");
         return employeeRole;
         
     }
@@ -640,9 +655,9 @@ public class CLI {
         }
 
         System.out.println();
-        System.err.print("id: ");
+        System.out.print("Enter id: ");
 
-        int id=stdin.nextInt();
+        int id = stdin.nextInt();
         try {
             employeeDao.delete(id);
 
@@ -726,28 +741,28 @@ public class CLI {
     private void insertAircraftModel(){
         Scanner stdin = new Scanner(System.in);
 
-        System.out.print("Manufacturer: ");
+        System.out.print("Enter manufacturer: ");
         String manufacturer =stdin.nextLine();
 
-        System.out.print("Model: ");
+        System.out.print("Enter model: ");
         String model = stdin.nextLine();
 
-        System.out.print("Specification: ");
+        System.out.print("Enter specification: ");
         String specification = stdin.nextLine();
 
-        System.out.print("Range:");
+        System.out.print("Enter range:");
         int range=stdin.nextInt();
 
-        System.out.print("Assistants number:");
+        System.out.print("Enter assistants number:");
         int assistantsNumber = stdin.nextInt();
 
         stdin.nextLine(); // Magic. Do not touch.
-        System.out.print("Dimension class:");
+        System.out.print("Enter the dimension class:");
 
         String dimCText= stdin.nextLine();
         DimensionClass dimC = DimensionClass.fromString(dimCText);
 
-        System.out.println("Seats:");
+        System.out.println("Enter number of seats:");
         int seats = stdin.nextInt();
 
         AircraftModel aircraft = new AircraftModel(manufacturer, model, specification, range, assistantsNumber, dimC, seats);
@@ -767,11 +782,11 @@ public class CLI {
             System.err.println("["+Integer.toString(i)+"] " + models.get(i) );
         }
 
-        System.err.println("chose the model: ");
+        System.err.println("Select the model: ");
         int chosenModel=stdin.nextInt();
 
         stdin.nextLine();
-        System.err.println("plate: ");
+        System.err.println("Enter the plate: ");
 
         String plate=stdin.nextLine();
         try {
@@ -786,8 +801,8 @@ public class CLI {
         Scanner stdin = new Scanner(System.in);
         while (true) {
             System.out.println("Select action:");
-            System.out.println("1 -> delete Aircraft");
-            System.out.println("2 -> delete Aircraft-instance");
+            System.out.println("1 -> Delete aircraft");
+            System.out.println("2 -> Delete aircraft-instance");
             System.out.println("3 -> Exit");
             System.out.print("Navigate to: ");
 
@@ -803,6 +818,7 @@ public class CLI {
                     case 2:
                         this.deleteAircraftInstance();
                         break;
+
                     case 3:
                         return;
                 }
@@ -852,10 +868,10 @@ public class CLI {
 
             } catch (RuntimeException e) {
                 System.out.println("Error: Impossible to delete aircraft instance " + plate + " (it is probably busy by flight schedule)");
-
-            } finally {
-                System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
+                return;
             }
+
+            System.out.println("Aircraft " + plate + " removed. Returning to menu\n");
         }
     }
 

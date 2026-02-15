@@ -17,6 +17,6 @@ public class FlightSchedule {
             return strategy.run();
         }
 
-        return null;
+        throw new RuntimeException("Null strategy");
     }
 }
